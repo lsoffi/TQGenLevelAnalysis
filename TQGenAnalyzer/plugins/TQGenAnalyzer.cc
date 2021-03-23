@@ -62,6 +62,8 @@ struct tree_struc_{
   long unsigned int event;
   int nEle;
   int nMu;
+  int nEleReco;
+  int nMuReco;
   float TQ_genMass;
   float TQ_recoMass;
   std::vector<float>            genLep_pt;
@@ -80,13 +82,19 @@ struct tree_struc_{
   std::vector<float>            recoMu_mass;
   std::vector<float>            recoMu_phi;
   std::vector<float>            recoMu_dR;
+  std::vector<int>              recoMu_charge;
+
 
   std::vector<float>            recoEle_pt;
   std::vector<float>            recoEle_eta;
   std::vector<float>            recoEle_mass;
   std::vector<float>            recoEle_phi;
   std::vector<float>            recoEle_dR;
+  std::vector<int>              recoEle_charge;
 
+
+  std::vector<float>            recoEle_pt_un;
+  std::vector<float>            recoMu_pt_un;
 
 };
 
@@ -189,22 +197,29 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   std::vector<float>recoMu_eta;
   std::vector<float>recoMu_phi;
   std::vector<float>recoMu_dR;
+  std::vector<int>recoMu_charge;
+
 
   std::vector<float>recoEle_pt;
   std::vector<float>recoEle_mass;
   std::vector<float>recoEle_eta;
   std::vector<float>recoEle_phi;
   std::vector<float>recoEle_dR;
+  std::vector<int>recoEle_charge;
 
 
+  std::vector<float>recoEle_pt_un;
+  std::vector<float>recoMu_pt_un;
 
-  // --- general event info 
+ // --- general event info 
   unsigned long int event = iEvent.id().event();   
   int run                 = iEvent.id().run();
   int lumi                = iEvent.luminosityBlock();
   int nEle=0;
   int nMu=0;
-
+  int nMuReco=0;
+  int nEleReco=0;
+  int first_lepton=0;
 
   TLorentzVector* lep1=new TLorentzVector();
   TLorentzVector* lep2=new TLorentzVector();
@@ -246,82 +261,244 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       
     }
 
-    
    // now look at muons and find the matching reco ones
   for(unsigned int i=0;i<genLep_pdgId.size();i++){
     if(abs(genLep_pdgId[i])!=13)continue;
-    
-    float dR=999.;
-    float dRMin=999.;
-      float recopt;
-      float recoeta;
-      float recophi;
-      float recomass;
-     
+       	float dR=999.;
+	float dRMin=999.;
+	float recopt=999.;
+	float recoeta=999.;
+	float recophi=999.;
+	float recomass=999.;
+        int recocharge=999;
+        float dRApp=999.;
+        bool last = true;
+
+  
     for (const auto & mu_iter : *muons){
-      
       float eta=mu_iter.eta();
       float phi=mu_iter.phi();
+    
       
-      
-       dR= deltaR(eta,phi,genLep_eta[i],genLep_phi[i]);
-       if(dR<dRMin){
+       dR= deltaR(eta,phi,genLep_eta[i],genLep_phi[i]); 
+	if(dR<dRMin){
 	 recopt=mu_iter.pt();
 	 recoeta=mu_iter.eta();
 	 recophi=mu_iter.phi();
 	 recomass=mu_iter.mass();
 	 dRMin=dR;
+         recocharge=mu_iter.charge();
        }
-       
+   
      }
   
-    
-     recoMu_pt.push_back(recopt);
-     recoMu_mass.push_back(recomass);
-     recoMu_eta.push_back(recoeta);
-     recoMu_phi.push_back(recophi);
-     recoMu_dR.push_back(dRMin);
+      if (first_lepton!=0 && recopt!=999 && ((recopt==recoMu_pt.back() && recophi==recoMu_phi.back() && recoeta==recoMu_eta.back()))){
+      
+    //std::cout<< "index "<<i<<"    prev "<<i-1<<std::endl;                                                                                                                                                        
+    //  std::cout<<"dR first "<<recoMu_dR.back()<<"  dR second "<<dRMin<<std::endl;
 
 
+  if (dRMin>recoMu_dR.back()) dRApp=dRMin;
+       else {
+         // std::cout<<"second last element  "<<recoMu_pt.back()<<std::endl;
+        dRApp=recoMu_dR.back();
+        recoMu_pt.push_back(recopt);
+        recoMu_mass.push_back(recomass);
+        recoMu_eta.push_back(recoeta);
+        recoMu_phi.push_back(recophi);
+        recoMu_dR.push_back(dRMin);
+        recoMu_charge.push_back(recocharge);
+        last=false;
+       }
+     //   std::cout<<"found"<<std::endl;
+     //
+       
+      
+     dR=999.;
+     dRMin=999.;
+
+
+     //  std::cout<<"found, wrong dR= "<<dRApp<<std::endl;
+
+      for (const auto & mu_iter : *muons){
+        float eta=mu_iter.eta();
+         float phi=mu_iter.phi();
+
+
+        if (last) dR= deltaR(eta,phi,genLep_eta[i],genLep_phi[i]);
+        else dR=deltaR(eta,phi,genLep_eta[first_lepton-1],genLep_phi[first_lepton-1]);
+          if(dR<dRMin && dR!=dRApp){
+             recopt=mu_iter.pt();
+             recoeta=mu_iter.eta();
+             recophi=mu_iter.phi();
+             recomass=mu_iter.mass();
+             dRMin=dR;
+             recocharge=mu_iter.charge();
+          }
+        }
+   // std::cout<<"found, new dR= "<<dRMin<<std::endl; 
+     if (last){
+      recoMu_pt.push_back(recopt);
+      recoMu_mass.push_back(recomass);
+      recoMu_eta.push_back(recoeta);
+      recoMu_phi.push_back(recophi);
+      recoMu_dR.push_back(dRMin);
+      recoMu_charge.push_back(recocharge);
+     }else{
+    //std::cout<<"second last element  "<<recoMu_pt.end()[-2]<<std::endl;
+    recoMu_pt.end()[-2]=recopt;
+    recoMu_mass.end()[-2]=recomass;
+    recoMu_phi.end()[-2]=recophi;
+    recoMu_eta.end()[-2]=recoeta;
+    recoMu_dR.end()[-2]=dRMin;
+    recoMu_charge.end()[-2]=recocharge;
    }
+   } else {
+    recoMu_pt.push_back(recopt);
+    recoMu_mass.push_back(recomass);
+    recoMu_eta.push_back(recoeta);
+    recoMu_phi.push_back(recophi);
+    recoMu_dR.push_back(dRMin);
+    recoMu_charge.push_back(recocharge);
+       }
+     
+    first_lepton=i+1;
+     
+   }
+ 
+  first_lepton=0;
 
-
-   // now look at electronss and find the matching reco ones
+	
+   // now look at electrons and find the matching reco ones
   for(unsigned int i=0;i<genLep_pdgId.size();i++){
-    if(abs(genLep_pdgId[i])!=11)continue;
+   if(abs(genLep_pdgId[i])!=11)continue;
     float dR=999.;
     float dRMin=999.;
-    float recopt;
-    float recoeta;
-    float recophi;
-    float recomass;
-      
-    for (const auto & el_iter : *electrons){
-      
+    float recopt=999.;
+    float recoeta=999.;
+    float recophi=999.;
+    float recomass=999.;
+    int recocharge=999;    
+    float dRApp=999.;
+    bool last = true; 
+     
+ 
+   for (const auto & el_iter : *electrons){ 
       float eta=el_iter.eta();
       float phi=el_iter.phi();
-      
-      
-      dR= deltaR(eta,phi,genLep_eta[i],genLep_phi[i]);
+
+  
+     
+    dR= deltaR(eta,phi,genLep_eta[i],genLep_phi[i]);
       if(dR<dRMin){
 	recopt=el_iter.pt();
 	recoeta=el_iter.eta();
 	recophi=el_iter.phi();
 	recomass=el_iter.mass();
 	dRMin=dR;
-      }
-      
+	recocharge=el_iter.charge();
+     }
+
     }
+   
+   // std::cout<<"inx "<<first_lepton<<std::endl;
+   // std::cout<<"index"<<i<<std::endl;
+      if (first_lepton!=0 && recopt!=999 && ((recopt==recoEle_pt.back() && recophi==recoEle_phi.back() && recoeta==recoEle_eta.back()))){
+   
+   // std::cout<< "index "<<i<<"    prev "<<i-1<<std::endl;                                                                                  
+     // std::cout<<"dR first "<<recoEle_dR.back()<<"  dR second "<<dRMin<<std::endl;
+
+       if (dRMin>recoEle_dR.back()) dRApp=dRMin;
+         else {
+
+    //      std::cout<<"second last element  "<<recoEle_pt.back()<<std::endl;
+        dRApp=recoEle_dR.back();
+
+
+        recoEle_pt.push_back(recopt);
+        recoEle_mass.push_back(recomass);
+        recoEle_eta.push_back(recoeta);
+        recoEle_phi.push_back(recophi);
+        recoEle_dR.push_back(dRMin);
+        recoEle_charge.push_back(recocharge);
+        last=false;	
+       }
+       
+
+       dR=999.;
+       dRMin=999.; 
+      // std::cout<<"found, wrong dR= "<<dRApp<<std::endl;
     
-    
+
+       for (const auto & el_iter : *electrons){
+        float eta=el_iter.eta();
+        float phi=el_iter.phi();
+
+
+
+        if (last) dR= deltaR(eta,phi,genLep_eta[i],genLep_phi[i]);
+        else dR=deltaR(eta,phi,genLep_eta[first_lepton],genLep_phi[first_lepton]);
+          if(dR<dRMin && dR!=dRApp){
+             recopt=el_iter.pt();
+             recoeta=el_iter.eta();
+             recophi=el_iter.phi();
+             recomass=el_iter.mass();
+             dRMin=dR;
+             recocharge=el_iter.charge();
+          }
+        }
+    // std::cout<<"found, new dR= "<<dRMin<<std::endl; 
+     if (last){
       recoEle_pt.push_back(recopt);
       recoEle_mass.push_back(recomass);
       recoEle_eta.push_back(recoeta);
       recoEle_phi.push_back(recophi);
       recoEle_dR.push_back(dRMin);
-    
+      recoEle_charge.push_back(recocharge);
+     }else{
+    //std::cout<<"second last element  "<<recoEle_pt.end()[-2]<<std::endl;
+    recoEle_pt.end()[-2]=recopt;
+    recoEle_mass.end()[-2]=recomass;
+    recoEle_phi.end()[-2]=recophi;
+    recoEle_eta.end()[-2]=recoeta;    
+    recoEle_dR.end()[-2]=dRMin;
+    recoEle_charge.end()[-2]=recocharge;
+
 
    }
+
+     
+   } else {
+   
+      
+     // dRApp=999.;
+      recoEle_pt.push_back(recopt);
+      recoEle_mass.push_back(recomass);
+      recoEle_eta.push_back(recoeta);
+      recoEle_phi.push_back(recophi);
+      recoEle_dR.push_back(dRMin);
+      recoEle_charge.push_back(recocharge);
+  }
+
+  first_lepton=i+1;
+  } 
+
+
+  for (const auto & el_iter : *electrons){
+  nEleReco++;
+
+  float reco_ele=999.;
+  reco_ele=el_iter.pt();
+  recoEle_pt_un.push_back(reco_ele);
+  }
+  
+  for (const auto & mu_iter : *muons){
+  nMuReco++;
+
+  float reco_mu=999.;
+  reco_mu=mu_iter.pt();
+  recoMu_pt_un.push_back(reco_mu);
+  }
 
   // --- setup tree values
   initTreeStructure();
@@ -335,7 +512,10 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    tree_.lumi=lumi;
    tree_.nEle=nEle;
    tree_.nMu=nMu;
-   
+   tree_.nMuReco=nMuReco;
+   tree_.nEleReco=nEleReco;  
+   first_lepton=0;
+ 
    for(unsigned int i=0;i<genLep_pt.size();i++){
       tree_.genLep_pt.push_back(genLep_pt[i]);
       tree_.genLep_mass.push_back(genLep_mass[i]);
@@ -365,7 +545,8 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       tree_.recoMu_eta.push_back(recoMu_eta[i]);
       tree_.recoMu_phi.push_back(recoMu_phi[i]);   
       tree_.recoMu_dR.push_back(recoMu_dR[i]);   
-      
+      tree_.recoMu_charge.push_back(recoMu_charge[i]);   
+ 
       if(i==0)recolep0->SetPtEtaPhiM(recoMu_pt[i],recoMu_eta[i],recoMu_phi[i],recoMu_mass[i]);
       if(i==1)recolep1->SetPtEtaPhiM(recoMu_pt[i],recoMu_eta[i],recoMu_phi[i],recoMu_mass[i]);
 
@@ -375,13 +556,25 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       tree_.recoEle_mass.push_back(recoEle_mass[i]);
       tree_.recoEle_eta.push_back(recoEle_eta[i]);
       tree_.recoEle_phi.push_back(recoEle_phi[i]);
-      tree_.recoEle_dR.push_back(recoEle_dR[i]);      
+      tree_.recoEle_dR.push_back(recoEle_dR[i]); 
+      tree_.recoEle_charge.push_back(recoEle_charge[i]);
+    
 
       if(i==0)recolep2->SetPtEtaPhiM(recoEle_pt[i],recoEle_eta[i],recoEle_phi[i],recoEle_mass[i]);
       if(i==1)recolep3->SetPtEtaPhiM(recoEle_pt[i],recoEle_eta[i],recoEle_phi[i],recoEle_mass[i]);
 
     }
 
+
+  for(unsigned int i=0; i<recoEle_pt_un.size();i++){
+  tree_.recoEle_pt_un.push_back(recoEle_pt_un[i]);
+
+  }
+
+  for(unsigned int i=0; i<recoMu_pt_un.size();i++){
+  tree_.recoMu_pt_un.push_back(recoMu_pt_un[i]);
+
+  }
     TLorentzVector recoTQ(*recolep0+*recolep1+*recolep2+*recolep3);
     tree_.TQ_recoMass=recoTQ.M();
     
@@ -402,6 +595,8 @@ TQGenAnalyzer::beginJob()
   tree->Branch("lumi", &tree_.lumi, "lumi/I");
   tree->Branch("nEle", &tree_.nEle, "nEle/I");
   tree->Branch("nMu", &tree_.nMu, "nMu/I");
+  tree->Branch("nEleReco", &tree_.nEleReco, "nEleReco/I");
+  tree->Branch("nMuReco", &tree_.nMuReco, "nMuReco/I"); 
   tree->Branch("TQ_genMass", &tree_.TQ_genMass, "TQ_genMass/F");
   tree->Branch("TQ_recoMass", &tree_.TQ_recoMass, "TQ_recoMass/F");
   tree->Branch("genLep_pt",     &tree_.genLep_pt);
@@ -415,15 +610,20 @@ TQGenAnalyzer::beginJob()
   tree->Branch("genMom_phi",&tree_.genMom_phi);
   tree->Branch("genMom_pdgId",&tree_.genMom_pdgId);
   tree->Branch("recoMu_pt",     &tree_.recoMu_pt);
+  tree->Branch("recoMu_pt_un",     &tree_.recoMu_pt_un);
   tree->Branch("recoMu_mass",      &tree_.recoMu_mass);
   tree->Branch("recoMu_eta",&tree_.recoMu_eta);
   tree->Branch("recoMu_phi",&tree_.recoMu_phi);
   tree->Branch("recoMu_dR",&tree_.recoMu_dR);
   tree->Branch("recoEle_pt",     &tree_.recoEle_pt);
+  tree->Branch("recoEle_pt_un",     &tree_.recoEle_pt_un);
   tree->Branch("recoEle_mass",      &tree_.recoEle_mass);
   tree->Branch("recoEle_eta",&tree_.recoEle_eta);
   tree->Branch("recoEle_phi",&tree_.recoEle_phi);
+  tree->Branch("recoEle_charge", &tree_.recoEle_charge);
   tree->Branch("recoEle_dR",&tree_.recoEle_dR);
+  tree->Branch("recoMu_charge", &tree_.recoMu_charge);
+
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
@@ -478,15 +678,16 @@ void TQGenAnalyzer::clearVectors()
   tree_.recoMu_eta.clear();
   tree_.recoMu_phi.clear();
   tree_.recoMu_dR.clear();
-
+  tree_.recoMu_pt_un.clear();
 
   tree_.recoEle_pt.clear();
   tree_.recoEle_mass.clear();
   tree_.recoEle_eta.clear();
   tree_.recoEle_phi.clear();
   tree_.recoEle_dR.clear();
-
-
+  tree_.recoEle_pt_un.clear();
+  tree_.recoEle_charge.clear();
+  tree_.recoMu_charge.clear();
 }
 //define this as a plug-in
 DEFINE_FWK_MODULE(TQGenAnalyzer);
