@@ -6,6 +6,7 @@
 
 <library file="*.cc" name="TQGenAnalysisPlugins">
   <use name="CommonTools/UtilAlgos"/>
+  <use name="CommonTools/CandAlgos"/>
   <use name="CommonTools/Utils"/>
   <use name="HLTrigger/HLTcore"/>
   <use name="DataFormats/HLTReco"/>
