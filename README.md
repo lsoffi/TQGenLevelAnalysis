@@ -1,6 +1,6 @@
 # TQGenLevelAnalysis
 
-### setup release (11_3_X or 10_6_X to have lowPtElectrons there)
+## setup release (11_3_X or 10_6_X to have lowPtElectrons there)
 
 ```
 scram project -n CMSSW-106X-GenAnalysis CMSSW CMSSW_10_6_2
