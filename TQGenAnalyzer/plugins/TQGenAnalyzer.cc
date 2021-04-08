@@ -62,7 +62,7 @@
 #include "Geometry/CaloTopology/interface/CaloTopology.h"
 #include "Geometry/Records/interface/CaloGeometryRecord.h"
 #include "RecoEcal/EgammaCoreTools/interface/EcalClusterLazyTools.h"
-#include "FastSimulation/BaseParticlePropagator/interface/BaseParticlePropagator.h"  
+
 
 // user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -338,7 +338,23 @@ TQGenAnalyzer::TQGenAnalyzer(const edm::ParameterSet& iConfig)
   xsec_          = iConfig.getUntrackedParameter<double>("sampleXsec",1.);
   puWFileName_   = iConfig.getParameter<std::string>("puWFileName");
 
+
+  if( iConfig.existsAs<edm::ParameterSet>("gsfRegressionConfig") ) {
+    const edm::ParameterSet& iconf = iConfig.getParameterSet("gsfRegressionConfig");
+    const std::string& mname = iconf.getParameter<std::string>("modifierName");
+    auto cc = consumesCollector();                  
+      ModifyObjectValueBase* plugin =
+        ModifyObjectValueFactory::get()->create(mname,iconf, cc);
+      regression_.reset(plugin);
+      // edm::ConsumesCollector sumes = consumesCollector();
+      // regression_->setConsumes(sumes);
+  } else {
+    regression_.reset(nullptr);
+  }
+
+
   // Regression stuff - lowPtElectrons
+  /*
   if( iConfig.existsAs<edm::ParameterSet>("gsfRegressionConfig") ) {
     const edm::ParameterSet& iconf = iConfig.getParameterSet("gsfRegressionConfig");
     const std::string& mname = iconf.getParameter<std::string>("modifierName");
@@ -351,6 +367,7 @@ TQGenAnalyzer::TQGenAnalyzer(const edm::ParameterSet& iConfig)
   } else {
     regression_.reset(nullptr);
   }
+  */
 
 }
 
