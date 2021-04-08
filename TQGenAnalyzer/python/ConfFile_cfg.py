@@ -1,4 +1,9 @@
 import FWCore.ParameterSet.Config as cms
+import FWCore.Utilities.FileUtils as FileUtils
+import FWCore.PythonUtilities.LumiList as LumiList  
+import FWCore.ParameterSet.Types as CfgTypes 
+import FWCore.ParameterSet.VarParsing as VarParsing
+
 from RecoEgamma.EgammaTools.regressionModifierNew_cfi import regressionModifier106XUL
 #from RecoEgamma.EgammaTools.regressionModifierNew_cfi import regressionModifier106XULLP
 
@@ -11,11 +16,8 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 process.source = cms.Source("PoolSource",
                                 # replace 'myfile.root' with the source file you want to use
-                                fileNames = cms.untracked.vstring(
-#            'file:/afs/cern.ch/user/s/soffi/public/10C23D4F-94BD-E811-9588-E0071B7B2320.root'
-#                            '/store/mc/RunIIAutumn18MiniAOD/BuToKJpsi_Toee_Mufilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/MINIAODSIM/PUPoissonAve20_BParking_102X_upgrade2018_realistic_v15-v2/60000/854B1DC0-2F71-694D-A3F5-8DC1CDE1EF18.root'
-#                                'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/file_Livia/01823A93-C4C6-4049-9A01-72D2BCA68238.root'
-#running in local on psudoscalar signals old
+                            #running in local on psudoscalar signals old
+                            fileNames = cms.untracked.vstring(
                                 'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/14GeV/14262656-E2BD-E811-B72F-20040FE8ECAC.root',
                                 'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/14GeV/1A96C0D8-03BE-E811-8ED2-509A4C83EF52.root',
                                 'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/14GeV/28930861-18C4-E811-A60C-008CFA111190.root',
@@ -39,9 +41,9 @@ process.source = cms.Source("PoolSource",
 #                                'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/26GeV/8831B77A-BBB9-E811-A8CA-001E67E6F918.root',
 #                                'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/26GeV/9052B279-BBB9-E811-9DFD-0242AC1C0502.root'
 
+)
 
-                )
-                            )
+)
 
 process.TFileService = cms.Service("TFileService",
     fileName = cms.string("ntuple_tetraquarks_pseudoscalar_14GeV.root")
@@ -101,6 +103,43 @@ cms.PSet(record = cms.string("GBRDWrapperRcd"),
          connect = cms.string("sqlite_file:lowPtEleReg_2017UL_25112020.db")))
 
 
+#setup input variables
+options = VarParsing.VarParsing('analysis')
+options.register ('isMC',
+                  True, # default value
+                  VarParsing.VarParsing.multiplicity.singleton, # singleton or list
+                  VarParsing.VarParsing.varType.bool,           # string, int, float, bool
+                  "Bool isMC")
+options.register ('isSignal',
+                  True, # default value
+                  VarParsing.VarParsing.multiplicity.singleton, # singleton or list
+                  VarParsing.VarParsing.varType.bool,           # string, int, float, bool
+                  "Bool isSignal")
+options.parseArguments()
+
+if options.isMC and options.isSignal : 
+    print'Sample is MC Signal'
+    xsec=1.
+
+if options.isMC and not options.isSignal : print'Sample is MC Background'
+if options.isMC == 0 : print'Sample is Data'
+
+if options.isMC and options.isSignal : index = 0
+if options.isMC and not options.isSignal : index = -100
+if options.isMC ==0 : index==100
+
+
+#setup json file
+if (options.isMC==False):
+    print "applying json"                                
+    process.source.lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange()) 
+    #change json below once you run on new data
+    JSONfile = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/PromptReco/Cert_294927-305636_13TeV_PromptReco_Collisions17_JSON.txt' 
+    myLumis = LumiList.LumiList(filename = JSONfile).getCMSSWString().split(',')  
+    process.source.lumisToProcess.extend(myLumis)                              
+#    print myLumis 
+
+
 
 process.GenAnalysis = cms.EDAnalyzer('TQGenAnalyzer',
                                      generatorInfo= cms.InputTag("generator"),
@@ -109,6 +148,13 @@ process.GenAnalysis = cms.EDAnalyzer('TQGenAnalyzer',
                                      patElectrons = cms.InputTag("slimmedElectrons"),                 # MINIAOD
                                      patElectronsLowPt = cms.InputTag("slimmedLowPtElectrons"), #change when running on our old signals
                                      vtx=cms.InputTag("offlineSlimmedPrimaryVertices"),
+                                     rho= cms.InputTag('fixedGridRhoAll'),
+                                     PileUp = cms.InputTag('slimmedAddPileupInfo'),
+                                     puWFileName  = cms.string('pileupWeights_moriond17_v2.root'),
+                                     bits         = cms.InputTag("TriggerResults::HLT"),
+                                     flags        = cms.InputTag("TriggerResults::SIM"),
+                                     sampleIndex  = cms.untracked.int32(index),
+                                     sampleXsec  = cms.untracked.double(xsec),
                                      drForCleaning = cms.double(0.03),
                                      dzForCleaning = cms.double(0.5), ##keep tighter dZ to check overlap of pfEle with lowPt (?)
                                      mvaValueEGamma = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15Trig25nsV1Values'),
