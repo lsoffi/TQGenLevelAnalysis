@@ -7,7 +7,7 @@ from os import path
 
 mvaTag = "BParkRetrain"
 
-weightFileDir = "/afs/cern.ch/work/s/soffi/TQ-WORK/CMSSW_10_2_15/src/TQGenLevelAnalysis/TQGenAnalyzer/data/PFRetrainWeightFiles"
+weightFileDir = "/afs/cern.ch/work/s/soffi/TQ-WORK/CMSSW-10-6-20-LowPtEle/src/data/PFRetrainWeightFiles"
 
 mvaWeightFiles = [
      path.join(weightFileDir, "BParkRetrain_LowPt_unbiased.xml.gz"),

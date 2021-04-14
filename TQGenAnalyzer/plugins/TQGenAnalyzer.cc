@@ -277,7 +277,7 @@ private:
 
   int sampleIndex_;
   float xsec_;    // pb
-  std::string puWFileName_;
+
   double puweights2016_[100];
   double puweights2017_[100];
   double puweights2018_[100];
@@ -336,7 +336,7 @@ TQGenAnalyzer::TQGenAnalyzer(const edm::ParameterSet& iConfig)
   // Event stuff
   sampleIndex_   = iConfig.getUntrackedParameter<int>("sampleIndex",0);
   xsec_          = iConfig.getUntrackedParameter<double>("sampleXsec",1.);
-  puWFileName_   = iConfig.getParameter<std::string>("puWFileName");
+
 
 
   if( iConfig.existsAs<edm::ParameterSet>("gsfRegressionConfig") ) {
@@ -393,7 +393,7 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     iEvent.getByToken(prunedGenParticles_, genParticlesH_);
     iEvent.getByToken(patMuons_,patMuonsH_);
     iEvent.getByToken(patElectrons_,gsfElectronsH_);
-    if(gsfElectronsLowPtH_.isValid()) iEvent.getByToken(patElectronsLowPt_,gsfElectronsLowPtH_);
+    iEvent.getByToken(patElectronsLowPt_,gsfElectronsLowPtH_);
     iEvent.getByToken(vtx_,vtxH_);
     iEvent.getByToken(rho_,rhoH_);
     iEvent.getByToken(PileUp_,PileUpH_);
@@ -736,7 +736,7 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       float mvaEGamma_value = -999.;
       int mvaEGamma_id = -999;
 
-      //      std::cout<<" mva: "<<mvaValueEGammaH_->size()<<"  gsf: "<<gsfElectronsH_->size()<<std::endl;
+      std::cout<<" mva: "<<mvaValueEGammaH_->size()<<"  gsf: "<<gsfElectronsH_->size()<<std::endl;
       if ( mvaValueEGammaH_.isValid() && 
 	   mvaValueEGammaH_->size() == gsfElectronsH_->size() ) {
 	mvaEGamma_value = mvaValueEGammaH_->get( ele.key() );
@@ -828,10 +828,11 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     unsigned int nPFEle=recoEle_pt.size();
 
     if(gsfElectronsLowPtH_.isValid()){
+      
 
     //here we loop on LowPt electrons only
     for( size_t electronlooper = 0; electronlooper < gsfElectronsLowPtH_->size(); electronlooper++ ) {
-
+      
       // filter candidates: there must be a trk with pT>0.5
       // Low pT electrons
       const reco::GsfElectronPtr ele(gsfElectronsLowPtH_, electronlooper);
