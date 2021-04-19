@@ -6,6 +6,11 @@
 <use name="DataFormats/ParticleFlowReco"/>
 <use name="DataFormats/PatCandidates"/>
 <use name="DataFormats/TrackReco"/>
+<use name="TrackingTools/TransientTrack"/>
+<use   name="RecoVertex/KinematicFit"/>
+<use   name="RecoVertex/KinematicFitPrimitives"/>
+<use   name="RecoVertex/KalmanVertexFit"/>
+<use   name="SimTracker/TrackAssociation"/>
 <use name="FWCore/Framework"/>
 <use name="RecoEcal/EgammaCoreTools"/>
 <use name="RecoEgamma/EgammaElectronProducers"/>

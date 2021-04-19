@@ -1,0 +1,91 @@
+DEBUG 2021-04-19 10:50:45.381 UTC: 	 CRAB Client version: v3.210323
+DEBUG 2021-04-19 10:50:45.382 UTC: 	 Running on: Linux lxplus709.cern.ch 3.10.0-1160.15.2.el7.x86_64 #1 SMP Wed Feb 3 15:06:38 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2021-04-19 10:50:45.382 UTC: 	 Executing command: 'submit'
+DEBUG 2021-04-19 10:50:45.382 UTC: 	 Found CRAB cache file /afs/cern.ch/user/s/soffi/.crab3
+INFO 2021-04-19 10:50:45.383 UTC: 	 Will use CRAB configuration file crabConfig.py
+DEBUG 2021-04-19 10:50:45.383 UTC: 	 Loading CRAB configuration file.
+DEBUG 2021-04-19 10:50:45.384 UTC: 	 Will use CRAB Analysis plugin (i.e. will run an analysis job type).
+ERROR 2021-04-19 10:50:45.385 UTC: 	 Working area '/afs/cern.ch/work/s/soffi/TQ-WORK/CMSSW-10-6-20-LowPtEle/src/TQGenLevelAnalysis/TQGenAnalyzer/crab/crab_projects/crab_ggXToYYTo2mu2e_m14_PseudoScalar_13TeV' already exists 
+Please change the requestName in the config file
+ERROR 2021-04-19 10:50:45.385 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/bin/crab", line 165, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/bin/crab", line 150, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/lib/CRABClient/Commands/submit.py", line 34, in __init__
+    SubCommand.__init__(self, logger, cmdargs, disable_interspersed_args=True)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/lib/CRABClient/Commands/SubCommand.py", line 315, in __init__
+    getattr(self.configuration.General, 'requestName', None))
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/lib/CRABClient/ClientUtilities.py", line 402, in createWorkArea
+    raise ConfigException("Working area '%s' already exists \nPlease change the requestName in the config file" % fullpath)
+ConfigException: Working area '/afs/cern.ch/work/s/soffi/TQ-WORK/CMSSW-10-6-20-LowPtEle/src/TQGenLevelAnalysis/TQGenAnalyzer/crab/crab_projects/crab_ggXToYYTo2mu2e_m14_PseudoScalar_13TeV' already exists 
+Please change the requestName in the config file
+INFO 2021-04-19 10:50:45.389 UTC: 	 Log file is /afs/cern.ch/work/s/soffi/TQ-WORK/CMSSW-10-6-20-LowPtEle/src/TQGenLevelAnalysis/TQGenAnalyzer/crab/crab.log
+DEBUG 2021-04-19 10:52:31.593 UTC: 	 CRAB Client version: v3.210323
+DEBUG 2021-04-19 10:52:31.593 UTC: 	 Running on: Linux lxplus709.cern.ch 3.10.0-1160.15.2.el7.x86_64 #1 SMP Wed Feb 3 15:06:38 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2021-04-19 10:52:31.593 UTC: 	 Executing command: 'submit'
+DEBUG 2021-04-19 10:52:31.593 UTC: 	 Found CRAB cache file /afs/cern.ch/user/s/soffi/.crab3
+INFO 2021-04-19 10:52:31.595 UTC: 	 Will use CRAB configuration file crabConfig.py
+DEBUG 2021-04-19 10:52:31.595 UTC: 	 Loading CRAB configuration file.
+DEBUG 2021-04-19 10:52:31.601 UTC: 	 Will use CRAB Analysis plugin (i.e. will run an analysis job type).
+ERROR 2021-04-19 10:52:31.602 UTC: 	 Working area '/afs/cern.ch/work/s/soffi/TQ-WORK/CMSSW-10-6-20-LowPtEle/src/TQGenLevelAnalysis/TQGenAnalyzer/crab/crab_projects/crab_ggXToYYTo2mu2e_m14_PseudoScalar_13TeV' already exists 
+Please change the requestName in the config file
+ERROR 2021-04-19 10:52:31.602 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/bin/crab", line 165, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/bin/crab", line 150, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/lib/CRABClient/Commands/submit.py", line 34, in __init__
+    SubCommand.__init__(self, logger, cmdargs, disable_interspersed_args=True)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/lib/CRABClient/Commands/SubCommand.py", line 315, in __init__
+    getattr(self.configuration.General, 'requestName', None))
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/lib/CRABClient/ClientUtilities.py", line 402, in createWorkArea
+    raise ConfigException("Working area '%s' already exists \nPlease change the requestName in the config file" % fullpath)
+ConfigException: Working area '/afs/cern.ch/work/s/soffi/TQ-WORK/CMSSW-10-6-20-LowPtEle/src/TQGenLevelAnalysis/TQGenAnalyzer/crab/crab_projects/crab_ggXToYYTo2mu2e_m14_PseudoScalar_13TeV' already exists 
+Please change the requestName in the config file
+INFO 2021-04-19 10:52:31.635 UTC: 	 Log file is /afs/cern.ch/work/s/soffi/TQ-WORK/CMSSW-10-6-20-LowPtEle/src/TQGenLevelAnalysis/TQGenAnalyzer/crab/crab.log
+DEBUG 2021-04-19 11:41:18.456 UTC: 	 CRAB Client version: v3.210323
+DEBUG 2021-04-19 11:41:18.457 UTC: 	 Running on: Linux lxplus709.cern.ch 3.10.0-1160.15.2.el7.x86_64 #1 SMP Wed Feb 3 15:06:38 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2021-04-19 11:41:18.457 UTC: 	 Executing command: 'status'
+DEBUG 2021-04-19 11:41:18.457 UTC: 	 Found CRAB cache file /afs/cern.ch/user/s/soffi/.crab3
+ERROR 2021-04-19 11:41:18.458 UTC: 	 Error: crab_projects/crab_ggXToYYTo2mu2e_m14_PseudoScalar_13TeV is not a valid CRAB project directory.
+ERROR 2021-04-19 11:41:18.458 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/bin/crab", line 165, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/bin/crab", line 150, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/lib/CRABClient/Commands/status.py", line 39, in __init__
+    SubCommand.__init__(self, logger, cmdargs)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/lib/CRABClient/Commands/SubCommand.py", line 270, in __init__
+    SubCommand.validateOptions(self)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/lib/CRABClient/Commands/SubCommand.py", line 639, in validateOptions
+    raise ConfigurationException(msg)
+ConfigurationException: [91mError[0m: crab_projects/crab_ggXToYYTo2mu2e_m14_PseudoScalar_13TeV is not a valid CRAB project directory.
+INFO 2021-04-19 11:41:18.566 UTC: 	 Log file is /afs/cern.ch/work/s/soffi/TQ-WORK/CMSSW-10-6-20-LowPtEle/src/TQGenLevelAnalysis/TQGenAnalyzer/crab/crab.log
+DEBUG 2021-04-19 12:46:29.645 UTC: 	 CRAB Client version: v3.210323
+DEBUG 2021-04-19 12:46:29.646 UTC: 	 Running on: Linux lxplus798.cern.ch 3.10.0-1160.15.2.el7.x86_64 #1 SMP Wed Feb 3 15:06:38 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2021-04-19 12:46:29.646 UTC: 	 Executing command: 'submit'
+DEBUG 2021-04-19 12:46:29.646 UTC: 	 Found CRAB cache file /afs/cern.ch/user/s/soffi/.crab3
+INFO 2021-04-19 12:46:29.647 UTC: 	 Will use CRAB configuration file crabConfig_ggXToYYTo2mu2e_m14_PseudoScalar_13TeV.py
+DEBUG 2021-04-19 12:46:29.647 UTC: 	 Loading CRAB configuration file.
+DEBUG 2021-04-19 12:46:29.674 UTC: 	 Will use CRAB Analysis plugin (i.e. will run an analysis job type).
+ERROR 2021-04-19 12:46:29.806 UTC: 	 Working area '/afs/cern.ch/work/s/soffi/TQ-WORK/CMSSW-10-6-20-LowPtEle/src/TQGenLevelAnalysis/TQGenAnalyzer/crab/crab_projects/crab_ggXToYYTo2mu2e_m14_PseudoScalar_13TeV' already exists 
+Please change the requestName in the config file
+ERROR 2021-04-19 12:46:29.806 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/bin/crab", line 165, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/bin/crab", line 150, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/lib/CRABClient/Commands/submit.py", line 34, in __init__
+    SubCommand.__init__(self, logger, cmdargs, disable_interspersed_args=True)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/lib/CRABClient/Commands/SubCommand.py", line 315, in __init__
+    getattr(self.configuration.General, 'requestName', None))
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.210323.00/lib/CRABClient/ClientUtilities.py", line 402, in createWorkArea
+    raise ConfigException("Working area '%s' already exists \nPlease change the requestName in the config file" % fullpath)
+ConfigException: Working area '/afs/cern.ch/work/s/soffi/TQ-WORK/CMSSW-10-6-20-LowPtEle/src/TQGenLevelAnalysis/TQGenAnalyzer/crab/crab_projects/crab_ggXToYYTo2mu2e_m14_PseudoScalar_13TeV' already exists 
+Please change the requestName in the config file
+INFO 2021-04-19 12:46:29.958 UTC: 	 Log file is /afs/cern.ch/work/s/soffi/TQ-WORK/CMSSW-10-6-20-LowPtEle/src/TQGenLevelAnalysis/TQGenAnalyzer/crab/crab.log

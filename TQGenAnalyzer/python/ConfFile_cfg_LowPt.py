@@ -4,8 +4,6 @@ import FWCore.PythonUtilities.LumiList as LumiList
 import FWCore.ParameterSet.Types as CfgTypes
 import FWCore.ParameterSet.VarParsing as VarParsing
 
-from RecoEgamma.EgammaTools.regressionModifierNew_cfi import regressionModifier106XUL
-#from RecoEgamma.EgammaTools.regressionModifierNew_cfi import regressionModifier106XULLP
 
 process = cms.Process("GenAnalysis")
 
@@ -20,18 +18,20 @@ process.load("Configuration.Geometry.GeometryRecoDB_cff")
 process.load("Configuration.StandardSequences.Services_cff")
 process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("Geometry.CaloEventSetup.CaloTowerConstituents_cfi")
+process.load("TrackingTools/TransientTrack/TransientTrackBuilder_cfi")
 
 #1. setting GT
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, '106X_dataRun2_v32')
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 process.source = cms.Source("PoolSource",
                                 # replace 'myfile.root' with the source file you want to use
                                 fileNames = cms.untracked.vstring(
 #            'file:/afs/cern.ch/user/s/soffi/public/10C23D4F-94BD-E811-9588-E0071B7B2320.root'
                                 '/store/mc/RunIIAutumn18MiniAOD/BuToKJpsi_Toee_Mufilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/MINIAODSIM/PUPoissonAve20_BParking_102X_upgrade2018_realistic_v15-v2/60000/854B1DC0-2F71-694D-A3F5-8DC1CDE1EF18.root'
+#                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/BPH-RunIISummer20UL18MiniAODv2-00008.root'
 #                                    '/store/cmst3/group/bpark/BToKmumu_1000Events_MINIAOD.root'
 
                 )
@@ -74,13 +74,10 @@ setupEgammaPostRecoSeq(process,era='2018-Prompt')
 
 
 
-#3c setting low pt electorns ID
-process.load('RecoEgamma.EgammaElectronProducers.lowPtGsfElectronID_cff')
-process.lowPtGsfElectronID.electrons = 'slimmedLowPtElectrons'
-process.lowPtGsfElectronID.rho = 'fixedGridRhoFastjetAll'
+
 
 process.ntuplizer_seq = cms.Sequence()
-process.ntuplizer_seq *= process.lowPtGsfElectronID
+
 #4. setting json file
 if (options.isMC==False):
     print "applying json"
@@ -94,6 +91,7 @@ if (options.isMC==False):
 
 
 #5. setting Regression configs
+from RecoEgamma.EgammaTools.regressionModifier_cfi import regressionModifier106XUL
 process.GlobalTag.toGet = cms.VPSet(
 cms.PSet(record = cms.string("GBRDWrapperRcd"),
          label = cms.untracked.string("lowPtElectron_eb_ecalOnly_05To50_mean"),
@@ -149,7 +147,7 @@ process.GenAnalysis = cms.EDAnalyzer('TQGenAnalyzer',
                                      drForCleaning = cms.double(0.03),
                                      dzForCleaning = cms.double(0.5), ##keep tighter dZ to check overlap of pfEle with lowPt (?)
  
-                                    mvaValueEGamma = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV1Values'),
+                                     mvaValueEGamma = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV1Values'),
 #                                     mvaValueEGamma = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2BParkRetrainRawValues'),
                                      mvaIdEGamma = cms.InputTag('egmGsfElectronIDs:mvaEleID-Fall17-noIso-V1-wp90'), 
                                      mvaValuePF = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV1Values'),
@@ -229,14 +227,14 @@ process.GenAnalysis = cms.EDAnalyzer('TQGenAnalyzer',
 
 #8. setting full path
 
-#process.p = cms.Path((process.egammaPostRecoSeq*process.egmGsfElectronIDSequence) * process.GenAnalysis)
+process.p = cms.Path((process.egammaPostRecoSeq*process.egmGsfElectronIDSequence) * process.GenAnalysis)
 #process.p = cms.Path(process.egammaPostRecoSeq+process.lowPtGsfElectronID+ process.GenAnalysis)
 #process.p = cms.Path((process.egmGsfElectronIDSequence) * process.GenAnalysis)
 
 
-process.ntuplizer_seq *= process.egammaPostRecoSeq
+#process.ntuplizer_seq *= process.egammaPostRecoSeq
 
-process.ntuplizer_seq *=process.GenAnalysis
-process.ntuplizer_path = cms.Path(
-                                  process.ntuplizer_seq)
+#process.ntuplizer_seq *=process.GenAnalysis
+#process.ntuplizer_path = cms.Path(
+#                                  process.ntuplizer_seq)
 #process.schedule = cms.Schedule(process.ntuplizer_path)

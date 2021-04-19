@@ -100,12 +100,29 @@
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "FWCore/Common/interface/TriggerNames.h"
 
-
+#include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
+#include "TrackingTools/Records/interface/TransientTrackRecord.h"
+#include "TrackingTools/TransientTrack/interface/TransientTrack.h"
+#include "RecoVertex/KalmanVertexFit/interface/KalmanVertexFitter.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/ParticleMass.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/MultiTrackKinematicConstraint.h"
+#include <RecoVertex/KinematicFitPrimitives/interface/KinematicParticleFactoryFromTransientTrack.h>
+// #include "RecoVertex/KinematicFitPrimitives/interface/"
+#include "RecoVertex/KinematicFit/interface/KinematicConstrainedVertexFitter.h"
+#include "RecoVertex/KinematicFit/interface/TwoTrackMassKinematicConstraint.h"
+#include "RecoVertex/KinematicFit/interface/KinematicParticleVertexFitter.h"
+#include "RecoVertex/KinematicFit/interface/KinematicParticleVertexFitter.h"
+#include "RecoVertex/KinematicFit/interface/KinematicParticleFitter.h"
+#include "RecoVertex/KinematicFit/interface/MassKinematicConstraint.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicVertex.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicParticle.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicTree.h"
 // root include files
 #include "TTree.h"
 #include "TLorentzVector.h"
 
 #define MAX_PU_REWEIGHT 100
+#define LEP_SIGMA 0.0000001
 
 namespace reco { typedef edm::Ptr<GsfElectron> GsfElectronPtr; }
 
@@ -161,6 +178,27 @@ struct tree_struc_{
   std::vector<float>              recoMu_dxy;
   std::vector<float>              recoMu_dz;
 
+
+  //bulding dimuon objects
+  int nDimuReco;
+  std::vector<float>            recoDimu_vx;
+  std::vector<float>            recoDimu_vy;
+  std::vector<float>            recoDimu_vz;
+  std::vector<float>            recoDimu_vtxchi2;
+  std::vector<float>            recoDimu_vtxndof;
+  std::vector<float>            recoDimu_vtxprob;
+  std::vector<float>            recoDimu_pt1;  
+  std::vector<float>            recoDimu_eta1;
+  std::vector<float>            recoDimu_phi1;
+  std::vector<float>            recoDimu_charge1;
+  std::vector<float>            recoDimu_mass1;        
+  std::vector<float>            recoDimu_pt2;  
+  std::vector<float>            recoDimu_eta2;
+  std::vector<float>            recoDimu_phi2;
+  std::vector<float>            recoDimu_charge2;
+  std::vector<float>            recoDimu_mass2;        
+
+  //electrons
   std::vector<float>            recoEle_pt;
   std::vector<float>            recoEle_eta;
   std::vector<float>            recoEle_mass;
@@ -407,6 +445,10 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     iEvent.getByToken(mvaId_, mvaIdH_); 
     iEvent.getByToken(mvaValue_, mvaValueH_); 
 
+    edm::ESHandle<TransientTrackBuilder> theB ;
+    iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theB);
+
+
     using namespace edm;
     regression_->setEvent(iEvent);
     regression_->setEventContent(iSetup);
@@ -440,6 +482,23 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::vector<int>              recoMu_isHQ;
     std::vector<float>              recoMu_dxy;
     std::vector<float>              recoMu_dz;
+
+    std::vector<float>            recoDimu_vx;
+    std::vector<float>            recoDimu_vy;
+    std::vector<float>            recoDimu_vz;
+    std::vector<float>            recoDimu_vtxchi2;
+    std::vector<float>            recoDimu_vtxndof;
+    std::vector<float>            recoDimu_vtxprob;
+    std::vector<float>            recoDimu_pt1;  
+    std::vector<float>            recoDimu_eta1;
+    std::vector<float>            recoDimu_phi1;
+    std::vector<float>            recoDimu_charge1;
+    std::vector<float>            recoDimu_mass1;        
+    std::vector<float>            recoDimu_pt2;  
+    std::vector<float>            recoDimu_eta2;
+    std::vector<float>            recoDimu_phi2;
+    std::vector<float>            recoDimu_charge2;
+    std::vector<float>            recoDimu_mass2;        
 
 
 
@@ -506,6 +565,7 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     int nMu=0;
     int nMuReco=0;
     int nEleReco=0;
+    int nDimuReco=0;
 
     TLorentzVector* lep1=new TLorentzVector();
     TLorentzVector* lep2=new TLorentzVector();
@@ -517,8 +577,8 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     float vz;
 
 
-    //    std::cout<<"-----------------------------------------------------"<<std::endl;
-
+    std::cout<<"-----------------------------------------------------"<<std::endl;
+	
     // save gen particles (only leptons)
     float puw_2016 = 1.;
     float puw_2017 = 1.;
@@ -670,6 +730,69 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       recoMu_dz.push_back(recodz);
     }
 
+
+    //building dimuon objects
+    for (const auto & mu1 : *patMuonsH_){
+
+      if(mu1.pt()<1.)continue;
+      if(abs(mu1.eta())>2.5)continue;
+
+      for (const auto & mu2 : *patMuonsH_){
+	
+	if(mu2.pt()<1.)continue;
+	if(abs(mu2.eta())>2.5)continue;
+	if(mu1.charge()*mu2.charge()>0)continue;
+      
+
+
+      recoDimu_pt1.push_back(mu1.pt());
+      recoDimu_eta1.push_back(mu1.eta());
+      recoDimu_phi1.push_back(mu1.phi());
+      recoDimu_charge1.push_back(mu1.charge());
+      recoDimu_mass1.push_back(mu1.mass());
+
+
+      recoDimu_pt2.push_back(mu2.pt());
+      recoDimu_eta2.push_back(mu2.eta());
+      recoDimu_phi2.push_back(mu2.phi());
+      recoDimu_charge2.push_back(mu2.charge());
+      recoDimu_mass2.push_back(mu2.mass());
+
+      //run kinematic fit
+      /*     reco::TrackRef mu1_trk = mu1.globalTrack();
+      reco::TrackRef mu2_trk = mu2.globalTrack();
+      reco::TransientTrack  mu1_ttrk = theB->build(mu1_trk);
+      reco::TransientTrack  mu2_ttrk = theB->build(mu2_trk);
+
+      KinematicParticleFactoryFromTransientTrack pFactory;
+      float chi = 0.;
+      float ndf = 0.;
+      std::vector<RefCountedKinematicParticle> allParticles;
+      ParticleMass muon_mass = 0.1056583;
+      float muon_sigma = 0.0000001;
+      allParticles.push_back(pFactory.particle (mu1_ttrk,muon_mass,chi,ndf,muon_sigma));
+      allParticles.push_back(pFactory.particle (mu2_ttrk,muon_mass,chi,ndf,muon_sigma));
+      KinematicParticleVertexFitter fitter;
+      
+      std::cout <<"Simple vertex fit with KinematicParticleVertexFitter:\n";
+      RefCountedKinematicTree vertexFitTree = fitter.fit(allParticles);
+      //      printout(vertexFitTree);
+
+*/
+      
+      recoDimu_vx.push_back(999.);
+      recoDimu_vy.push_back(999.);
+      recoDimu_vz.push_back(999.);
+      recoDimu_vtxchi2.push_back(999.);
+      recoDimu_vtxndof.push_back(999.);
+      recoDimu_vtxprob.push_back(999.);
+      
+      nDimuReco++;
+
+
+
+    }
+ }
 
 
 
@@ -827,6 +950,8 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     
     unsigned int nPFEle=recoEle_pt.size();
 
+
+    std::cout<<" NPF: "<<nPFEle<<std::endl;
     if(gsfElectronsLowPtH_.isValid()){
       
 
@@ -919,7 +1044,8 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
      float mva_value = -999.;
       int mva_id = -999;
 
-      //      std::cout<<" mva: "<<mvaValueH_->size()<<"  gsf: "<<gsfElectronsH_->size()<<std::endl;
+      //std::cout<<" mva: "<<mvaValueH_->size()<<std::endl;
+      //      std::cout<<"  gsf: "<<gsfElectronsLowPtH_->size()<<std::endl;
       if ( mvaValueH_.isValid() && 
 	   mvaValueH_->size() == gsfElectronsLowPtH_->size() ) {
 	mva_value = mvaValueH_->get( ele.key() );
@@ -1069,6 +1195,29 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
 
+
+    tree_.nDimuReco=nDimuReco;
+    for(unsigned int i=0;i<recoDimu_vx.size();i++){
+       
+      tree_.recoDimu_vx.push_back(           recoDimu_vx[i]);	      
+      tree_.recoDimu_vy.push_back(	     recoDimu_vy[i]);	      
+      tree_.recoDimu_vz.push_back(	     recoDimu_vz[i]);	      
+      tree_.recoDimu_vtxchi2.push_back(     recoDimu_vtxchi2[i]);  
+      tree_.recoDimu_vtxndof.push_back(     recoDimu_vtxndof[i]);  
+      tree_.recoDimu_vtxprob.push_back(     recoDimu_vtxprob[i]);  
+      tree_.recoDimu_pt1.push_back(  	     recoDimu_pt1[i]);      
+      tree_.recoDimu_eta1.push_back(	     recoDimu_eta1[i]);     
+      tree_.recoDimu_phi1.push_back(	     recoDimu_phi1[i]);     
+      tree_.recoDimu_charge1.push_back(     recoDimu_charge1[i]);  
+      tree_.recoDimu_mass1.push_back(       recoDimu_mass1[i]);     
+      tree_.recoDimu_pt2.push_back(  	     recoDimu_pt2[i]);      
+      tree_.recoDimu_eta2.push_back(	     recoDimu_eta2[i]);     
+      tree_.recoDimu_phi2.push_back(	     recoDimu_phi2[i]);     
+      tree_.recoDimu_charge2.push_back(     recoDimu_charge2[i]);  
+      tree_.recoDimu_mass2.push_back(       recoDimu_mass2[i]);           
+               
+    }
+
     nEleReco=recoEle_pt.size();
     tree_.nEleReco=nEleReco;
     for(unsigned int i=0;i<recoEle_pt.size();i++){
@@ -1181,6 +1330,25 @@ TQGenAnalyzer::beginJob()
   tree->Branch("recoMu_dxy",&tree_.recoMu_dxy);
   tree->Branch("recoMu_dz",&tree_.recoMu_dz);
 
+  tree->Branch("nDimuReco", &tree_.nDimuReco, "nDimuReco/I");
+  tree->Branch("recoDimu_vx",     &tree_.recoDimu_vx);
+  tree->Branch("recoDimu_vy",     &tree_.recoDimu_vy);
+  tree->Branch("recoDimu_vz",     &tree_.recoDimu_vz);
+  tree->Branch("recoDimu_vtxchi2",     &tree_.recoDimu_vtxchi2);
+  tree->Branch("recoDimu_vtxndof",     &tree_.recoDimu_vtxndof);
+  tree->Branch("recoDimu_vtxprob",     &tree_.recoDimu_vtxprob);
+  tree->Branch("recoDimu_pt1",     &tree_.recoDimu_pt1);
+  tree->Branch("recoDimu_eta1",     &tree_.recoDimu_eta1);
+  tree->Branch("recoDimu_phi1",     &tree_.recoDimu_phi1);
+  tree->Branch("recoDimu_charge1",     &tree_.recoDimu_charge1);
+  tree->Branch("recoDimu_mass1",     &tree_.recoDimu_mass1);
+  tree->Branch("recoDimu_pt2",     &tree_.recoDimu_pt2);
+  tree->Branch("recoDimu_eta2",     &tree_.recoDimu_eta2);
+  tree->Branch("recoDimu_phi2",     &tree_.recoDimu_phi2);
+  tree->Branch("recoDimu_charge2",     &tree_.recoDimu_charge2);
+  tree->Branch("recoDimu_mass2",     &tree_.recoDimu_mass2);
+
+
   tree->Branch("nEleReco", &tree_.nEleReco, "nEleReco/I");
   tree->Branch("recoEle_pt",     &tree_.recoEle_pt);
   tree->Branch("recoEle_mass",      &tree_.recoEle_mass);
@@ -1285,6 +1453,23 @@ void TQGenAnalyzer::clearVectors()
   tree_.recoMu_dxy.clear();
   tree_.recoMu_dz.clear();
 
+  tree_.recoDimu_vx.clear();
+  tree_.recoDimu_vy.clear() ;
+  tree_.recoDimu_vz.clear();
+  tree_.recoDimu_vtxchi2.clear();
+  tree_.recoDimu_vtxndof.clear();
+  tree_.recoDimu_vtxprob.clear();
+  tree_.recoDimu_pt1.clear();
+  tree_.recoDimu_eta1.clear();
+  tree_.recoDimu_phi1.clear();
+  tree_.recoDimu_charge1.clear();
+  tree_.recoDimu_mass1.clear();
+  tree_.recoDimu_pt2.clear();
+  tree_.recoDimu_eta2.clear();
+  tree_.recoDimu_phi2.clear();
+  tree_.recoDimu_charge2.clear();
+  tree_.recoDimu_mass2.clear();
+
 
   tree_.recoEle_pt.clear();
   tree_.recoEle_mass.clear();
@@ -1344,10 +1529,10 @@ float TQGenAnalyzer::GetPUWeight(int npu,int year) {
 void TQGenAnalyzer::SetPuWeights(int year,double* puw_array) {
 
   std::string puWeightFile;
-  if(year==2016) puWeightFile="PU/pileup_2016.root";
-  else   if(year==2017) puWeightFile="PU/pileup_2017.root";
-  else   if(year==2018) puWeightFile="PU/pileup_2018.root";
-  else   if(year==0) puWeightFile="PU/pileup_ALL.root";
+  if(year==2016) puWeightFile="pileup_2016.root";
+  else   if(year==2017) puWeightFile="pileup_2017.root";
+  else   if(year==2018) puWeightFile="pileup_2018.root";
+  else   if(year==0) puWeightFile="pileup_ALL.root";
 
   if (puWeightFile == "") {
     std::cout << "you need a weights file to use this function" << std::endl;

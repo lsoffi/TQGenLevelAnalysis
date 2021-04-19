@@ -11,8 +11,18 @@ from RecoEgamma.EgammaTools.regressionModifierNew_cfi import regressionModifier1
 process = cms.Process("GenAnalysis")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
-
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
+process.load('FWCore.MessageService.MessageLogger_cfi')
+process.load('Configuration.EventContent.EventContent_cff')
+process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
+process.load('Configuration.StandardSequences.EndOfProcess_cff')
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+process.load("Configuration.Geometry.GeometryRecoDB_cff")
+process.load("Configuration.StandardSequences.Services_cff")
+process.load("Configuration.StandardSequences.MagneticField_cff")
+process.load("Geometry.CaloEventSetup.CaloTowerConstituents_cfi")
+process.load("TrackingTools/TransientTrack/TransientTrackBuilder_cfi")
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 process.source = cms.Source("PoolSource",
                                 # replace 'myfile.root' with the source file you want to use
@@ -57,6 +67,10 @@ for idmod in ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Sp
     setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
 
 process.ntuplizer_seq = cms.Sequence()
+
+#3. setting up post reco tools from EGM to have all IDs and SS
+from EgammaUser.EgammaPostRecoTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
+setupEgammaPostRecoSeq(process,era='2018-Prompt') 
 
 process.load('RecoEgamma.EgammaElectronProducers.lowPtGsfElectronID_cff')
 process.lowPtGsfElectronID.electrons = 'slimmedLowPtElectrons'
@@ -157,11 +171,11 @@ process.GenAnalysis = cms.EDAnalyzer('TQGenAnalyzer',
                                      sampleXsec  = cms.untracked.double(xsec),
                                      drForCleaning = cms.double(0.03),
                                      dzForCleaning = cms.double(0.5), ##keep tighter dZ to check overlap of pfEle with lowPt (?)
-                                     mvaValueEGamma = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15Trig25nsV1Values'),
-                                     mvaIdEGamma = cms.InputTag('egmGsfElectronIDs:mvaEleID-Spring15-25ns-Trig-V1-wp90'), 
-                                     mvaValuePF = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15Trig25nsV1Values'),
-                                     mvaIdPF = cms.InputTag('egmGsfElectronIDs:mvaEleID-Spring15-25ns-Trig-V1-wp90'), 
-                     #                mvaValue = cms.InputTag('lowPtGsfElectronID'),
+
+                                     mvaValueEGamma = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV2Values'),
+                                     mvaIdEGamma = cms.InputTag('egmGsfElectronIDs:mvaEleID-Fall17-noIso-V2-wp90'), 
+                                     mvaValuePF = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV2Values'),
+                                     mvaIdPF = cms.InputTag('egmGsfElectronIDs:mvaEleID-Fall17-noIso-V2-wp90'), 
                                      mvaValue = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV2Values'),
                                      mvaId = cms.InputTag('egmGsfElectronIDs:mvaEleID-Fall17-noIso-V2-wp90'), 
 
@@ -231,10 +245,10 @@ process.GenAnalysis = cms.EDAnalyzer('TQGenAnalyzer',
                                      )
                                 )
 
-process.ntuplizer_seq *= process.GenAnalysis
-
+#process.ntuplizer_seq *= process.GenAnalysis
+process.p = cms.Path(process.egammaPostRecoSeq* process.GenAnalysis)
 #process.p = cms.Path(process.egmGsfElectronIDSequence* process.ntuplizer_seq)
 
-process.p = cms.Path(process.ntuplizer_seq)
+#process.p = cms.Path(process.ntuplizer_seq)
 
 process.schedule = cms.Schedule(process.p)
