@@ -1,4 +1,4 @@
-// -*- C++ -*-
+// -*-C++ -*-
 //
 // Package:    GenAnalysis/TQGenAnalyzer
 // Class:      TQGenAnalyzer
@@ -15,7 +15,6 @@
 //         Created:  Mon, 01 Mar 2021 11:15:18 GMT
 //
 //
-
 
 // system include files
 #include <memory>
@@ -121,6 +120,97 @@
 #include "TTree.h"
 #include "TLorentzVector.h"
 
+// system include files
+#include <memory>
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "CommonTools/CandAlgos/interface/ModifyObjectValueBase.h"
+
+#include "DataFormats/BeamSpot/interface/BeamSpot.h"
+#include "DataFormats/CaloRecHit/interface/CaloCluster.h"
+#include "DataFormats/CaloRecHit/interface/CaloClusterFwd.h"
+#include "DataFormats/Candidate/interface/Candidate.h"
+#include "DataFormats/Candidate/interface/CandidateFwd.h"
+#include "DataFormats/Common/interface/Association.h"
+#include "DataFormats/Common/interface/Handle.h"
+#include "DataFormats/Common/interface/Ptr.h"
+#include "DataFormats/Common/interface/Ref.h"
+#include "DataFormats/Common/interface/RefToBase.h"
+#include "DataFormats/Common/interface/RefToPtr.h"
+#include "DataFormats/Common/interface/View.h"
+#include "DataFormats/EcalRecHit/interface/EcalRecHitCollections.h"
+#include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
+#include "DataFormats/EgammaCandidates/interface/GsfElectronFwd.h"
+#include "DataFormats/EgammaReco/interface/ElectronSeed.h"
+#include "DataFormats/EgammaReco/interface/ElectronSeedFwd.h"
+#include "DataFormats/EgammaReco/interface/SuperCluster.h"
+#include "DataFormats/EgammaReco/interface/SuperClusterFwd.h"
+#include "DataFormats/GsfTrackReco/interface/GsfTrack.h"
+#include "DataFormats/GsfTrackReco/interface/GsfTrackFwd.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
+#include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/PatCandidates/interface/PackedCandidate.h"
+#include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
+#include "DataFormats/PatCandidates/interface/Electron.h"
+#include "DataFormats/TrajectorySeed/interface/TrajectorySeed.h"
+#include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/TrackReco/interface/TrackFwd.h"
+#include "DataFormats/TrackReco/interface/DeDxData.h"
+#include "DataFormats/MuonReco/interface/Muon.h"
+#include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/Common/interface/TriggerResults.h"
+
+
+#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/ESHandle.h"
+#include "FWCore/Framework/interface/Frameworkfwd.h"
+#include "FWCore/Framework/interface/Event.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "FWCore/Utilities/interface/EDGetToken.h"
+#include "FWCore/Framework/interface/MakerMacros.h"
+#include "FWCore/Utilities/interface/InputTag.h"
+#include "FWCore/Common/interface/TriggerNames.h"
+
+#include "Geometry/CaloTopology/interface/CaloTopology.h"
+#include "Geometry/Records/interface/CaloGeometryRecord.h"
+
+#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
+#include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+#include "SimDataFormats/Associations/interface/MuonToTrackingParticleAssociator.h"
+#include "SimTracker/Records/interface/TrackAssociatorRecord.h"
+#include "SimDataFormats/TrackingAnalysis/interface/TrackingVertex.h"
+
+#include "RecoEgamma/ElectronIdentification/interface/ElectronIDAlgo.h"
+#include "RecoEcal/EgammaCoreTools/interface/EcalClusterLazyTools.h"
+
+
+#include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
+#include "TrackingTools/Records/interface/TransientTrackRecord.h"
+#include "TrackingTools/TransientTrack/interface/TransientTrack.h"
+
+#include "RecoVertex/KalmanVertexFit/interface/KalmanVertexFitter.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/ParticleMass.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/MultiTrackKinematicConstraint.h"
+#include <RecoVertex/KinematicFitPrimitives/interface/KinematicParticleFactoryFromTransientTrack.h>
+#include "RecoVertex/KinematicFit/interface/KinematicConstrainedVertexFitter.h"
+#include "RecoVertex/KinematicFit/interface/TwoTrackMassKinematicConstraint.h"
+#include "RecoVertex/KinematicFit/interface/KinematicParticleVertexFitter.h"
+#include "RecoVertex/KinematicFit/interface/KinematicParticleVertexFitter.h"
+#include "RecoVertex/KinematicFit/interface/KinematicParticleFitter.h"
+#include "RecoVertex/KinematicFit/interface/MassKinematicConstraint.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicVertex.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicParticle.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicTree.h"
+
+#include "KinVtxFitter.h"
+
+// root include files
+#include "TTree.h"
+#include "TLorentzVector.h"
+
+
+
 #define MAX_PU_REWEIGHT 100
 #define LEP_SIGMA 0.0000001
 
@@ -158,7 +248,6 @@ struct tree_struc_{
 
   int nEleReco;
   int nMuReco;
-  float TQ_recoMass;
   std::vector<float>            recoMu_pt;
   std::vector<float>            recoMu_eta;
   std::vector<float>            recoMu_mass;
@@ -170,7 +259,6 @@ struct tree_struc_{
   std::vector<int>              recoMu_matchid2;
   std::vector<int>              recoMu_looseID;
   std::vector<int>              recoMu_softID;
-
   //below variables are those applied in softID. Cuts can be seen here:https://cmssdt.cern.ch/lxr/source/DataFormats/MuonReco/src/MuonSelectors.cc?v=CMSSW_10_6_20
   std::vector<int>              recoMu_nTrkLayers;
   std::vector<int>              recoMu_nPixLayers;
@@ -179,7 +267,7 @@ struct tree_struc_{
   std::vector<float>              recoMu_dz;
 
 
-  //bulding dimuon objects
+  //dimuon pairs
   int nDimuReco;
   std::vector<float>            recoDimu_vx;
   std::vector<float>            recoDimu_vy;
@@ -204,11 +292,9 @@ struct tree_struc_{
   std::vector<float>            recoEle_mass;
   std::vector<float>            recoEle_phi;
   std::vector<int>              recoEle_charge;
-
   std::vector<int>              recoEle_vx;
   std::vector<int>              recoEle_vy;
   std::vector<int>              recoEle_vz;
-
   std::vector<float>            recoEle_dR1;
   std::vector<float>            recoEle_dR2;
   std::vector<int>              recoEle_matchid1;
@@ -217,24 +303,18 @@ struct tree_struc_{
   std::vector<float>recoEle_E_ecal_postReg;
   std::vector<float>recoEle_E_ecaltrk_preReg;
   std::vector<float>recoEle_E_ecaltrk_postReg;
-
   std::vector<float>recoEle_rawE;
   std::vector<float>recoEle_corrEcalE;
   std::vector<float>recoEle_gsfTrkChi2;
   std::vector<float>recoEle_passConvVeto;
   std::vector<float>recoEle_isPF;
-  std::vector<float>recoEle_mvaPFID;
   std::vector<float>recoEle_mvaPFValue;
-  std::vector<float>recoEle_isPFoverlap;
 
   //specific fro low pt electrons
+  std::vector<float>recoEle_isPFoverlap;
   std::vector<float>recoEle_isLowPt;
-  std::vector<float>recoEle_mvaID;
   std::vector<float>recoEle_mvaValue;
 
-  std::vector<float>recoEle_mvaEGammaID;
-  std::vector<float>recoEle_mvaEGammaValue;
-  
   float vx;
   float vy;
   float vz;
@@ -260,533 +340,494 @@ private:
   void SetPuWeights(int year, double* puw_array);
   float GetPUWeight(int npu,int year);
 
-  // ----------member data ---------------------------
+  // ---------- member data -------------------- //
   edm::Service<TFileService> fs;
   edm::EDGetTokenT<GenEventInfoProduct>genInfoToken_;
   
   const edm::EDGetTokenT< edm::View<reco::GenParticle> > prunedGenParticles_; // MINIAOD
   edm::Handle< edm::View<reco::GenParticle> > genParticlesH_;
 
-  const edm::EDGetTokenT< edm::View<pat::Muon> > patMuons_; // MINIAOD
-  edm::Handle< edm::View<pat::Muon> > patMuonsH_;
+  const edm::EDGetTokenT< std::vector<pat::Muon> > patMuons_; // MINIAOD
+  edm::Handle< std::vector<pat::Muon> > patMuonsH_;
 
-  const edm::EDGetTokenT< edm::View<reco::GsfElectron> > patElectrons_; // MINIAOD
-  edm::Handle< edm::View<reco::GsfElectron> > gsfElectronsH_;
+  const edm::EDGetTokenT<pat::ElectronCollection> lowpt_src_;
+   const edm::EDGetTokenT<pat::ElectronCollection> pf_src_;
 
-  const edm::EDGetTokenT< edm::View<reco::GsfElectron> > patElectronsLowPt_; // MINIAOD
-  edm::Handle< edm::View<reco::GsfElectron> > gsfElectronsLowPtH_;
+   const edm::EDGetTokenT< std::vector<reco::Vertex> > vtx_; // MINIAOD
+   edm::Handle< std::vector<reco::Vertex>> vtxH_;
 
-  const edm::EDGetTokenT< std::vector<reco::Vertex> > vtx_; // MINIAOD
-  edm::Handle< std::vector<reco::Vertex>> vtxH_;
+   const edm::EDGetTokenT< double > rho_; // MINIAOD
+   edm::Handle< double> rhoH_;
 
-  const edm::EDGetTokenT< double > rho_; // MINIAOD
-  edm::Handle< double> rhoH_;
+   const edm::EDGetTokenT<edm::View<PileupSummaryInfo> > PileUp_;
+   edm:: Handle<edm::View< PileupSummaryInfo> > PileUpH_;
 
-  const edm::EDGetTokenT<edm::View<PileupSummaryInfo> > PileUp_;
-  edm:: Handle<edm::View< PileupSummaryInfo> > PileUpH_;
+   const edm::EDGetTokenT< edm::TriggerResults> triggerBits_;
+   edm::Handle<edm::TriggerResults> triggerBitsH_;
+   const edm::EDGetTokenT<edm::TriggerResults> triggerFlags_;
+   edm::Handle<edm::TriggerResults> triggerFlagsH_;
 
-  const edm::EDGetTokenT< edm::TriggerResults> triggerBits_;
-  edm::Handle<edm::TriggerResults> triggerBitsH_;
-  const edm::EDGetTokenT<edm::TriggerResults> triggerFlags_;
-  edm::Handle<edm::TriggerResults> triggerFlagsH_;
+   const double dr_cleaning_;
+   const double dz_cleaning_;
 
+   //setup mva ID for PF electrons
 
-
-  const double dr_cleaning_;
-  const double dz_cleaning_;
-
-  //setup mva ID for electrons
-  const edm::EDGetTokenT< edm::ValueMap<float> > mvaValueEGamma_; 
-  edm::Handle< edm::ValueMap<float> > mvaValueEGammaH_;
-  const edm::EDGetTokenT< edm::ValueMap<bool> > mvaIdEGamma_; 
-  edm::Handle< edm::ValueMap<bool> > mvaIdEGammaH_;
+   const edm::EDGetTokenT< edm::ValueMap<float> > mvaValuePF_; 
+   edm::Handle< edm::ValueMap<float> > mvaValuePFH_;
 
 
-  const edm::EDGetTokenT< edm::ValueMap<float> > mvaValuePF_; 
-  edm::Handle< edm::ValueMap<float> > mvaValuePFH_;
-  const edm::EDGetTokenT< edm::ValueMap<bool> > mvaIdPF_; 
-  edm::Handle< edm::ValueMap<bool> > mvaIdPFH_;
+   int sampleIndex_;
+   float xsec_;    // pb
+
+   double puweights2016_[100];
+   double puweights2017_[100];
+   double puweights2018_[100];
+   double puweightsALL_[100];
+
+   // setup tree;
+   TTree* tree;
+   tree_struc_ tree_;
 
 
-  const edm::EDGetTokenT< edm::ValueMap<float> > mvaValue_; 
-  edm::Handle< edm::ValueMap<float> > mvaValueH_;
-  const edm::EDGetTokenT< edm::ValueMap<bool> > mvaId_; 
-  edm::Handle< edm::ValueMap<bool> > mvaIdH_;
-
-  int sampleIndex_;
-  float xsec_;    // pb
-
-  double puweights2016_[100];
-  double puweights2017_[100];
-  double puweights2018_[100];
-  double puweightsALL_[100];
-
-  // setup tree;
-  TTree* tree;
-  tree_struc_ tree_;
-
-  //setup regression for low pt
-  std::unique_ptr<ModifyObjectValueBase> regression_;     // Low pt 
-  
 };
 
 
-TQGenAnalyzer::TQGenAnalyzer(const edm::ParameterSet& iConfig)
-  :
-  prunedGenParticles_(consumes< edm::View<reco::GenParticle> >(iConfig.getParameter<edm::InputTag>("prunedGenParticles"))),
-  genParticlesH_(),
-  patMuons_(consumes< edm::View<pat::Muon> >(iConfig.getParameter<edm::InputTag>("patMuons"))),
-  patMuonsH_(),
-  patElectrons_(consumes< edm::View<reco::GsfElectron> >(iConfig.getParameter<edm::InputTag>("patElectrons"))),
-  gsfElectronsH_(),
-  patElectronsLowPt_(consumes< edm::View<reco::GsfElectron> >(iConfig.getParameter<edm::InputTag>("patElectronsLowPt"))),
-  gsfElectronsLowPtH_(),
-  vtx_(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("vtx"))),
-  vtxH_(),
-  rho_(consumes<double>(iConfig.getParameter<edm::InputTag>("rho"))),
-  rhoH_(),
-  PileUp_(consumes<edm::View<PileupSummaryInfo> >(iConfig.getParameter<edm::InputTag> ("PileUp"))),
-  PileUpH_(),
-  triggerBits_( consumes<edm::TriggerResults>( iConfig.getParameter<edm::InputTag>( "bits" ))),
-  triggerBitsH_(),
-  triggerFlags_( consumes<edm::TriggerResults>( iConfig.getParameter<edm::InputTag>( "flags" ))),
-  triggerFlagsH_(),
-  dr_cleaning_(iConfig.getParameter<double>("drForCleaning")),
-  dz_cleaning_(iConfig.getParameter<double>("dzForCleaning")),
-  mvaValueEGamma_(consumes< edm::ValueMap<float> >(iConfig.getParameter<edm::InputTag>("mvaValueEGamma"))),
-  mvaValueEGammaH_(),
-  mvaIdEGamma_(consumes<edm::ValueMap<bool> >(iConfig.getParameter<edm::InputTag>("mvaIdEGamma"))),
-  mvaIdEGammaH_(),
-  mvaValuePF_(consumes< edm::ValueMap<float> >(iConfig.getParameter<edm::InputTag>("mvaValuePF"))),
-  mvaValuePFH_(),
-  mvaIdPF_(consumes<edm::ValueMap<bool> >(iConfig.getParameter<edm::InputTag>("mvaIdPF"))),
-  mvaIdPFH_(),
-  mvaValue_(consumes< edm::ValueMap<float> >(iConfig.getParameter<edm::InputTag>("mvaValue"))),
-  mvaValueH_(),
-  mvaId_(consumes<edm::ValueMap<bool> >(iConfig.getParameter<edm::InputTag>("mvaId"))),
-  mvaIdH_()
+ TQGenAnalyzer::TQGenAnalyzer(const edm::ParameterSet& iConfig)
+   :
+   prunedGenParticles_(consumes< edm::View<reco::GenParticle> >(iConfig.getParameter<edm::InputTag>("prunedGenParticles"))),
+   genParticlesH_(),
+   patMuons_(consumes< std::vector<pat::Muon> >(iConfig.getParameter<edm::InputTag>("patMuons"))),
+   patMuonsH_(),
+   lowpt_src_{ consumes<pat::ElectronCollection>( iConfig.getParameter<edm::InputTag>("lowptSrc") )},
+   pf_src_{ consumes<pat::ElectronCollection>( iConfig.getParameter<edm::InputTag>("pfSrc") )},
+   vtx_(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("vtx"))),
+   vtxH_(),
+   rho_(consumes<double>(iConfig.getParameter<edm::InputTag>("rho"))),
+   rhoH_(),
+   PileUp_(consumes<edm::View<PileupSummaryInfo> >(iConfig.getParameter<edm::InputTag> ("PileUp"))),
+   PileUpH_(),
+   triggerBits_( consumes<edm::TriggerResults>( iConfig.getParameter<edm::InputTag>( "bits" ))),
+   triggerBitsH_(),
+   triggerFlags_( consumes<edm::TriggerResults>( iConfig.getParameter<edm::InputTag>( "flags" ))),
+   triggerFlagsH_(),
+   dr_cleaning_(iConfig.getParameter<double>("drForCleaning")),
+   dz_cleaning_(iConfig.getParameter<double>("dzForCleaning")),
+   mvaValuePF_(consumes< edm::ValueMap<float> >(iConfig.getParameter<edm::InputTag>("mvaValuePF"))),
+   mvaValuePFH_()
+
+
+ {
+
+
+   // Event stuff
+   sampleIndex_   = iConfig.getUntrackedParameter<int>("sampleIndex",0);
+   xsec_          = iConfig.getUntrackedParameter<double>("sampleXsec",1.);
+
+ }
+
+
+ TQGenAnalyzer::~TQGenAnalyzer()
+ {
+
+    // do anything here that needs to be done at desctruction time
+    // (e.g. close files, deallocate resources etc.)
+
+ }
+
+
+ //
+ // member functions
+ //
+
+ // ------------ method called for each event  ------------
+ void
+ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
+ {
+
+     iEvent.getByToken(prunedGenParticles_, genParticlesH_);
+     iEvent.getByToken(patMuons_,patMuonsH_);
+     edm::Handle<pat::ElectronCollection> lowpt;
+     iEvent.getByToken(lowpt_src_, lowpt);
+     edm::Handle<pat::ElectronCollection> pf;
+     iEvent.getByToken(pf_src_, pf);
+     iEvent.getByToken(vtx_,vtxH_);
+     iEvent.getByToken(rho_,rhoH_);
+     iEvent.getByToken(PileUp_,PileUpH_);
+     iEvent.getByToken( triggerBits_, triggerBitsH_ );
+     iEvent.getByToken( triggerFlags_, triggerFlagsH_ );
+     iEvent.getByToken(mvaValuePF_, mvaValuePFH_); 
+
+     edm::ESHandle<MagneticField> bFieldHandle;
+     iSetup.get<IdealMagneticFieldRecord>().get(bFieldHandle);
+     edm::ESHandle<TransientTrackBuilder> theB ;
+     iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theB);
+
+
+     using namespace edm;
 
 
 
-{
+     std::vector<float>genLep_pt;
+     std::vector<float>genLep_mass;
+     std::vector<float>genLep_eta;
+     std::vector<float>genLep_phi;
+     std::vector<int>genLep_pdgId;
+
+     std::vector<float>genMom_pt;
+     std::vector<float>genMom_mass;
+     std::vector<float>genMom_eta;
+     std::vector<float>genMom_phi;
+     std::vector<int>genMom_pdgId;
+
+     std::vector<float>recoMu_pt;
+     std::vector<float>recoMu_mass;
+     std::vector<float>recoMu_eta;
+     std::vector<float>recoMu_phi;
+     std::vector<float>recoMu_dR1;
+     std::vector<float>recoMu_dR2;
+     std::vector<int>              recoMu_charge;
+     std::vector<int>              recoMu_matchid1;
+     std::vector<int>              recoMu_matchid2;
+     std::vector<int>              recoMu_looseID;
+     std::vector<int>              recoMu_softID;
+     std::vector<int>              recoMu_nTrkLayers;
+     std::vector<int>              recoMu_nPixLayers;
+     std::vector<int>              recoMu_isHQ;
+     std::vector<float>              recoMu_dxy;
+     std::vector<float>              recoMu_dz;
+
+     std::vector<float>            recoDimu_vx;
+     std::vector<float>            recoDimu_vy;
+     std::vector<float>            recoDimu_vz;
+     std::vector<float>            recoDimu_vtxchi2;
+     std::vector<float>            recoDimu_vtxndof;
+     std::vector<float>            recoDimu_vtxprob;
+     std::vector<float>            recoDimu_pt1;  
+     std::vector<float>            recoDimu_eta1;
+     std::vector<float>            recoDimu_phi1;
+     std::vector<float>            recoDimu_charge1;
+     std::vector<float>            recoDimu_mass1;        
+     std::vector<float>            recoDimu_pt2;  
+     std::vector<float>            recoDimu_eta2;
+     std::vector<float>            recoDimu_phi2;
+     std::vector<float>            recoDimu_charge2;
+     std::vector<float>            recoDimu_mass2;        
+
+     std::vector<float>recoEle_pt;
+     std::vector<float>recoEle_mass;
+     std::vector<float>recoEle_eta;
+     std::vector<float>recoEle_phi;
+     std::vector<float>recoEle_dR1;
+     std::vector<float>recoEle_dR2;
+     std::vector<int>              recoEle_charge;
+     std::vector<int>              recoEle_vx;
+     std::vector<int>              recoEle_vy;
+     std::vector<int>              recoEle_vz;
+     std::vector<int>              recoEle_matchid1;
+     std::vector<int>              recoEle_matchid2;
+     std::vector<float>recoEle_E_ecal_preReg;
+     std::vector<float>recoEle_E_ecal_postReg;
+     std::vector<float>recoEle_E_ecaltrk_preReg;
+     std::vector<float>recoEle_E_ecaltrk_postReg;
+     std::vector<float>recoEle_rawE;
+     std::vector<float>recoEle_corrEcalE;
+     std::vector<float>recoEle_gsfTrkChi2;
+     std::vector<float>recoEle_passConvVeto;
+     std::vector<float>recoEle_isPF;
+     std::vector<float>recoEle_mvaPFValue;
+     std::vector<float>recoEle_mvaValue;
+
+     std::vector<float>recoEle_isPFoverlap;
+
+     std::vector<float>recoEle_isLowPt;
+
+     // --- sample info (0:signal, <0 background, >0 data)
+     int sampleID = sampleIndex_;
+     float xsec=1.;
   
+     if(sampleID<=0) xsec=xsec_;
 
-  // Event stuff
-  sampleIndex_   = iConfig.getUntrackedParameter<int>("sampleIndex",0);
-  xsec_          = iConfig.getUntrackedParameter<double>("sampleXsec",1.);
+     // ---------- TRIGGER -------------------- //
+     const edm::TriggerNames &triggerNames = iEvent.triggerNames( *triggerBitsH_ );
 
+     //  vector<std::string> const &names = triggerNames.triggerNames();  
+     int triggerBit=0;
+     for( unsigned index = 0; index < triggerNames.size(); ++index ) {
+      
+       //  if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_") && triggerBitsH_->accept( index ) == 1) std::cout << index << " " << triggerNames.triggerName( index ) << " " << triggerBitsH_->accept( index ) << std::endl;
+      
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Physics") ) triggerBit=triggerBitsH_->accept( index );
 
+     }
 
-  if( iConfig.existsAs<edm::ParameterSet>("gsfRegressionConfig") ) {
-    const edm::ParameterSet& iconf = iConfig.getParameterSet("gsfRegressionConfig");
-    const std::string& mname = iconf.getParameter<std::string>("modifierName");
-    auto cc = consumesCollector();                  
-      ModifyObjectValueBase* plugin =
-        ModifyObjectValueFactory::get()->create(mname,iconf, cc);
-      regression_.reset(plugin);
-      // edm::ConsumesCollector sumes = consumesCollector();
-      // regression_->setConsumes(sumes);
-  } else {
-    regression_.reset(nullptr);
-  }
+     // ---------- GENERAL INFOS -------------------- //
+     unsigned long int event = iEvent.id().event();   
+     int run                 = iEvent.id().run();
+     int lumi                = iEvent.luminosityBlock();
+     int nEle=0;
+     int nMu=0;
+     int nMuReco=0;
+     int nEleReco=0;
+     int nDimuReco=0;
 
-
-  // Regression stuff - lowPtElectrons
-  /*
-  if( iConfig.existsAs<edm::ParameterSet>("gsfRegressionConfig") ) {
-    const edm::ParameterSet& iconf = iConfig.getParameterSet("gsfRegressionConfig");
-    const std::string& mname = iconf.getParameter<std::string>("modifierName");
-    //    std::cout<<mname<<std::endl;
-    ModifyObjectValueBase* plugin = ModifyObjectValueFactory::get()->create(mname,iconf);
-    regression_.reset(plugin);
-    edm::ConsumesCollector sumes = consumesCollector();
-    regression_->setConsumes(sumes);
-    
-  } else {
-    regression_.reset(nullptr);
-  }
-  */
-
-}
-
-
-TQGenAnalyzer::~TQGenAnalyzer()
-{
-
-   // do anything here that needs to be done at desctruction time
-   // (e.g. close files, deallocate resources etc.)
-
-}
-
-
-//
-// member functions
-//
-
-// ------------ method called for each event  ------------
-void
-TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
-{
-
-    iEvent.getByToken(prunedGenParticles_, genParticlesH_);
-    iEvent.getByToken(patMuons_,patMuonsH_);
-    iEvent.getByToken(patElectrons_,gsfElectronsH_);
-    iEvent.getByToken(patElectronsLowPt_,gsfElectronsLowPtH_);
-    iEvent.getByToken(vtx_,vtxH_);
-    iEvent.getByToken(rho_,rhoH_);
-    iEvent.getByToken(PileUp_,PileUpH_);
-    iEvent.getByToken( triggerBits_, triggerBitsH_ );
-    iEvent.getByToken( triggerFlags_, triggerFlagsH_ );
-    
-    iEvent.getByToken(mvaIdEGamma_, mvaIdEGammaH_); 
-    iEvent.getByToken(mvaValueEGamma_, mvaValueEGammaH_); 
-    iEvent.getByToken(mvaIdPF_, mvaIdPFH_); 
-    iEvent.getByToken(mvaValuePF_, mvaValuePFH_); 
-    iEvent.getByToken(mvaId_, mvaIdH_); 
-    iEvent.getByToken(mvaValue_, mvaValueH_); 
-
-    edm::ESHandle<TransientTrackBuilder> theB ;
-    iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theB);
-
-
-    using namespace edm;
-    regression_->setEvent(iEvent);
-    regression_->setEventContent(iSetup);
+     TLorentzVector* lep1=new TLorentzVector();
+     TLorentzVector* lep2=new TLorentzVector();
+     TLorentzVector* lep3=new TLorentzVector();
+     TLorentzVector* lep0=new TLorentzVector();
   
-
-    std::vector<float>genLep_pt;
-    std::vector<float>genLep_mass;
-    std::vector<float>genLep_eta;
-    std::vector<float>genLep_phi;
-    std::vector<int>genLep_pdgId;
-
-    std::vector<float>genMom_pt;
-    std::vector<float>genMom_mass;
-    std::vector<float>genMom_eta;
-    std::vector<float>genMom_phi;
-    std::vector<int>genMom_pdgId;
-
-    std::vector<float>recoMu_pt;
-    std::vector<float>recoMu_mass;
-    std::vector<float>recoMu_eta;
-    std::vector<float>recoMu_phi;
-    std::vector<float>recoMu_dR1;
-    std::vector<float>recoMu_dR2;
-    std::vector<int>              recoMu_charge;
-    std::vector<int>              recoMu_matchid1;
-    std::vector<int>              recoMu_matchid2;
-    std::vector<int>              recoMu_looseID;
-    std::vector<int>              recoMu_softID;
-    std::vector<int>              recoMu_nTrkLayers;
-    std::vector<int>              recoMu_nPixLayers;
-    std::vector<int>              recoMu_isHQ;
-    std::vector<float>              recoMu_dxy;
-    std::vector<float>              recoMu_dz;
-
-    std::vector<float>            recoDimu_vx;
-    std::vector<float>            recoDimu_vy;
-    std::vector<float>            recoDimu_vz;
-    std::vector<float>            recoDimu_vtxchi2;
-    std::vector<float>            recoDimu_vtxndof;
-    std::vector<float>            recoDimu_vtxprob;
-    std::vector<float>            recoDimu_pt1;  
-    std::vector<float>            recoDimu_eta1;
-    std::vector<float>            recoDimu_phi1;
-    std::vector<float>            recoDimu_charge1;
-    std::vector<float>            recoDimu_mass1;        
-    std::vector<float>            recoDimu_pt2;  
-    std::vector<float>            recoDimu_eta2;
-    std::vector<float>            recoDimu_phi2;
-    std::vector<float>            recoDimu_charge2;
-    std::vector<float>            recoDimu_mass2;        
+     float vx;
+     float vy;
+     float vz;
 
 
-
-    std::vector<float>recoEle_pt;
-    std::vector<float>recoEle_mass;
-    std::vector<float>recoEle_eta;
-    std::vector<float>recoEle_phi;
-    std::vector<float>recoEle_dR1;
-    std::vector<float>recoEle_dR2;
-    std::vector<int>              recoEle_charge;
-
-    std::vector<int>              recoEle_vx;
-    std::vector<int>              recoEle_vy;
-    std::vector<int>              recoEle_vz;
-
-
-    std::vector<int>              recoEle_matchid1;
-    std::vector<int>              recoEle_matchid2;
-    std::vector<float>recoEle_E_ecal_preReg;
-    std::vector<float>recoEle_E_ecal_postReg;
-    std::vector<float>recoEle_E_ecaltrk_preReg;
-    std::vector<float>recoEle_E_ecaltrk_postReg;
-    std::vector<float>recoEle_rawE;
-    std::vector<float>recoEle_corrEcalE;
-    std::vector<float>recoEle_gsfTrkChi2;
-    std::vector<float>recoEle_passConvVeto;
-    std::vector<float>recoEle_isPF;
-    std::vector<float>recoEle_mvaPFID;
-    std::vector<float>recoEle_mvaPFValue;
-
-    std::vector<float>recoEle_isPFoverlap;
-
-    std::vector<float>recoEle_isLowPt;
-    std::vector<float>recoEle_mvaID;
-    std::vector<float>recoEle_mvaValue;
-
-    std::vector<float>recoEle_mvaEGammaID;
-    std::vector<float>recoEle_mvaEGammaValue;
-
-    
-    // --- sample info (0:signal, <0 background, >0 data)
-    int sampleID = sampleIndex_;
-    float xsec=1.;
-    
-    if(sampleID<=0) xsec=xsec_;
-
-    // --- trigger info
-    const edm::TriggerNames &triggerNames = iEvent.triggerNames( *triggerBitsH_ );
-    //  vector<std::string> const &names = triggerNames.triggerNames();  
-    int triggerBit=0;
-    for( unsigned index = 0; index < triggerNames.size(); ++index ) {
-      //here i print all trigger paths
-      //  if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_") && triggerBitsH_->accept( index ) == 1) std::cout << index << " " << triggerNames.triggerName( index ) << " " << triggerBitsH_->accept( index ) << std::endl;
-      //here i store trigger bit
-      if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Physics") ) triggerBit=triggerBitsH_->accept( index );
-
-    }
-
-    // --- general event info 
-    unsigned long int event = iEvent.id().event();   
-    int run                 = iEvent.id().run();
-    int lumi                = iEvent.luminosityBlock();
-    int nEle=0;
-    int nMu=0;
-    int nMuReco=0;
-    int nEleReco=0;
-    int nDimuReco=0;
-
-    TLorentzVector* lep1=new TLorentzVector();
-    TLorentzVector* lep2=new TLorentzVector();
-    TLorentzVector* lep3=new TLorentzVector();
-    TLorentzVector* lep0=new TLorentzVector();
-    
-    float vx;
-    float vy;
-    float vz;
-
-
-    std::cout<<"-----------------------------------------------------"<<std::endl;
+     std::cout<<"-----------------------------------------------------"<<std::endl;
 	
-    // save gen particles (only leptons)
-    float puw_2016 = 1.;
-    float puw_2017 = 1.;
-    float puw_2018 = 1.;
-    float puw_ALL = 1.;
-    int npu      = -1;
+     
+     float puw_2016 = 1.;
+     float puw_2017 = 1.;
+     float puw_2018 = 1.;
+     float puw_ALL = 1.;
+     int npu      = -1;
+  
+     // ---------- GEN LEVEL INFO -------------------- //
+     if(sampleID <=0){
+     for (const auto & genpar_iter : *genParticlesH_){ // loop over genparticles
+       if(abs(genpar_iter.pdgId())!=13 && abs(genpar_iter.pdgId())!=11)continue;
+
+       if(genpar_iter.mother(0)->pdgId()<20 || genpar_iter.mother(0)->pdgId()>50) continue;
     
-    if(sampleID <=0){
-    for (const auto & genpar_iter : *genParticlesH_){ // loop over genparticles
-      if(abs(genpar_iter.pdgId())!=13 && abs(genpar_iter.pdgId())!=11)continue;
+     //      std::cout<<"status: "<<genpar_iter.status()<<" pdgid: "<<genpar_iter.pdgId()<<" pt: "<<genpar_iter.pt()<<" mass: "<<genpar_iter.mass()<<" eta: "<<genpar_iter.eta()<<" phi: "<<genpar_iter.phi()<<" mom pdgId: "<<genpar_iter.mother(0)->pdgId()<<" mom mass: "<<genpar_iter.mother(0)->mass()<<std::endl;
 
-      if(genpar_iter.mother(0)->pdgId()<20 || genpar_iter.mother(0)->pdgId()>50) continue;
-      
-      //      std::cout<<"status: "<<genpar_iter.status()<<" pdgid: "<<genpar_iter.pdgId()<<" pt: "<<genpar_iter.pt()<<" mass: "<<genpar_iter.mass()<<" eta: "<<genpar_iter.eta()<<" phi: "<<genpar_iter.phi()<<" mom pdgId: "<<genpar_iter.mother(0)->pdgId()<<" mom mass: "<<genpar_iter.mother(0)->mass()<<std::endl;
+    
+       genLep_pt.push_back(genpar_iter.pt());
+       genLep_mass.push_back(genpar_iter.mass());
+       genLep_eta.push_back(genpar_iter.eta());
+       genLep_phi.push_back(genpar_iter.phi());
+       genLep_pdgId.push_back(genpar_iter.pdgId());
+    
 
-      
-      genLep_pt.push_back(genpar_iter.pt());
-      genLep_mass.push_back(genpar_iter.mass());
-      genLep_eta.push_back(genpar_iter.eta());
-      genLep_phi.push_back(genpar_iter.phi());
-      genLep_pdgId.push_back(genpar_iter.pdgId());
-      
-
-      genMom_pt.push_back(genpar_iter.mother(0)->pt());
-      genMom_mass.push_back(genpar_iter.mother(0)->mass());
-      genMom_eta.push_back(genpar_iter.mother(0)->eta());
-      genMom_phi.push_back(genpar_iter.mother(0)->phi());
-      genMom_pdgId.push_back(genpar_iter.mother(0)->pdgId());
-      
-      if(abs(genpar_iter.pdgId())==11)nEle++;
-      if(abs(genpar_iter.pdgId())==13)nMu++;
-      
-    }
+       genMom_pt.push_back(genpar_iter.mother(0)->pt());
+       genMom_mass.push_back(genpar_iter.mother(0)->mass());
+       genMom_eta.push_back(genpar_iter.mother(0)->eta());
+       genMom_phi.push_back(genpar_iter.mother(0)->phi());
+       genMom_pdgId.push_back(genpar_iter.mother(0)->pdgId());
+    
+       if(abs(genpar_iter.pdgId())==11)nEle++;
+       if(abs(genpar_iter.pdgId())==13)nMu++;
+    
+     }
 
 
-      npu = 0;
-      for( unsigned int PVI = 0; PVI < PileUpH_->size(); ++PVI ) {
-	Int_t pu_bunchcrossing = PileUpH_->ptrAt( PVI )->getBunchCrossing();
-	if( pu_bunchcrossing == 0 ) {
-	  npu = PileUpH_->ptrAt( PVI )->getTrueNumInteractions();
-	}
-      }
+       npu = 0;
+       for( unsigned int PVI = 0; PVI < PileUpH_->size(); ++PVI ) {
+ 	Int_t pu_bunchcrossing = PileUpH_->ptrAt( PVI )->getBunchCrossing();
+ 	if( pu_bunchcrossing == 0 ) {
+ 	  npu = PileUpH_->ptrAt( PVI )->getTrueNumInteractions();
+ 	}
+       }
 
-      puw_2016 = GetPUWeight(npu,2016);
-      puw_2017 = GetPUWeight(npu,2017);
-      puw_2018 = GetPUWeight(npu,2018);
-      puw_ALL = GetPUWeight(npu,0);
+       puw_2016 = GetPUWeight(npu,2016);
+       puw_2017 = GetPUWeight(npu,2017);
+       puw_2018 = GetPUWeight(npu,2018);
+       puw_ALL = GetPUWeight(npu,0);
 
-    }
-
-    //saving info of primary vertex
-    const reco::Vertex & pv = vtxH_->front(); 
-    vx=pv.x();
-    vy=pv.y();
-    vz=pv.z();
-    int nvtx=vtxH_->size();
-
-    //saving rho
-    float rho = *(rhoH_.product());
+     }
 
 
-    //looping over muons
-    for (const auto & mu_iter : *patMuonsH_){
-      nMuReco++;
+     // ---------- VERTICES -------------------- //
+     const reco::Vertex & pv = vtxH_->front(); 
+     vx=pv.x();
+     vy=pv.y();
+     vz=pv.z();
+     int nvtx=vtxH_->size();
 
-      float dR=999.;
-      float dRMin1=999.;
-      float dRMin2=999.;
-      int recomatchid1=999;
-      int recomatchid2=999;
-      int recolooseID=999;
-      int recosoftID=999;     
-      int recontrklayers=999;
-      int reconpixlayers=999;
-      int recoishq=999;
-      float recodxy=999.;
-      float recodz=999.;
+     //saving rho
+     float rho = *(rhoH_.product());
 
 
-      float recopt;
-      float recoeta;
-      float recophi;
-      float recomass;
-      int recocharge=999;
+
+     // ---------- MUONS -------------------- //
+     for (const auto & mu_iter : *patMuonsH_){
+       nMuReco++;
+
+       float dR=999.;
+       float dRMin1=999.;
+       float dRMin2=999.;
+       int recomatchid1=999;
+       int recomatchid2=999;
+       int recolooseID=999;
+       int recosoftID=999;     
+       int recontrklayers=999;
+       int reconpixlayers=999;
+       int recoishq=999;
+       float recodxy=999.;
+       float recodz=999.;
 
 
-      float eta=mu_iter.eta();
-      float phi=mu_iter.phi();
-      
-      //store kinematics
-      recopt=mu_iter.pt();
-      recoeta=mu_iter.eta();
-      recophi=mu_iter.phi();
-      recomass=mu_iter.mass();
-      recocharge=mu_iter.charge();
-      
+       float recopt;
+       float recoeta;
+       float recophi;
+       float recomass;
+       int recocharge=999;
 
-      //store ID variables
-      recolooseID=muon::isLooseMuon(mu_iter);
-      recosoftID=muon::isSoftMuon(mu_iter, pv);
-      //      recontrklayers=mu_iter.innerTrack()->hitPattern().trackerLayersWithMeasurement();
-      //reconpixlayers=mu_iter.innerTrack()->hitPattern().pixelLayersWithMeasurement();
-      //recoishq=1;//mu_iter.innerTrack()->quality(reco::Track::highPurity); 
-      //      recodxy=mu_iter.innerTrack()->dxy(pv.position());
-      //recodz=mu_iter.innerTrack()->dz(pv.position());
+
+       float eta=mu_iter.eta();
+       float phi=mu_iter.phi();
+    
+       //store kinematics
+       recopt=mu_iter.pt();
+       recoeta=mu_iter.eta();
+       recophi=mu_iter.phi();
+       recomass=mu_iter.mass();
+       recocharge=mu_iter.charge();
+    
+
+       //store ID variables
+       recolooseID=muon::isLooseMuon(mu_iter);
+       recosoftID=muon::isSoftMuon(mu_iter, pv);
+       //recontrklayers=mu_iter.innerTrack()->hitPattern().trackerLayersWithMeasurement();
+       //reconpixlayers=mu_iter.innerTrack()->hitPattern().pixelLayersWithMeasurement();
+       //recoishq=1;//mu_iter.innerTrack()->quality(reco::Track::highPurity); 
+       //      recodxy=mu_iter.innerTrack()->dxy(pv.position());
+       //recodz=mu_iter.innerTrack()->dz(pv.position());
 
 
 
 
-      //compute dR matching w/ each gen muon      
-      for(unsigned int i=0;i<genLep_pdgId.size();i++){
-	if(abs(genLep_pdgId[i])!=13)continue;
-	dR= deltaR(eta,phi,genLep_eta[i],genLep_phi[i]);
-	if(dR<dRMin1){
-	  dRMin1=dR;
-	  recomatchid1=i;
-	}
-      }
-      
-      
-      for(unsigned int i=0;i<genLep_pdgId.size();i++){
-	if(abs(genLep_pdgId[i])!=13)continue;
-	if(i==(unsigned int)recomatchid1)continue;
-	dR= deltaR(eta,phi,genLep_eta[i],genLep_phi[i]);
-	if(dR<dRMin2){
-	  dRMin2=dR;
-	  recomatchid2=i;
-	}
-      }
-      
+       //compute dR matching w/ each gen muon      
+       for(unsigned int i=0;i<genLep_pdgId.size();i++){
+ 	if(abs(genLep_pdgId[i])!=13)continue;
+ 	dR= deltaR(eta,phi,genLep_eta[i],genLep_phi[i]);
+ 	if(dR<dRMin1){
+ 	  dRMin1=dR;
+ 	  recomatchid1=i;
+ 	}
+       }
+    
+    
+       for(unsigned int i=0;i<genLep_pdgId.size();i++){
+ 	if(abs(genLep_pdgId[i])!=13)continue;
+ 	if(i==(unsigned int)recomatchid1)continue;
+ 	dR= deltaR(eta,phi,genLep_eta[i],genLep_phi[i]);
+ 	if(dR<dRMin2){
+ 	  dRMin2=dR;
+ 	  recomatchid2=i;
+ 	}
+       }
+    
 
-      
-      recoMu_pt.push_back(recopt);
-      recoMu_mass.push_back(recomass);
-      recoMu_eta.push_back(recoeta);
-      recoMu_phi.push_back(recophi);
-      recoMu_charge.push_back(recocharge);
+    
+       recoMu_pt.push_back(recopt);
+       recoMu_mass.push_back(recomass);
+       recoMu_eta.push_back(recoeta);
+       recoMu_phi.push_back(recophi);
+       recoMu_charge.push_back(recocharge);
 
-      recoMu_dR1.push_back(dRMin1);
-      recoMu_dR2.push_back(dRMin2);
-      recoMu_matchid1.push_back(recomatchid1);
-      recoMu_matchid2.push_back(recomatchid2);
-      recoMu_looseID.push_back(recolooseID);
-      recoMu_softID.push_back(recosoftID);
-      recoMu_nTrkLayers.push_back(recontrklayers);
-      recoMu_nPixLayers.push_back(reconpixlayers);
-      recoMu_isHQ.push_back(recoishq);
-      recoMu_dxy.push_back(recodxy);
-      recoMu_dz.push_back(recodz);
-    }
+       recoMu_dR1.push_back(dRMin1);
+       recoMu_dR2.push_back(dRMin2);
+       recoMu_matchid1.push_back(recomatchid1);
+       recoMu_matchid2.push_back(recomatchid2);
+       recoMu_looseID.push_back(recolooseID);
+       recoMu_softID.push_back(recosoftID);
+       recoMu_nTrkLayers.push_back(recontrklayers);
+       recoMu_nPixLayers.push_back(reconpixlayers);
+       recoMu_isHQ.push_back(recoishq);
+       recoMu_dxy.push_back(recodxy);
+       recoMu_dz.push_back(recodz);
+     }
 
 
-    //building dimuon objects
-    for (const auto & mu1 : *patMuonsH_){
+     // ---------- DIMUONS -------------------- //			
+     size_t imu1=-1;
+     size_t imu2=-1;
 
-      if(mu1.pt()<1.)continue;
-      if(abs(mu1.eta())>2.5)continue;
+     std::cout<<" nMuReco:   "<<nMuReco<<std::endl;
+     //     for (pat::MuonCollection::const_iterator mu1 = patMuonsH_.begin(); mu1 != patMuonsH_.end(); ++mu1){
+     for (const pat::Muon & mu1 : *patMuonsH_){
+       imu1++;
+       if(mu1.pt()<1.)continue;
+       if(abs(mu1.eta())>2.5)continue;
 
-      for (const auto & mu2 : *patMuonsH_){
+       imu2=-1;
+       // for (pat::MuonCollection::const_iterator mu2 = patMuonsH_.begin(); mu2 != patMuonsH_.end(); ++mu2){
+       for (const pat::Muon & mu2 : *patMuonsH_){
+	 imu2++;
+	 if(imu2<=imu1)continue;
+	 if(mu2.pt()<1.)continue;
+	 if(abs(mu2.eta())>2.5)continue;
+	 if(mu1.charge()*mu2.charge()>0)continue;
+    
+
+	std::cout<<" pt1: "<<mu1.pt()<<" pt2: "<<mu2.pt()<<" eta1: "<<mu1.eta()<<" eta2: "<<mu2.eta()<<" phi1: "<<mu1.phi()<<" phi2: "<<mu2.phi()<<" ch1: "<<mu1.charge()<<" ch2: "<<mu2.charge()<<std::endl;
+	/*
+
+       recoDimu_pt1.push_back(mu1.pt());
+       recoDimu_eta1.push_back(mu1.eta());
+       recoDimu_phi1.push_back(mu1.phi());
+       recoDimu_charge1.push_back(mu1.charge());
+       recoDimu_mass1.push_back(mu1.mass());
+
+
+       recoDimu_pt2.push_back(mu2.pt());
+       recoDimu_eta2.push_back(mu2.eta());
+       recoDimu_phi2.push_back(mu2.phi());
+       recoDimu_charge2.push_back(mu2.charge());
+       recoDimu_mass2.push_back(mu2.mass());
+	*/
 	
-	if(mu2.pt()<1.)continue;
-	if(abs(mu2.eta())>2.5)continue;
-	if(mu1.charge()*mu2.charge()>0)continue;
-      
+       //run kinematic fit
+	
+	//	reco::TransientTrack mu1TT = theB->build(mu1.bestTrack());
+	//	reco::TransientTrack mu2TT = theB->build(mu2.bestTrack());
+	const reco::TransientTrack mu1TT((*(mu1.bestTrack())),&(*bFieldHandle)); 
+	const reco::TransientTrack mu2TT((*(mu2.bestTrack())),&(*bFieldHandle)); 
+	std::cout<<mu1TT.isValid()<<" "<<mu2TT.isValid()<<std::endl;
+	std::cout<<mu1TT.numberOfValidHits()<<" "<<mu2TT.numberOfValidHits()<<std::endl;
 
+	float chi = 0.;
+	float ndf = 0.;
+	double muon_mass = 0.1056583;
+	float muon_sigma = 0.0000001;
 
-      recoDimu_pt1.push_back(mu1.pt());
-      recoDimu_eta1.push_back(mu1.eta());
-      recoDimu_phi1.push_back(mu1.phi());
-      recoDimu_charge1.push_back(mu1.charge());
-      recoDimu_mass1.push_back(mu1.mass());
+	
+	KinematicParticleFactoryFromTransientTrack pFactory;
+	std::vector<RefCountedKinematicParticle> allParticles;
+	allParticles.push_back(pFactory.particle (mu1TT,muon_mass,chi,ndf,muon_sigma));
+	allParticles.push_back(pFactory.particle (mu2TT,muon_mass,chi,ndf,muon_sigma));
+	KinematicConstrainedVertexFitter fitter;
+	
+	RefCountedKinematicTree vtx_tree = fitter.fit(allParticles);
+	if(vtx_tree->isEmpty() == 1 || vtx_tree->isConsistent() == 0)
+	  std::cout << "Kinematic Fit unsuccesfull" << std::endl;
+	else{
+	vtx_tree->movePointerToTheTop(); 
+	RefCountedKinematicVertex fitted_vtx_ = vtx_tree->currentDecayVertex();
 
+	float fitted_chi2=fitted_vtx_->chiSquared();
+	}
 
-      recoDimu_pt2.push_back(mu2.pt());
-      recoDimu_eta2.push_back(mu2.eta());
-      recoDimu_phi2.push_back(mu2.phi());
-      recoDimu_charge2.push_back(mu2.charge());
-      recoDimu_mass2.push_back(mu2.mass());
+	/*       KinVtxFitter fitter(
+			   {mu1TT,mu2TT},
+			   {muon_mass,muon_mass},
+			   {muon_sigma,muon_sigma} //some small sigma for the lepton mass
+		      );
+	
+       if(!fitter.success()) continue; 
+       //       std::cout<<" prob: "<<fitter.prob()<<std::endl;
+       recoDimu_vx.push_back(fitter.fitted_vtx().x());
+       recoDimu_vy.push_back(fitter.fitted_vtx().y());
+       recoDimu_vz.push_back(fitter.fitted_vtx().z());
+       recoDimu_vtxchi2.push_back(fitter.chi2());
+       recoDimu_vtxndof.push_back(fitter.dof());
+       recoDimu_vtxprob.push_back(fitter.prob());
+	*/
+       recoDimu_vx.push_back(999);
+       recoDimu_vy.push_back(999);
+       recoDimu_vz.push_back(999);
+       recoDimu_vtxchi2.push_back(999);
+       recoDimu_vtxndof.push_back(999);
+       recoDimu_vtxprob.push_back(999);
 
-      //run kinematic fit
-      /*     reco::TrackRef mu1_trk = mu1.globalTrack();
-      reco::TrackRef mu2_trk = mu2.globalTrack();
-      reco::TransientTrack  mu1_ttrk = theB->build(mu1_trk);
-      reco::TransientTrack  mu2_ttrk = theB->build(mu2_trk);
-
-      KinematicParticleFactoryFromTransientTrack pFactory;
-      float chi = 0.;
-      float ndf = 0.;
-      std::vector<RefCountedKinematicParticle> allParticles;
-      ParticleMass muon_mass = 0.1056583;
-      float muon_sigma = 0.0000001;
-      allParticles.push_back(pFactory.particle (mu1_ttrk,muon_mass,chi,ndf,muon_sigma));
-      allParticles.push_back(pFactory.particle (mu2_ttrk,muon_mass,chi,ndf,muon_sigma));
-      KinematicParticleVertexFitter fitter;
-      
-      std::cout <<"Simple vertex fit with KinematicParticleVertexFitter:\n";
-      RefCountedKinematicTree vertexFitTree = fitter.fit(allParticles);
-      //      printout(vertexFitTree);
-
-*/
-      
-      recoDimu_vx.push_back(999.);
-      recoDimu_vy.push_back(999.);
-      recoDimu_vz.push_back(999.);
-      recoDimu_vtxchi2.push_back(999.);
-      recoDimu_vtxndof.push_back(999.);
-      recoDimu_vtxprob.push_back(999.);
-      
       nDimuReco++;
 
 
@@ -796,12 +837,10 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
 
-    //here we loop on PF electrons only
-    for( size_t electronlooper = 0; electronlooper < gsfElectronsH_->size(); electronlooper++ ) {
-
-      // filter candidates: there must be a trk with pT>0.5
-      // Low pT electrons
-      const reco::GsfElectronPtr ele(gsfElectronsH_, electronlooper);
+     // ---------- PF ELECTRONS -------------------- //
+    size_t ipfele=-1;
+    for(auto ele : *pf) {
+      ipfele++;
       
       float dR=999.;
       float dRMin1=999.;
@@ -809,20 +848,20 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       int recomatchid1=999;
       int recomatchid2=999;
 
-      float recopt=ele->pt();
-      float recoeta=ele->eta();
-      float recophi=ele->phi();
-      float recomass=ele->mass();
-      int recocharge=ele->charge();
+      float recopt=ele.pt();
+      float recoeta=ele.eta();
+      float recophi=ele.phi();
+      float recomass=ele.mass();
+      int recocharge=ele.charge();
 
-      float recovx=ele->vx();
-      float recovy=ele->vy();
-      float recovz=ele->vz();
+      float recovx=ele.vx();
+      float recovy=ele.vy();
+      float recovz=ele.vz();
 
       
-      float recorawe=ele->superCluster()->rawEnergy();
-      float recocorrecale=ele->correctedEcalEnergy();
-      float recotrkchi2=ele->gsfTrack()->normalizedChi2();
+      float recorawe=ele.superCluster()->rawEnergy();
+      float recocorrecale=ele.correctedEcalEnergy();
+      float recotrkchi2=ele.gsfTrack()->normalizedChi2();
       int recoconvveto=999.;//ele->passConversionVeto();
       
 
@@ -852,40 +891,13 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       int recoispfoverlap=0;
 
 
-      //ID stuff
       
-
-      //save EGM mva ID no Iso
-      float mvaEGamma_value = -999.;
-      int mvaEGamma_id = -999;
-
-      std::cout<<" mva: "<<mvaValueEGammaH_->size()<<"  gsf: "<<gsfElectronsH_->size()<<std::endl;
-      if ( mvaValueEGammaH_.isValid() && 
-	   mvaValueEGammaH_->size() == gsfElectronsH_->size() ) {
-	mvaEGamma_value = mvaValueEGammaH_->get( ele.key() );
-	mvaEGamma_id = mvaIdEGammaH_->get( ele.key() );
-      } else {
-	std::cout << "ERROR! Issue matching EGamma MVA output to GsfElectrons!" << std::endl;
-      }
- 
-      //save retrained EGamma ID for low pt PF
-     float mvaPF_value = -999.;
-      int mvaPF_id = -999;
-
-      //      std::cout<<" mva: "<<mvaValuePFH_->size()<<"  gsf: "<<gsfElectronsH_->size()<<std::endl;
-      if ( mvaValuePFH_.isValid() && 
-	   mvaValuePFH_->size() == gsfElectronsH_->size() ) {
-	mvaPF_value = mvaValuePFH_->get( ele.key() );
-	mvaPF_id = mvaIdPFH_->get( ele.key() );
-      } else {
-	std::cout << "ERROR! Issue matching PF MVA output to GsfElectrons!" << std::endl;
-      }
-
-
+      float mvaPF_value = -999.;
+      edm::Ref<pat::ElectronCollection> ref(pf,ipfele);
+      mvaPF_value = float((*mvaValuePFH_)[ref]);
+      
       float mva_value = -999.;
-      int mva_id = -999;
-      
-      
+
       recoEle_pt.push_back(recopt);
       recoEle_mass.push_back(recomass);
       recoEle_eta.push_back(recoeta);
@@ -910,87 +922,66 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       recoEle_isLowPt.push_back(recoislowpt);
       recoEle_isPFoverlap.push_back(recoispfoverlap);
 
-      recoEle_mvaEGammaID.push_back(mvaEGamma_id);
-      recoEle_mvaEGammaValue.push_back(mvaEGamma_value);
-
-      recoEle_mvaPFID.push_back(mvaPF_id);
       recoEle_mvaPFValue.push_back(mvaPF_value);
-
-      recoEle_mvaID.push_back(mva_id);
       recoEle_mvaValue.push_back(mva_value);
 
-    // Here I apply the regression and i save also the postregression quantitiess
-    TVector3 eleTV3(0,0,0);
-    eleTV3.SetPtEtaPhi(ele->pt(), ele->eta(), ele->phi());
-    // Regression stuff
-    float recopre_ecal     = -999.;
-    float recopre_ecaltrk  = -999.;
-    float recopost_ecal    = -999.;
-    float recopost_ecaltrk = -999.;
+      
+      
+      float recopre_ecal     = -999.;
+      float recopre_ecaltrk  = -999.;
+      float recopost_ecal    = -999.;
+      float recopost_ecaltrk = -999.;
+      
+      recopre_ecal = ele.correctedEcalEnergy();
+      recopre_ecaltrk = ele.energy();
+      recopost_ecal = ele.correctedEcalEnergy();
+      recopost_ecaltrk = ele.energy();
+      
+      recoEle_E_ecal_preReg.push_back(recopre_ecal);
+      recoEle_E_ecal_postReg.push_back(recopost_ecal);
+      recoEle_E_ecaltrk_preReg.push_back(recopre_ecaltrk);
+      recoEle_E_ecaltrk_postReg.push_back(recopost_ecaltrk);
 
-    reco::GsfElectron newElectron(*ele);
-    recopre_ecal = newElectron.correctedEcalEnergy();
-    recopre_ecaltrk = newElectron.energy();
+    }
     
-    //std::cout<<" pre ecal: "<<recopre_ecal<<" pre ecaltrk: "<<recopre_ecaltrk<<std::endl;
-
-    //    regression_->modifyObject(newElectron);
-    recopost_ecal = newElectron.correctedEcalEnergy();
-    recopost_ecaltrk = newElectron.energy();
-
-    //std::cout<<" post ecal: "<<recopost_ecal<<" post ecaltrk: "<<recopost_ecaltrk<<std::endl;
-
-    recoEle_E_ecal_preReg.push_back(recopre_ecal);
-    recoEle_E_ecal_postReg.push_back(recopost_ecal);
-    recoEle_E_ecaltrk_preReg.push_back(recopre_ecaltrk);
-    recoEle_E_ecaltrk_postReg.push_back(recopost_ecaltrk);
-
-}
-
     
     unsigned int nPFEle=recoEle_pt.size();
 
+     // ---------- LOW PT ELECTRONS -------------------- //
 
-    std::cout<<" NPF: "<<nPFEle<<std::endl;
-    if(gsfElectronsLowPtH_.isValid()){
-      
+     if(lowpt.isValid()){
+       
+       for(auto ele : *lowpt) {
 
-    //here we loop on LowPt electrons only
-    for( size_t electronlooper = 0; electronlooper < gsfElectronsLowPtH_->size(); electronlooper++ ) {
-      
-      // filter candidates: there must be a trk with pT>0.5
-      // Low pT electrons
-      const reco::GsfElectronPtr ele(gsfElectronsLowPtH_, electronlooper);
-      
-      float dR=999.;
-      float dRMin1=999.;
-      float dRMin2=999.;
-      int recomatchid1=999;
-      int recomatchid2=999;
+	float dR=999.;
+	float dRMin1=999.;
+	float dRMin2=999.;
+	int recomatchid1=999;
+	int recomatchid2=999;
 
-      float recopt=ele->pt();
-      float recoeta=ele->eta();
-      float recophi=ele->phi();
-      float recomass=ele->mass();
-      int recocharge=ele->charge();
+	float recopt=ele.pt();
+	float recoeta=ele.eta();
+	float recophi=ele.phi();
+	float recomass=ele.mass();
+	int recocharge=ele.charge();
 
-      float recovx=ele->vx();
-      float recovy=ele->vy();
-      float recovz=ele->vz();
+	float recovx=ele.vx();
+	float recovy=ele.vy();
+	float recovz=ele.vz();
+	
+	int recoispfoverlap=0;
 
-      int recoispfoverlap=0;
-
-      //remove overlap with PF
-      //pf cleaning    
-      bool clean_out = false;
-      for(unsigned int iEle=0; iEle<nPFEle; ++iEle) {
-
-	clean_out |= (
-		      fabs(recoEle_vz[iEle] - recovz) < dz_cleaning_ &&
-		      reco::deltaR(recoeta, recophi, recoEle_eta[iEle], recoEle_phi[iEle]) < dr_cleaning_   );
-
-      }
-
+	// ---------- REMOVE OVERLAP WITH PF -------------------- //
+	   
+	bool clean_out = false;
+	for(unsigned int iEle=0; iEle<nPFEle; ++iEle) {
+	  
+	  clean_out |= (
+			fabs(recoEle_vz[iEle] - recovz) < dz_cleaning_ &&
+			reco::deltaR(recoeta, recophi, recoEle_eta[iEle], recoEle_phi[iEle]) < dr_cleaning_   );
+	  
+	}
+	
             
       int recoispf=0;
       int recoislowpt=1;
@@ -999,9 +990,9 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
  
 
       
-      float recorawe=ele->superCluster()->rawEnergy();
-      float recocorrecale=ele->correctedEcalEnergy();
-      float recotrkchi2=ele->gsfTrack()->normalizedChi2();
+      float recorawe=ele.superCluster()->rawEnergy();
+      float recocorrecale=ele.correctedEcalEnergy();
+      float recotrkchi2=ele.gsfTrack()->normalizedChi2();
       int recoconvveto=999.;//ele->passConversionVeto();
       
 
@@ -1028,31 +1019,10 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
 
-      //ID stuff
       
-
-
-      //save EGM mva ID no Iso
-      float mvaEGamma_value = -999.;
-      int mvaEGamma_id = -999;
-      //save retrained EGamma ID for low pt PF
-      float mvaPF_value = -999.;
-      int mvaPF_id = -999;
-
-
-
-     float mva_value = -999.;
-      int mva_id = -999;
-
-      //std::cout<<" mva: "<<mvaValueH_->size()<<std::endl;
-      //      std::cout<<"  gsf: "<<gsfElectronsLowPtH_->size()<<std::endl;
-      if ( mvaValueH_.isValid() && 
-	   mvaValueH_->size() == gsfElectronsLowPtH_->size() ) {
-	mva_value = mvaValueH_->get( ele.key() );
-	//	mva_id = mvaIdH_->get( ele.key() );
-      } else {
-	std::cout << "ERROR! Issue matching Low Pt MVA output to GsfElectrons!" << std::endl;
-      }
+      float mvaPF_value = -999.;      
+      float mva_value = -999.;
+      mva_value=ele.isElectronIDAvailable("ID") ? ele.electronID("ID") : -100. ;
       
       
       recoEle_pt.push_back(recopt);
@@ -1080,53 +1050,37 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       recoEle_isLowPt.push_back(recoislowpt);
       recoEle_isPFoverlap.push_back(recoispfoverlap);
 
-      recoEle_mvaEGammaID.push_back(mvaEGamma_id);
-      recoEle_mvaEGammaValue.push_back(mvaEGamma_value);
-
-      recoEle_mvaPFID.push_back(mvaPF_id);
       recoEle_mvaPFValue.push_back(mvaPF_value);
 
-      recoEle_mvaID.push_back(mva_id);
       recoEle_mvaValue.push_back(mva_value);
 
-    // Here I apply the regression and i save also the postregression quantitiess
-    TVector3 eleTV3(0,0,0);
-    eleTV3.SetPtEtaPhi(ele->pt(), ele->eta(), ele->phi());
-    // Regression stuff
+
+      // ---------- REGRESSION: TO BE APPLIED -------------------- //
     float recopre_ecal     = -999.;
     float recopre_ecaltrk  = -999.;
     float recopost_ecal    = -999.;
     float recopost_ecaltrk = -999.;
 
-    reco::GsfElectron newElectron(*ele);
-    recopre_ecal = newElectron.correctedEcalEnergy();
-    recopre_ecaltrk = newElectron.energy();
-    
-    //std::cout<<" pre ecal: "<<recopre_ecal<<" pre ecaltrk: "<<recopre_ecaltrk<<std::endl;
 
-    //    regression_->modifyObject(newElectron);
-    recopost_ecal = newElectron.correctedEcalEnergy();
-    recopost_ecaltrk = newElectron.energy();
-
-    //std::cout<<" post ecal: "<<recopost_ecal<<" post ecaltrk: "<<recopost_ecaltrk<<std::endl;
+    recopre_ecal = ele.correctedEcalEnergy();
+    recopre_ecaltrk = ele.energy();
+    recopost_ecal = ele.correctedEcalEnergy();
+    recopost_ecaltrk = ele.energy();
 
     recoEle_E_ecal_preReg.push_back(recopre_ecal);
     recoEle_E_ecal_postReg.push_back(recopost_ecal);
     recoEle_E_ecaltrk_preReg.push_back(recopre_ecaltrk);
     recoEle_E_ecaltrk_postReg.push_back(recopost_ecaltrk);
 
-}
+       }
  
 
-    }//close if low pt collection is valid
-
-    // --- setup tree values
+    }
+    
     initTreeStructure();
-
-    // --- clear all vectors
     clearVectors();
-  
-    // --- fill trees
+
+
     tree_.run=run;
     tree_.event=event;
     tree_.lumi=lumi;
@@ -1189,9 +1143,6 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       tree_.recoMu_dxy.push_back(recoMu_dxy[i]);   
       tree_.recoMu_dz.push_back(recoMu_dz[i]);   
       
-      //      if(i==0)recolep0->SetPtEtaPhiM(recoMu_pt[i],recoMu_eta[i],recoMu_phi[i],recoMu_mass[i]);
-      // if(i==1)recolep1->SetPtEtaPhiM(recoMu_pt[i],recoMu_eta[i],recoMu_phi[i],recoMu_mass[i]);
-
     }
 
 
@@ -1247,31 +1198,18 @@ TQGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       tree_.recoEle_isPF.push_back(recoEle_isPF[i]);
 
       tree_.recoEle_isLowPt.push_back(recoEle_isLowPt[i]);
-      tree_.recoEle_mvaID.push_back(recoEle_mvaID[i]);
       tree_.recoEle_isPFoverlap.push_back(recoEle_isPFoverlap[i]);
-      
-
-      tree_.recoEle_mvaEGammaID.push_back(recoEle_mvaEGammaID[i]);
-      tree_.recoEle_mvaEGammaValue.push_back(recoEle_mvaEGammaValue[i]);
-
-      tree_.recoEle_mvaPFID.push_back(recoEle_mvaPFID[i]);
       tree_.recoEle_mvaPFValue.push_back(recoEle_mvaPFValue[i]);
-
-      tree_.recoEle_mvaID.push_back(recoEle_mvaID[i]);
       tree_.recoEle_mvaValue.push_back(recoEle_mvaValue[i]);
 
     }
 
-
-    //filling tree
     tree->Fill();
   
-}
+ }
 
 
-// ------------ method called once each job just before starting event loop  ------------
-void
-TQGenAnalyzer::beginJob()
+void TQGenAnalyzer::beginJob()
 {
   std::cout << "Starting job" << std::endl;
   SetPuWeights(2016,puweights2016_);
@@ -1300,7 +1238,6 @@ TQGenAnalyzer::beginJob()
   tree->Branch("triggerBit", &tree_.triggerBit, "triggerBit/I");
 
   tree->Branch("TQ_genMass", &tree_.TQ_genMass, "TQ_genMass/F");
-  tree->Branch("TQ_recoMass", &tree_.TQ_recoMass, "TQ_recoMass/F");
   tree->Branch("genLep_pt",     &tree_.genLep_pt);
   tree->Branch("genLep_mass",      &tree_.genLep_mass);
   tree->Branch("genLep_eta",&tree_.genLep_eta);
@@ -1379,23 +1316,16 @@ TQGenAnalyzer::beginJob()
 
   tree->Branch("recoEle_isPFoverlap",&tree_.recoEle_isPFoverlap);
 
-  tree->Branch("recoEle_mvaEGammaID",&tree_.recoEle_mvaEGammaID);
-  tree->Branch("recoEle_mvaEGammaValue",&tree_.recoEle_mvaEGammaValue);
-
-  tree->Branch("recoEle_mvaPFID",&tree_.recoEle_mvaPFID);
   tree->Branch("recoEle_mvaPFValue",&tree_.recoEle_mvaPFValue);
 
-  tree->Branch("recoEle_mvaID",&tree_.recoEle_mvaID);
   tree->Branch("recoEle_mvaValue",&tree_.recoEle_mvaValue);
 }
 
-// ------------ method called once each job just after ending the event loop  ------------
 void
 TQGenAnalyzer::endJob()
 {
 }
 
-// ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
 TQGenAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation
@@ -1497,16 +1427,10 @@ void TQGenAnalyzer::clearVectors()
   tree_.recoEle_isPF.clear();
 
   tree_.recoEle_isLowPt.clear();
-  tree_.recoEle_mvaID.clear();
   tree_.recoEle_isPFoverlap.clear();
 
-  tree_.recoEle_mvaEGammaID.clear();
-  tree_.recoEle_mvaEGammaValue.clear();
-
-  tree_.recoEle_mvaPFID.clear();
   tree_.recoEle_mvaPFValue.clear();
   
-  tree_.recoEle_mvaID.clear();
   tree_.recoEle_mvaValue.clear();
 
 }
@@ -1524,6 +1448,8 @@ float TQGenAnalyzer::GetPUWeight(int npu,int year) {
 
   return weight;
 }
+
+
 
 
 void TQGenAnalyzer::SetPuWeights(int year,double* puw_array) {
@@ -1628,5 +1554,5 @@ void TQGenAnalyzer::SetPuWeights(int year,double* puw_array) {
   
   
 }
-//define this as a plug-in
+
 DEFINE_FWK_MODULE(TQGenAnalyzer);
