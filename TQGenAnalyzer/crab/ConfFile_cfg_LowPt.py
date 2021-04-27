@@ -25,9 +25,9 @@ process.ntuplizer_seq = cms.Sequence()
 
 #1. setting GT
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '106X_dataRun2_v32')
+process.GlobalTag = GlobalTag(process.GlobalTag, '106X_upgrade2018_realistic_v4')
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 process.source = cms.Source("PoolSource",
                                 # replace 'myfile.root' with the source file you want to use
@@ -37,8 +37,35 @@ process.source = cms.Source("PoolSource",
 #                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/BPH-RunIISummer20UL18MiniAODv2-00008.root'
 #                                    '/store/cmst3/group/bpark/BToKmumu_1000Events_MINIAOD.root'
 #                                '/store/data/Run2018B/ParkingBPH4/MINIAOD/05May2019-v2/230000/6B5A24B1-0E6E-504B-8331-BD899EB60110.root'
-                                'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/BPH-RunIISummer20UL18MiniAODv2-00008.root'
-               )
+#                                'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/BPH-RunIISummer20UL18MiniAODv2-00008.root'
+
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_1.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_10.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_11.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_13.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_14.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_15.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_16.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_17.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_19.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_2.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_21.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_22.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_23.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_25.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_26.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_27.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_28.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_29.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_3.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_30.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_4.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_5.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_6.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_8.root',
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_9.root'
+
+              )
                             )
 
 process.TFileService = cms.Service("TFileService",
