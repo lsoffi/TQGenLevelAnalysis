@@ -246,7 +246,7 @@ struct tree_struc_{
   std::vector<float>            genMom_phi;
   std::vector<int>            genMom_pdgId;
 
-  int nEleReco;
+
   int nMuReco;
   std::vector<float>            recoMu_pt;
   std::vector<float>            recoMu_eta;
@@ -285,8 +285,16 @@ struct tree_struc_{
   std::vector<float>            recoDimu_phi2;
   std::vector<float>            recoDimu_charge2;
   std::vector<float>            recoDimu_mass2;        
+  std::vector<float>            recoDimu_pt;        
+  std::vector<float>            recoDimu_eta;        
+  std::vector<float>            recoDimu_phi;        
+  std::vector<float>            recoDimu_mass;        
+  std::vector<float>            recoDimu_massErr;        
 
   //electrons
+  int nEleReco;
+  int nPFEleReco;
+  int nLowPtEleReco;
   std::vector<float>            recoEle_pt;
   std::vector<float>            recoEle_eta;
   std::vector<float>            recoEle_mass;
@@ -309,11 +317,39 @@ struct tree_struc_{
   std::vector<float>recoEle_passConvVeto;
   std::vector<float>recoEle_isPF;
   std::vector<float>recoEle_mvaPFValue;
-
-  //specific fro low pt electrons
   std::vector<float>recoEle_isPFoverlap;
   std::vector<float>recoEle_isLowPt;
   std::vector<float>recoEle_mvaValue;
+
+  //dielectron pairs
+  int nDieleReco;
+  std::vector<float>            recoDiele_vx;
+  std::vector<float>            recoDiele_vy;
+  std::vector<float>            recoDiele_vz;
+  std::vector<float>            recoDiele_vtxchi2;
+  std::vector<float>            recoDiele_vtxndof;
+  std::vector<float>            recoDiele_vtxprob;
+  std::vector<float>            recoDiele_pt1;  
+  std::vector<float>            recoDiele_eta1;
+  std::vector<float>            recoDiele_phi1;
+  std::vector<float>            recoDiele_charge1;
+  std::vector<float>            recoDiele_mass1;        
+  std::vector<int>            recoDiele_isPF1;        
+  std::vector<int>            recoDiele_isLowPt1;        
+  std::vector<int>            recoDiele_isPFoverlap1;        
+  std::vector<float>            recoDiele_pt2;  
+  std::vector<float>            recoDiele_eta2;
+  std::vector<float>            recoDiele_phi2;
+  std::vector<float>            recoDiele_charge2;
+  std::vector<float>            recoDiele_mass2;        
+  std::vector<int>            recoDiele_isPF2;        
+  std::vector<int>            recoDiele_isLowPt2;        
+  std::vector<int>            recoDiele_isPFoverlap2;        
+  std::vector<float>            recoDiele_pt;        
+  std::vector<float>            recoDiele_eta;        
+  std::vector<float>            recoDiele_phi;        
+  std::vector<float>            recoDiele_mass;        
+  std::vector<float>            recoDiele_massErr;        
 
   float vx;
   float vy;
@@ -512,6 +548,12 @@ private:
      std::vector<float>            recoDimu_phi2;
      std::vector<float>            recoDimu_charge2;
      std::vector<float>            recoDimu_mass2;        
+     std::vector<float>            recoDimu_pt;        
+     std::vector<float>            recoDimu_eta;        
+     std::vector<float>            recoDimu_phi;        
+     std::vector<float>            recoDimu_mass;        
+     std::vector<float>            recoDimu_massErr;        
+
 
      std::vector<float>recoEle_pt;
      std::vector<float>recoEle_mass;
@@ -536,10 +578,38 @@ private:
      std::vector<float>recoEle_isPF;
      std::vector<float>recoEle_mvaPFValue;
      std::vector<float>recoEle_mvaValue;
-
      std::vector<float>recoEle_isPFoverlap;
-
      std::vector<float>recoEle_isLowPt;
+     
+
+
+     std::vector<float>            recoDiele_vx;
+     std::vector<float>            recoDiele_vy;
+     std::vector<float>            recoDiele_vz;
+     std::vector<float>            recoDiele_vtxchi2;
+     std::vector<float>            recoDiele_vtxndof;
+     std::vector<float>            recoDiele_vtxprob;
+     std::vector<float>            recoDiele_pt1;  
+     std::vector<float>            recoDiele_eta1;
+     std::vector<float>            recoDiele_phi1;
+     std::vector<float>            recoDiele_charge1;
+     std::vector<float>            recoDiele_mass1;        
+     std::vector<float>            recoDiele_pt2;  
+     std::vector<float>            recoDiele_eta2;
+     std::vector<float>            recoDiele_phi2;
+     std::vector<float>            recoDiele_charge2;
+     std::vector<float>            recoDiele_mass2;        
+     std::vector<int>            recoDiele_isPF1;        
+     std::vector<int>            recoDiele_isLowPt1;        
+     std::vector<int>            recoDiele_isPFoverlap1;        
+     std::vector<int>            recoDiele_isPF2;        
+     std::vector<int>            recoDiele_isLowPt2;        
+     std::vector<int>            recoDiele_isPFoverlap2;        
+     std::vector<float>            recoDiele_pt;        
+     std::vector<float>            recoDiele_eta;        
+     std::vector<float>            recoDiele_phi;        
+     std::vector<float>            recoDiele_mass;        
+     std::vector<float>            recoDiele_massErr;        
 
      // --- sample info (0:signal, <0 background, >0 data)
      int sampleID = sampleIndex_;
@@ -568,7 +638,10 @@ private:
      int nMu=0;
      int nMuReco=0;
      int nEleReco=0;
+     int nPFEleReco=0;
+     int nLowPtEleReco=0;
      int nDimuReco=0;
+     int nDieleReco=0;
 
      TLorentzVector* lep1=new TLorentzVector();
      TLorentzVector* lep2=new TLorentzVector();
@@ -757,9 +830,9 @@ private:
 	 if(abs(mu2.eta())>2.5)continue;
 	 if(mu1.charge()*mu2.charge()>0)continue;
     
-
-	std::cout<<" pt1: "<<mu1.pt()<<" pt2: "<<mu2.pt()<<" eta1: "<<mu1.eta()<<" eta2: "<<mu2.eta()<<" phi1: "<<mu1.phi()<<" phi2: "<<mu2.phi()<<" ch1: "<<mu1.charge()<<" ch2: "<<mu2.charge()<<std::endl;
-	/*
+	 std::cout<<"-----------------------------------------"<<std::endl;
+	 std::cout<<" pt1: "<<mu1.pt()<<" pt2: "<<mu2.pt()<<" eta1: "<<mu1.eta()<<" eta2: "<<mu2.eta()<<" phi1: "<<mu1.phi()<<" phi2: "<<mu2.phi()<<" ch1: "<<mu1.charge()<<" ch2: "<<mu2.charge()<<std::endl;
+	 
 
        recoDimu_pt1.push_back(mu1.pt());
        recoDimu_eta1.push_back(mu1.eta());
@@ -773,16 +846,17 @@ private:
        recoDimu_phi2.push_back(mu2.phi());
        recoDimu_charge2.push_back(mu2.charge());
        recoDimu_mass2.push_back(mu2.mass());
-	*/
+       
 	
        //run kinematic fit
 	
-	//	reco::TransientTrack mu1TT = theB->build(mu1.bestTrack());
-	//	reco::TransientTrack mu2TT = theB->build(mu2.bestTrack());
-	const reco::TransientTrack mu1TT((*(mu1.bestTrack())),&(*bFieldHandle)); 
+       reco::TransientTrack mu1TT = theB->build(mu1.bestTrack());
+       reco::TransientTrack mu2TT = theB->build(mu2.bestTrack());
+	/*	const reco::TransientTrack mu1TT((*(mu1.bestTrack())),&(*bFieldHandle)); 
 	const reco::TransientTrack mu2TT((*(mu2.bestTrack())),&(*bFieldHandle)); 
-	std::cout<<mu1TT.isValid()<<" "<<mu2TT.isValid()<<std::endl;
-	std::cout<<mu1TT.numberOfValidHits()<<" "<<mu2TT.numberOfValidHits()<<std::endl;
+	*/
+       //       std::cout<<mu1TT.isValid()<<" "<<mu2TT.isValid()<<std::endl;
+       //       std::cout<<mu1TT.numberOfValidHits()<<" "<<mu2TT.numberOfValidHits()<<std::endl;
 
 	float chi = 0.;
 	float ndf = 0.;
@@ -794,39 +868,44 @@ private:
 	std::vector<RefCountedKinematicParticle> allParticles;
 	allParticles.push_back(pFactory.particle (mu1TT,muon_mass,chi,ndf,muon_sigma));
 	allParticles.push_back(pFactory.particle (mu2TT,muon_mass,chi,ndf,muon_sigma));
-	KinematicConstrainedVertexFitter fitter;
+	KinematicParticleVertexFitter fitter;
 	
-	RefCountedKinematicTree vtx_tree = fitter.fit(allParticles);
-	if(vtx_tree->isEmpty() == 1 || vtx_tree->isConsistent() == 0)
+	/*RefCountedKinematicTree vtx_tree = fitter.fit(allParticles);
+	if(vtx_tree->isEmpty() == 1)
 	  std::cout << "Kinematic Fit unsuccesfull" << std::endl;
 	else{
 	vtx_tree->movePointerToTheTop(); 
 	RefCountedKinematicVertex fitted_vtx_ = vtx_tree->currentDecayVertex();
 
 	float fitted_chi2=fitted_vtx_->chiSquared();
-	}
+	std::cout<<" chi2: "<<fitted_chi2<<std::endl;
+	}*/
 
-	/*       KinVtxFitter fitter(
+
+	KinVtxFitter fitter2(
 			   {mu1TT,mu2TT},
 			   {muon_mass,muon_mass},
 			   {muon_sigma,muon_sigma} //some small sigma for the lepton mass
 		      );
 	
-       if(!fitter.success()) continue; 
-       //       std::cout<<" prob: "<<fitter.prob()<<std::endl;
-       recoDimu_vx.push_back(fitter.fitted_vtx().x());
-       recoDimu_vy.push_back(fitter.fitted_vtx().y());
-       recoDimu_vz.push_back(fitter.fitted_vtx().z());
-       recoDimu_vtxchi2.push_back(fitter.chi2());
-       recoDimu_vtxndof.push_back(fitter.dof());
-       recoDimu_vtxprob.push_back(fitter.prob());
-	*/
-       recoDimu_vx.push_back(999);
-       recoDimu_vy.push_back(999);
-       recoDimu_vz.push_back(999);
-       recoDimu_vtxchi2.push_back(999);
-       recoDimu_vtxndof.push_back(999);
-       recoDimu_vtxprob.push_back(999);
+       if(!fitter2.success()) continue; 
+       
+       std::cout<<" chi2: "<<fitter2.chi2()<<std::endl;
+       std::cout<<" dof: "<<fitter2.dof()<<std::endl;
+       std::cout<<" prob: "<<fitter2.prob()<<std::endl;
+       recoDimu_vx.push_back(fitter2.fitted_vtx().x());
+       recoDimu_vy.push_back(fitter2.fitted_vtx().y());
+       recoDimu_vz.push_back(fitter2.fitted_vtx().z());
+       recoDimu_vtxchi2.push_back(fitter2.chi2());
+       recoDimu_vtxndof.push_back(fitter2.dof());
+       recoDimu_vtxprob.push_back(fitter2.prob());
+       /*       auto fit_p4 = fitter2.fitted_p4();
+       recoDimu_pt.push_back(fit_p4.pt());        
+       recoDimu_eta.push_back(fit_p4.eta());        
+       recoDimu_phi.push_back(fit_p4.phi());        
+       //       recoDimu_mass.push_back(fitter2.fitted_candidate().mass());        
+       //recoDimu_massErr.push_back(sqrt(fitter2.fitted_candidate().kinematicParametersError().matrix()(6,6)));        
+       */
 
       nDimuReco++;
 
@@ -836,12 +915,12 @@ private:
  }
 
 
-
      // ---------- PF ELECTRONS -------------------- //
     size_t ipfele=-1;
     for(auto ele : *pf) {
       ipfele++;
-      
+      nEleReco++;
+      nPFEleReco++;
       float dR=999.;
       float dRMin1=999.;
       float dRMin2=999.;
@@ -862,7 +941,7 @@ private:
       float recorawe=ele.superCluster()->rawEnergy();
       float recocorrecale=ele.correctedEcalEnergy();
       float recotrkchi2=ele.gsfTrack()->normalizedChi2();
-      int recoconvveto=999.;//ele->passConversionVeto();
+      int recoconvveto=ele.passConversionVeto();
       
 
       
@@ -948,7 +1027,6 @@ private:
     unsigned int nPFEle=recoEle_pt.size();
 
      // ---------- LOW PT ELECTRONS -------------------- //
-
      if(lowpt.isValid()){
        
        for(auto ele : *lowpt) {
@@ -988,12 +1066,13 @@ private:
       if(clean_out) recoispfoverlap=1;
       else recoispfoverlap=0;
  
-
+      if(recoispfoverlap==0) nEleReco++;
+      if(recoispfoverlap==0) nLowPtEleReco++;
       
       float recorawe=ele.superCluster()->rawEnergy();
       float recocorrecale=ele.correctedEcalEnergy();
       float recotrkchi2=ele.gsfTrack()->normalizedChi2();
-      int recoconvveto=999.;//ele->passConversionVeto();
+      int recoconvveto=ele.passConversionVeto();
       
 
       
@@ -1076,6 +1155,180 @@ private:
  
 
     }
+
+
+     // ----------------- DIELECTRON PF-PF -------------------- //
+     size_t iel1=-1;
+     size_t iel2=-1;
+     for (const pat::Electron & el1 : *pf){
+       iel1++;
+       if(el1.pt()<1.)continue;
+       if(abs(el1.eta())>2.5)continue;
+
+       iel2=-1;
+       // for (pat::MuonCollection::const_iterator mu2 = patMuonsH_.begin(); mu2 != patMuonsH_.end(); ++mu2){
+       for (const pat::Electron & el2 : *pf){
+	 iel2++;
+	 if(iel2<=iel1)continue;
+	 if(el2.pt()<1.)continue;
+	 if(abs(el2.eta())>2.5)continue;
+	 if(el1.charge()*el2.charge()>0)continue;
+    
+
+	 //	std::cout<<" pt1: "<<el1.pt()<<" pt2: "<<el2.pt()<<" eta1: "<<el1.eta()<<" eta2: "<<el2.eta()<<" phi1: "<<el1.phi()<<" phi2: "<<el2.phi()<<" ch1: "<<el1.charge()<<" ch2: "<<el2.charge()<<std::endl;
+	
+
+       recoDiele_pt1.push_back(el1.pt());
+       recoDiele_eta1.push_back(el1.eta());
+       recoDiele_phi1.push_back(el1.phi());
+       recoDiele_charge1.push_back(el1.charge());
+       recoDiele_mass1.push_back(el1.mass());
+       recoDiele_isPF1.push_back(1);
+       recoDiele_isLowPt1.push_back(0);
+       recoDiele_isPFoverlap1.push_back(0);
+
+
+       recoDiele_pt2.push_back(el2.pt());
+       recoDiele_eta2.push_back(el2.eta());
+       recoDiele_phi2.push_back(el2.phi());
+       recoDiele_charge2.push_back(el2.charge());
+       recoDiele_mass2.push_back(el2.mass());
+       recoDiele_isPF2.push_back(1);
+       recoDiele_isLowPt2.push_back(0);
+       recoDiele_isPFoverlap2.push_back(0);
+	
+	
+       //run kinematic fit
+	
+       reco::TransientTrack el1TT = (*theB).build( el1.gsfTrack() );
+       reco::TransientTrack el2TT = (*theB).build( el2.gsfTrack() );
+
+	float chi = 0.;
+	float ndf = 0.;
+	double elon_mass = 0.005056583;
+	float elon_sigma = 0.0000001;
+
+	KinVtxFitter fitter(
+			   {el1TT,el2TT},
+			   {elon_mass,elon_mass},
+			   {elon_sigma,elon_sigma} //some small sigma for the lepton mass
+		      );
+	
+       if(!fitter.success()) continue; 
+       //       std::cout<<" prob: "<<fitter.prob()<<std::endl;
+       recoDiele_vx.push_back(fitter.fitted_vtx().x());
+       recoDiele_vy.push_back(fitter.fitted_vtx().y());
+       recoDiele_vz.push_back(fitter.fitted_vtx().z());
+       recoDiele_vtxchi2.push_back(fitter.chi2());
+       recoDiele_vtxndof.push_back(fitter.dof());
+       recoDiele_vtxprob.push_back(fitter.prob());
+       
+       nDieleReco++;
+
+
+
+    }
+ }
+
+
+
+     // ----------------- DLP_IELECTRON LP-LP -------------------- //
+     size_t lp_iel1=-1;
+     size_t lp_iel2=-1;
+     for (const pat::Electron & el1 : *lowpt){
+       lp_iel1++;
+       if(el1.pt()<1.)continue;
+       if(abs(el1.eta())>2.5)continue;
+
+       lp_iel2=-1;
+       // for (pat::MuonCollection::const_iterator mu2 = patMuonsH_.begin(); mu2 != patMuonsH_.end(); ++mu2){
+       for (const pat::Electron & el2 : *pf){
+	 lp_iel2++;
+	 if(lp_iel2<=lp_iel1)continue;
+	 if(el2.pt()<1.)continue;
+	 if(abs(el2.eta())>2.5)continue;
+	 if(el1.charge()*el2.charge()>0)continue;
+    
+
+	 //	std::cout<<" pt1: "<<el1.pt()<<" pt2: "<<el2.pt()<<" eta1: "<<el1.eta()<<" eta2: "<<el2.eta()<<" phi1: "<<el1.phi()<<" phi2: "<<el2.phi()<<" ch1: "<<el1.charge()<<" ch2: "<<el2.charge()<<std::endl;
+	bool clean_out1 = false;
+	bool clean_out2 = false;
+	for(unsigned int iEle=0; iEle<nPFEle; ++iEle) {
+	  
+	  clean_out1 |= (
+			 fabs(recoEle_vz[iEle] - el1.vz()) < dz_cleaning_ &&
+			 reco::deltaR(el1.eta(), el1.phi(), recoEle_eta[iEle], recoEle_phi[iEle]) < dr_cleaning_   );
+	  clean_out2 |= (
+			 fabs(recoEle_vz[iEle] - el2.vz()) < dz_cleaning_ &&
+			 reco::deltaR(el2.eta(), el2.phi(), recoEle_eta[iEle], recoEle_phi[iEle]) < dr_cleaning_   );
+	  
+	}
+	
+            
+      int recoisoverlap1=0;
+      if(clean_out1) recoisoverlap1=1;
+      else recoisoverlap1=0;
+      int recoisoverlap2=0;
+      if(clean_out2) recoisoverlap2=1;
+      else recoisoverlap2=0;
+	
+
+       recoDiele_pt1.push_back(el1.pt());
+       recoDiele_eta1.push_back(el1.eta());
+       recoDiele_phi1.push_back(el1.phi());
+       recoDiele_charge1.push_back(el1.charge());
+       recoDiele_mass1.push_back(el1.mass());
+       recoDiele_isPF1.push_back(0);
+       recoDiele_isLowPt1.push_back(1);
+       recoDiele_isPFoverlap1.push_back(recoisoverlap1);
+
+
+       recoDiele_pt2.push_back(el2.pt());
+       recoDiele_eta2.push_back(el2.eta());
+       recoDiele_phi2.push_back(el2.phi());
+       recoDiele_charge2.push_back(el2.charge());
+       recoDiele_mass2.push_back(el2.mass());
+       recoDiele_isPF2.push_back(0);
+       recoDiele_isLowPt2.push_back(1);
+       recoDiele_isPFoverlap2.push_back(recoisoverlap2);
+	
+	
+       //run kinematic fit
+	
+       reco::TransientTrack el1TT = (*theB).build( el1.gsfTrack() );
+       reco::TransientTrack el2TT = (*theB).build( el2.gsfTrack() );
+
+	float chi = 0.;
+	float ndf = 0.;
+	double elon_mass = 0.005056583;
+	float elon_sigma = 0.0000001;
+
+	KinVtxFitter fitter(
+			   {el1TT,el2TT},
+			   {elon_mass,elon_mass},
+			   {elon_sigma,elon_sigma} //some small sigma for the lepton mass
+		      );
+	
+       if(!fitter.success()) continue; 
+       //       std::cout<<" prob: "<<fitter.prob()<<std::endl;
+       recoDiele_vx.push_back(fitter.fitted_vtx().x());
+       recoDiele_vy.push_back(fitter.fitted_vtx().y());
+       recoDiele_vz.push_back(fitter.fitted_vtx().z());
+       recoDiele_vtxchi2.push_back(fitter.chi2());
+       recoDiele_vtxndof.push_back(fitter.dof());
+       recoDiele_vtxprob.push_back(fitter.prob());
+       
+       nDieleReco++;
+
+
+
+    }
+ }
+
+
+
+
+
     
     initTreeStructure();
     clearVectors();
@@ -1146,7 +1399,7 @@ private:
     }
 
 
-
+    
     tree_.nDimuReco=nDimuReco;
     for(unsigned int i=0;i<recoDimu_vx.size();i++){
        
@@ -1166,11 +1419,18 @@ private:
       tree_.recoDimu_phi2.push_back(	     recoDimu_phi2[i]);     
       tree_.recoDimu_charge2.push_back(     recoDimu_charge2[i]);  
       tree_.recoDimu_mass2.push_back(       recoDimu_mass2[i]);           
-               
-    }
+      /*      tree_.recoDimu_pt.push_back(       recoDimu_pt[i]);           
+      tree_.recoDimu_eta.push_back(       recoDimu_eta[i]);           
+      tree_.recoDimu_phi.push_back(       recoDimu_phi[i]);           
+      tree_.recoDimu_mass.push_back(       recoDimu_mass[i]);           
+      tree_.recoDimu_massErr.push_back(       recoDimu_massErr[i]);           
+      */       
+      }
 
-    nEleReco=recoEle_pt.size();
+
     tree_.nEleReco=nEleReco;
+    tree_.nPFEleReco=nPFEleReco;
+    tree_.nLowPtEleReco=nLowPtEleReco;
     for(unsigned int i=0;i<recoEle_pt.size();i++){
       tree_.recoEle_pt.push_back(recoEle_pt[i]);
       tree_.recoEle_mass.push_back(recoEle_mass[i]);
@@ -1204,8 +1464,42 @@ private:
 
     }
 
+    tree_.nDieleReco=nDieleReco;
+    for(unsigned int i=0;i<recoDiele_vx.size();i++){
+       
+      tree_.recoDiele_vx.push_back(           recoDiele_vx[i]);	      
+      tree_.recoDiele_vy.push_back(	     recoDiele_vy[i]);	      
+      tree_.recoDiele_vz.push_back(	     recoDiele_vz[i]);	      
+      tree_.recoDiele_vtxchi2.push_back(     recoDiele_vtxchi2[i]);  
+      tree_.recoDiele_vtxndof.push_back(     recoDiele_vtxndof[i]);  
+      tree_.recoDiele_vtxprob.push_back(     recoDiele_vtxprob[i]);  
+      tree_.recoDiele_pt1.push_back(  	     recoDiele_pt1[i]);      
+      tree_.recoDiele_eta1.push_back(	     recoDiele_eta1[i]);     
+      tree_.recoDiele_phi1.push_back(	     recoDiele_phi1[i]);     
+      tree_.recoDiele_charge1.push_back(     recoDiele_charge1[i]);  
+      tree_.recoDiele_mass1.push_back(       recoDiele_mass1[i]);     
+      tree_.recoDiele_isPF1.push_back(       recoDiele_isPF1[i]);     
+      tree_.recoDiele_isLowPt1.push_back(       recoDiele_isLowPt1[i]);     
+      tree_.recoDiele_isPFoverlap1.push_back(       recoDiele_isPFoverlap1[i]);     
+      tree_.recoDiele_pt2.push_back(  	     recoDiele_pt2[i]);      
+      tree_.recoDiele_eta2.push_back(	     recoDiele_eta2[i]);     
+      tree_.recoDiele_phi2.push_back(	     recoDiele_phi2[i]);     
+      tree_.recoDiele_charge2.push_back(     recoDiele_charge2[i]);  
+      tree_.recoDiele_mass2.push_back(       recoDiele_mass2[i]);           
+      tree_.recoDiele_isPF2.push_back(       recoDiele_isPF2[i]);     
+      tree_.recoDiele_isLowPt2.push_back(       recoDiele_isLowPt2[i]);     
+      tree_.recoDiele_isPFoverlap2.push_back(       recoDiele_isPFoverlap2[i]);     
+      /*      tree_.recoDiele_pt.push_back(       recoDiele_pt[i]);           
+      tree_.recoDiele_eta.push_back(       recoDiele_eta[i]);           
+      tree_.recoDiele_phi.push_back(       recoDiele_phi[i]);           
+      tree_.recoDiele_mass.push_back(       recoDiele_mass[i]);           
+      tree_.recoDiele_massErr.push_back(       recoDiele_massErr[i]);           
+      */       
+    }
+
+
     tree->Fill();
-  
+
  }
 
 
@@ -1284,9 +1578,16 @@ void TQGenAnalyzer::beginJob()
   tree->Branch("recoDimu_phi2",     &tree_.recoDimu_phi2);
   tree->Branch("recoDimu_charge2",     &tree_.recoDimu_charge2);
   tree->Branch("recoDimu_mass2",     &tree_.recoDimu_mass2);
+  tree->Branch("recoDimu_pt",     &tree_.recoDimu_pt);
+  tree->Branch("recoDimu_eta",     &tree_.recoDimu_eta);
+  tree->Branch("recoDimu_phi",     &tree_.recoDimu_phi);
+  tree->Branch("recoDimu_mass",     &tree_.recoDimu_mass);
+  tree->Branch("recoDimu_massErr",     &tree_.recoDimu_massErr);
 
 
   tree->Branch("nEleReco", &tree_.nEleReco, "nEleReco/I");
+  tree->Branch("nPFEleReco", &tree_.nPFEleReco, "nPFEleReco/I");
+  tree->Branch("nLowPtEleReco", &tree_.nLowPtEleReco, "nLowPtEleReco/I");
   tree->Branch("recoEle_pt",     &tree_.recoEle_pt);
   tree->Branch("recoEle_mass",      &tree_.recoEle_mass);
   tree->Branch("recoEle_eta",&tree_.recoEle_eta);
@@ -1319,6 +1620,38 @@ void TQGenAnalyzer::beginJob()
   tree->Branch("recoEle_mvaPFValue",&tree_.recoEle_mvaPFValue);
 
   tree->Branch("recoEle_mvaValue",&tree_.recoEle_mvaValue);
+
+
+  tree->Branch("nDieleReco", &tree_.nDieleReco, "nDieleReco/I");
+  tree->Branch("recoDiele_vx",     &tree_.recoDiele_vx);
+  tree->Branch("recoDiele_vy",     &tree_.recoDiele_vy);
+  tree->Branch("recoDiele_vz",     &tree_.recoDiele_vz);
+  tree->Branch("recoDiele_vtxchi2",     &tree_.recoDiele_vtxchi2);
+  tree->Branch("recoDiele_vtxndof",     &tree_.recoDiele_vtxndof);
+  tree->Branch("recoDiele_vtxprob",     &tree_.recoDiele_vtxprob);
+  tree->Branch("recoDiele_pt1",     &tree_.recoDiele_pt1);
+  tree->Branch("recoDiele_eta1",     &tree_.recoDiele_eta1);
+  tree->Branch("recoDiele_phi1",     &tree_.recoDiele_phi1);
+  tree->Branch("recoDiele_charge1",     &tree_.recoDiele_charge1);
+  tree->Branch("recoDiele_mass1",     &tree_.recoDiele_mass1);
+  tree->Branch("recoDiele_isPF1",     &tree_.recoDiele_isPF1);
+  tree->Branch("recoDiele_isLowPt1",     &tree_.recoDiele_isLowPt1);
+  tree->Branch("recoDiele_isPFoverlap1",     &tree_.recoDiele_isPFoverlap1);
+  tree->Branch("recoDiele_pt2",     &tree_.recoDiele_pt2);
+  tree->Branch("recoDiele_eta2",     &tree_.recoDiele_eta2);
+  tree->Branch("recoDiele_phi2",     &tree_.recoDiele_phi2);
+  tree->Branch("recoDiele_charge2",     &tree_.recoDiele_charge2);
+  tree->Branch("recoDiele_mass2",     &tree_.recoDiele_mass2);
+  tree->Branch("recoDiele_isPF2",     &tree_.recoDiele_isPF2);
+  tree->Branch("recoDiele_isLowPt2",     &tree_.recoDiele_isLowPt2);
+  tree->Branch("recoDiele_isPFoverlap2",     &tree_.recoDiele_isPFoverlap2);
+  tree->Branch("recoDiele_pt",     &tree_.recoDiele_pt);
+  tree->Branch("recoDiele_eta",     &tree_.recoDiele_eta);
+  tree->Branch("recoDiele_phi",     &tree_.recoDiele_phi);
+  tree->Branch("recoDiele_mass",     &tree_.recoDiele_mass);
+  tree->Branch("recoDiele_massErr",     &tree_.recoDiele_massErr);
+
+
 }
 
 void
@@ -1399,6 +1732,11 @@ void TQGenAnalyzer::clearVectors()
   tree_.recoDimu_phi2.clear();
   tree_.recoDimu_charge2.clear();
   tree_.recoDimu_mass2.clear();
+  tree_.recoDimu_pt.clear();
+  tree_.recoDimu_eta.clear();
+  tree_.recoDimu_phi.clear();
+  tree_.recoDimu_mass.clear();
+  tree_.recoDimu_massErr.clear();
 
 
   tree_.recoEle_pt.clear();
@@ -1432,6 +1770,35 @@ void TQGenAnalyzer::clearVectors()
   tree_.recoEle_mvaPFValue.clear();
   
   tree_.recoEle_mvaValue.clear();
+
+
+  tree_.recoDiele_vx.clear();
+  tree_.recoDiele_vy.clear() ;
+  tree_.recoDiele_vz.clear();
+  tree_.recoDiele_vtxchi2.clear();
+  tree_.recoDiele_vtxndof.clear();
+  tree_.recoDiele_vtxprob.clear();
+  tree_.recoDiele_pt1.clear();
+  tree_.recoDiele_eta1.clear();
+  tree_.recoDiele_phi1.clear();
+  tree_.recoDiele_charge1.clear();
+  tree_.recoDiele_mass1.clear();
+  tree_.recoDiele_isPF1.clear();
+  tree_.recoDiele_isLowPt1.clear();
+  tree_.recoDiele_isPFoverlap1.clear();
+  tree_.recoDiele_pt2.clear();
+  tree_.recoDiele_eta2.clear();
+  tree_.recoDiele_phi2.clear();
+  tree_.recoDiele_charge2.clear();
+  tree_.recoDiele_mass2.clear();
+  tree_.recoDiele_isPF2.clear();
+  tree_.recoDiele_isLowPt2.clear();
+  tree_.recoDiele_isPFoverlap2.clear();
+  tree_.recoDiele_pt.clear();
+  tree_.recoDiele_eta.clear();
+  tree_.recoDiele_phi.clear();
+  tree_.recoDiele_mass.clear();
+  tree_.recoDiele_massErr.clear();
 
 }
 

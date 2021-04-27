@@ -30,10 +30,10 @@ process.source = cms.Source("PoolSource",
                                 # replace 'myfile.root' with the source file you want to use
                                 fileNames = cms.untracked.vstring(
 #            'file:/afs/cern.ch/user/s/soffi/public/10C23D4F-94BD-E811-9588-E0071B7B2320.root'
-                                '/store/mc/RunIIAutumn18MiniAOD/BuToKJpsi_Toee_Mufilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/MINIAODSIM/PUPoissonAve20_BParking_102X_upgrade2018_realistic_v15-v2/60000/854B1DC0-2F71-694D-A3F5-8DC1CDE1EF18.root'
+#                                '/store/mc/RunIIAutumn18MiniAOD/BuToKJpsi_Toee_Mufilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/MINIAODSIM/PUPoissonAve20_BParking_102X_upgrade2018_realistic_v15-v2/60000/854B1DC0-2F71-694D-A3F5-8DC1CDE1EF18.root'
 #                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/BPH-RunIISummer20UL18MiniAODv2-00008.root'
 #                                    '/store/cmst3/group/bpark/BToKmumu_1000Events_MINIAOD.root'
-
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/root_files_23042021/BPH-RunIISummer20UL18MiniAOD_2.root'
                 )
                             )
 

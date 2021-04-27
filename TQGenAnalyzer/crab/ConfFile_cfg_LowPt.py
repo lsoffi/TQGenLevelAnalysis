@@ -25,7 +25,8 @@ process.ntuplizer_seq = cms.Sequence()
 
 #1. setting GT
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '106X_upgrade2018_realistic_v4')
+#process.GlobalTag = GlobalTag(process.GlobalTag, '106X_upgrade2018_realistic_v4')
+process.GlobalTag = GlobalTag(process.GlobalTag, '106X_upgrade2018_realistic_v16_L1v1')
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
@@ -154,6 +155,7 @@ cms.PSet(record = cms.string("GBRDWrapperRcd"),
          connect = cms.string("sqlite_file:lowPtEleReg_2018_02062020_nv.db")))
 
 
+#from RecoEgamma.EgammaTools.regressionModifierNoPhoReg_cfi import regressionModifier106XUL
 from RecoEgamma.EgammaTools.regressionModifier_cfi import regressionModifier106XUL
 _gsfRegressionModifier = regressionModifier106XUL.clone(
     modifierName = 'EGRegressionModifierV3',

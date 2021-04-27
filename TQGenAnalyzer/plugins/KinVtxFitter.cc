@@ -11,10 +11,7 @@ KinVtxFitter::KinVtxFitter(const std::vector<reco::TransientTrack> tracks,
   
   KinematicParticleFactoryFromTransientTrack factory;
   std::vector<RefCountedKinematicParticle> particles;
-  std::cout<<"size: "<<tracks.size()<<std::endl;
-  std::cout<<"======================="<<std::endl;
   for(size_t i = 0; i < tracks.size(); ++i) {
-    std::cout<<"m: "<<masses.at(i)<<" chi2: "<<kin_chi2_<<" nof: "<<kin_ndof_<<" sigma: "<<sigmas[i]<<std::endl;
     particles.emplace_back(
       factory.particle(
         tracks.at(i), masses.at(i), kin_chi2_, 
@@ -25,9 +22,6 @@ KinVtxFitter::KinVtxFitter(const std::vector<reco::TransientTrack> tracks,
 
   KinematicConstrainedVertexFitter kcv_fitter;    
   RefCountedKinematicTree vtx_tree = kcv_fitter.fit(particles);
-  std::cout<<" empty? "<<vtx_tree->isEmpty()<<std::endl;
-  std::cout<<" valid? "<<vtx_tree->isValid()<<std::endl;
-  //  std::cout<<" consistent? "<<vtx_tree->isConsistent()<<std::endl;
   if (vtx_tree->isEmpty() || !vtx_tree->isValid() || !vtx_tree->isConsistent()) {
     success_ = false; 
     return;
