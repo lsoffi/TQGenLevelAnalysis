@@ -234,7 +234,23 @@ struct tree_struc_{
   int nEle;
   int nMu;
   float TQ_genMass;
-  int triggerBit;
+  
+  int HLT2016_Dimuon0_Jpsi_Muon;
+  int HLT2016_Dimuon0_Upsilon_Muon;
+  int HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL;
+  int HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ;
+  
+  int HLT2017_Dimuon0_Jpsi3p5_Muon2;
+  int HLT2017_Dimuon12_Upsilon_eta1p5;
+  int HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL;
+  int HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ;
+  
+  int HLT2018_Dimuon0_Jpsi3p5_Muon2;
+  int HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon;
+  int HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL;
+  int HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL;
+  int HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ;
+  
   std::vector<float>            genLep_pt;
   std::vector<float>            genLep_eta;
   std::vector<float>            genLep_mass;
@@ -275,16 +291,20 @@ struct tree_struc_{
   std::vector<float>            recoDimu_vtxchi2;
   std::vector<float>            recoDimu_vtxndof;
   std::vector<float>            recoDimu_vtxprob;
+  std::vector<int>            recoDimu_index1;  
   std::vector<float>            recoDimu_pt1;  
   std::vector<float>            recoDimu_eta1;
   std::vector<float>            recoDimu_phi1;
   std::vector<float>            recoDimu_charge1;
   std::vector<float>            recoDimu_mass1;        
+  std::vector<int>            recoDimu_softID1;        
+  std::vector<int>            recoDimu_index2;  
   std::vector<float>            recoDimu_pt2;  
   std::vector<float>            recoDimu_eta2;
   std::vector<float>            recoDimu_phi2;
   std::vector<float>            recoDimu_charge2;
   std::vector<float>            recoDimu_mass2;        
+  std::vector<int>            recoDimu_softID2;        
   std::vector<float>            recoDimu_pt;        
   std::vector<float>            recoDimu_eta;        
   std::vector<float>            recoDimu_phi;        
@@ -300,9 +320,9 @@ struct tree_struc_{
   std::vector<float>            recoEle_mass;
   std::vector<float>            recoEle_phi;
   std::vector<int>              recoEle_charge;
-  std::vector<int>              recoEle_vx;
-  std::vector<int>              recoEle_vy;
-  std::vector<int>              recoEle_vz;
+  std::vector<float>              recoEle_vx;
+  std::vector<float>              recoEle_vy;
+  std::vector<float>              recoEle_vz;
   std::vector<float>            recoEle_dR1;
   std::vector<float>            recoEle_dR2;
   std::vector<int>              recoEle_matchid1;
@@ -320,6 +340,11 @@ struct tree_struc_{
   std::vector<float>recoEle_isPFoverlap;
   std::vector<float>recoEle_isLowPt;
   std::vector<float>recoEle_mvaValue;
+  std::vector<float>            recoEle_ptmode;
+  std::vector<float>            recoEle_etamode;
+  std::vector<float>            recoEle_phimode;
+
+  std::vector<float>            recoEle_p;
 
   //dielectron pairs
   int nDieleReco;
@@ -329,11 +354,15 @@ struct tree_struc_{
   std::vector<float>            recoDiele_vtxchi2;
   std::vector<float>            recoDiele_vtxndof;
   std::vector<float>            recoDiele_vtxprob;
+  std::vector<int>            recoDiele_index1;  
+  std::vector<int>            recoDiele_index2;  
   std::vector<float>            recoDiele_pt1;  
   std::vector<float>            recoDiele_eta1;
   std::vector<float>            recoDiele_phi1;
   std::vector<float>            recoDiele_charge1;
   std::vector<float>            recoDiele_mass1;        
+  std::vector<float>            recoDiele_mvaValue1;        
+  std::vector<float>            recoDiele_mvaPFValue1;        
   std::vector<int>            recoDiele_isPF1;        
   std::vector<int>            recoDiele_isLowPt1;        
   std::vector<int>            recoDiele_isPFoverlap1;        
@@ -342,6 +371,8 @@ struct tree_struc_{
   std::vector<float>            recoDiele_phi2;
   std::vector<float>            recoDiele_charge2;
   std::vector<float>            recoDiele_mass2;        
+  std::vector<float>            recoDiele_mvaValue2;        
+  std::vector<float>            recoDiele_mvaPFValue2;        
   std::vector<int>            recoDiele_isPF2;        
   std::vector<int>            recoDiele_isLowPt2;        
   std::vector<int>            recoDiele_isPFoverlap2;        
@@ -350,6 +381,91 @@ struct tree_struc_{
   std::vector<float>            recoDiele_phi;        
   std::vector<float>            recoDiele_mass;        
   std::vector<float>            recoDiele_massErr;        
+  std::vector<float>            recoDiele_pt1mode;
+  std::vector<float>            recoDiele_eta1mode;
+  std::vector<float>            recoDiele_phi1mode;
+  std::vector<float>            recoDiele_pt2mode;
+  std::vector<float>            recoDiele_eta2mode;
+  std::vector<float>            recoDiele_phi2mode;
+
+  //TQ
+  int nTQReco;
+  std::vector<float>            recoTQ_pt;
+  std::vector<float>            recoTQ_eta;
+  std::vector<float>            recoTQ_phi;
+  std::vector<float>            recoTQ_mass;
+  std::vector<float>            recoTQ_massErr;
+  std::vector<float>            recoTQ_vtxchi2;
+  std::vector<float>            recoTQ_vtxndof;
+  std::vector<float>            recoTQ_vtxprob;
+
+
+  std::vector<float>            recoTQ_Y1pt;
+  std::vector<float>            recoTQ_Y1eta;
+  std::vector<float>            recoTQ_Y1phi;
+  std::vector<float>            recoTQ_Y1mass;
+  std::vector<float>            recoTQ_Y1massErr;
+  std::vector<float>            recoTQ_Y1vtxchi2;
+  std::vector<float>            recoTQ_Y1vtxndof;
+  std::vector<float>            recoTQ_Y1vtxprob;
+
+  std::vector<float>            recoTQ_Y2pt;
+  std::vector<float>            recoTQ_Y2eta;
+  std::vector<float>            recoTQ_Y2phi;
+  std::vector<float>            recoTQ_Y2mass;
+  std::vector<float>            recoTQ_Y2massErr;
+  std::vector<float>            recoTQ_Y2vtxchi2;
+  std::vector<float>            recoTQ_Y2vtxndof;
+  std::vector<float>            recoTQ_Y2vtxprob;
+
+
+  std::vector<int>            recoTQ_leptype1;
+  std::vector<float>            recoTQ_pt1;
+  std::vector<float>            recoTQ_eta1;
+  std::vector<float>            recoTQ_phi1;
+  std::vector<float>            recoTQ_charge1;
+  std::vector<float>            recoTQ_mass1;
+  std::vector<int>            recoTQ_softID1;
+
+  std::vector<int>            recoTQ_leptype2;
+  std::vector<float>            recoTQ_pt2;
+  std::vector<float>            recoTQ_eta2;
+  std::vector<float>            recoTQ_phi2;
+  std::vector<float>            recoTQ_charge2;
+  std::vector<float>            recoTQ_mass2;
+  std::vector<int>            recoTQ_softID2;
+
+  std::vector<int>            recoTQ_leptype3;
+  std::vector<float>            recoTQ_pt3;
+  std::vector<float>            recoTQ_pt3mode;
+  std::vector<float>            recoTQ_eta3;
+  std::vector<float>            recoTQ_phi3;
+  std::vector<float>            recoTQ_charge3;
+  std::vector<float>            recoTQ_mass3;
+  std::vector<int>            recoTQ_softID3;
+  std::vector<float>            recoTQ_mvaValue3;
+  std::vector<float>            recoTQ_mvaPFValue3;
+  std::vector<int>            recoTQ_isPF3;
+  std::vector<int>            recoTQ_isLowPt3;
+  std::vector<int>            recoTQ_isPFoverlap3;
+
+
+  std::vector<int>            recoTQ_leptype4;
+  std::vector<float>            recoTQ_pt4;
+  std::vector<float>            recoTQ_pt4mode;
+  std::vector<float>            recoTQ_eta4;
+  std::vector<float>            recoTQ_phi4;
+  std::vector<float>            recoTQ_charge4;
+  std::vector<float>            recoTQ_mass4;
+  std::vector<int>            recoTQ_softID4;
+  std::vector<float>            recoTQ_mvaValue4;
+  std::vector<float>            recoTQ_mvaPFValue4;
+  std::vector<int>            recoTQ_isPF4;
+  std::vector<int>            recoTQ_isLowPt4;
+  std::vector<int>            recoTQ_isPFoverlap4;
+
+
+
 
   float vx;
   float vy;
@@ -538,16 +654,21 @@ private:
      std::vector<float>            recoDimu_vtxchi2;
      std::vector<float>            recoDimu_vtxndof;
      std::vector<float>            recoDimu_vtxprob;
+
+     std::vector<int>            recoDimu_index1;  
+     std::vector<int>            recoDimu_index2;  
      std::vector<float>            recoDimu_pt1;  
      std::vector<float>            recoDimu_eta1;
      std::vector<float>            recoDimu_phi1;
      std::vector<float>            recoDimu_charge1;
      std::vector<float>            recoDimu_mass1;        
+     std::vector<float>            recoDimu_softID1;        
      std::vector<float>            recoDimu_pt2;  
      std::vector<float>            recoDimu_eta2;
      std::vector<float>            recoDimu_phi2;
      std::vector<float>            recoDimu_charge2;
      std::vector<float>            recoDimu_mass2;        
+     std::vector<float>            recoDimu_softID2;        
      std::vector<float>            recoDimu_pt;        
      std::vector<float>            recoDimu_eta;        
      std::vector<float>            recoDimu_phi;        
@@ -562,9 +683,9 @@ private:
      std::vector<float>recoEle_dR1;
      std::vector<float>recoEle_dR2;
      std::vector<int>              recoEle_charge;
-     std::vector<int>              recoEle_vx;
-     std::vector<int>              recoEle_vy;
-     std::vector<int>              recoEle_vz;
+     std::vector<float>              recoEle_vx;
+     std::vector<float>              recoEle_vy;
+     std::vector<float>              recoEle_vz;
      std::vector<int>              recoEle_matchid1;
      std::vector<int>              recoEle_matchid2;
      std::vector<float>recoEle_E_ecal_preReg;
@@ -581,7 +702,11 @@ private:
      std::vector<float>recoEle_isPFoverlap;
      std::vector<float>recoEle_isLowPt;
      
+     std::vector<float>recoEle_ptmode;
+     std::vector<float>recoEle_etamode;
+     std::vector<float>recoEle_phimode;
 
+     std::vector<float>recoEle_p;
 
      std::vector<float>            recoDiele_vx;
      std::vector<float>            recoDiele_vy;
@@ -589,6 +714,8 @@ private:
      std::vector<float>            recoDiele_vtxchi2;
      std::vector<float>            recoDiele_vtxndof;
      std::vector<float>            recoDiele_vtxprob;
+     std::vector<int>            recoDiele_index1;  
+     std::vector<int>            recoDiele_index2;  
      std::vector<float>            recoDiele_pt1;  
      std::vector<float>            recoDiele_eta1;
      std::vector<float>            recoDiele_phi1;
@@ -599,6 +726,12 @@ private:
      std::vector<float>            recoDiele_phi2;
      std::vector<float>            recoDiele_charge2;
      std::vector<float>            recoDiele_mass2;        
+     std::vector<float>            recoDiele_mvaValue1;        
+     std::vector<float>            recoDiele_mvaPFValue1;        
+
+     std::vector<float>            recoDiele_mvaValue2;        
+     std::vector<float>            recoDiele_mvaPFValue2;        
+
      std::vector<int>            recoDiele_isPF1;        
      std::vector<int>            recoDiele_isLowPt1;        
      std::vector<int>            recoDiele_isPFoverlap1;        
@@ -611,6 +744,88 @@ private:
      std::vector<float>            recoDiele_mass;        
      std::vector<float>            recoDiele_massErr;        
 
+     std::vector<float>recoDiele_pt1mode;
+     std::vector<float>recoDiele_eta1mode;
+     std::vector<float>recoDiele_phi1mode;
+     std::vector<float>recoDiele_pt2mode;
+     std::vector<float>recoDiele_eta2mode;
+     std::vector<float>recoDiele_phi2mode;
+
+  //TQ
+  std::vector<float>            recoTQ_pt;
+  std::vector<float>            recoTQ_eta;
+  std::vector<float>            recoTQ_phi;
+  std::vector<float>            recoTQ_mass;
+  std::vector<float>            recoTQ_massErr;
+  std::vector<float>            recoTQ_vtxchi2;
+  std::vector<float>            recoTQ_vtxndof;
+  std::vector<float>            recoTQ_vtxprob;
+
+  std::vector<float>            recoTQ_Y1pt;
+  std::vector<float>            recoTQ_Y1eta;
+  std::vector<float>            recoTQ_Y1phi;
+  std::vector<float>            recoTQ_Y1mass;
+  std::vector<float>            recoTQ_Y1massErr;
+  std::vector<float>            recoTQ_Y1vtxchi2;
+  std::vector<float>            recoTQ_Y1vtxndof;
+  std::vector<float>            recoTQ_Y1vtxprob;
+
+  std::vector<float>            recoTQ_Y2pt;
+  std::vector<float>            recoTQ_Y2eta;
+  std::vector<float>            recoTQ_Y2phi;
+  std::vector<float>            recoTQ_Y2mass;
+  std::vector<float>            recoTQ_Y2massErr;
+  std::vector<float>            recoTQ_Y2vtxchi2;
+  std::vector<float>            recoTQ_Y2vtxndof;
+  std::vector<float>            recoTQ_Y2vtxprob;
+
+
+  std::vector<int>            recoTQ_leptype1;
+  std::vector<float>            recoTQ_pt1;
+  std::vector<float>            recoTQ_eta1;
+  std::vector<float>            recoTQ_phi1;
+  std::vector<float>            recoTQ_charge1;
+  std::vector<float>            recoTQ_mass1;
+  std::vector<int>            recoTQ_softID1;
+
+  std::vector<int>            recoTQ_leptype2;
+  std::vector<float>            recoTQ_pt2;
+  std::vector<float>            recoTQ_eta2;
+  std::vector<float>            recoTQ_phi2;
+  std::vector<float>            recoTQ_charge2;
+  std::vector<float>            recoTQ_mass2;
+  std::vector<int>            recoTQ_softID2;
+
+  std::vector<int>            recoTQ_leptype3;
+  std::vector<float>            recoTQ_pt3;
+  std::vector<float>            recoTQ_pt3mode;
+  std::vector<float>            recoTQ_eta3;
+  std::vector<float>            recoTQ_phi3;
+  std::vector<float>            recoTQ_charge3;
+  std::vector<float>            recoTQ_mass3;
+  std::vector<int>            recoTQ_softID3;
+  std::vector<float>            recoTQ_mvaValue3;
+  std::vector<float>            recoTQ_mvaPFValue3;
+  std::vector<int>            recoTQ_isPF3;
+  std::vector<int>            recoTQ_isLowPt3;
+  std::vector<int>            recoTQ_isPFoverlap3;
+
+
+  std::vector<int>            recoTQ_leptype4;
+  std::vector<float>            recoTQ_pt4;
+  std::vector<float>            recoTQ_pt4mode;
+  std::vector<float>            recoTQ_eta4;
+  std::vector<float>            recoTQ_phi4;
+  std::vector<float>            recoTQ_charge4;
+  std::vector<float>            recoTQ_mass4;
+  std::vector<int>            recoTQ_softID4;
+  std::vector<float>            recoTQ_mvaValue4;
+  std::vector<float>            recoTQ_mvaPFValue4;
+  std::vector<int>            recoTQ_isPF4;
+  std::vector<int>            recoTQ_isLowPt4;
+  std::vector<int>            recoTQ_isPFoverlap4;
+
+
      // --- sample info (0:signal, <0 background, >0 data)
      int sampleID = sampleIndex_;
      float xsec=1.;
@@ -618,18 +833,66 @@ private:
      if(sampleID<=0) xsec=xsec_;
 
      // ---------- TRIGGER -------------------- //
+     /*
+      -----------------------------------------
+      year dataset     unprescaled
+      -----------------------------------------
+`      2016 Charmonium  HLT_Dimuon0_Jpsi_Muon_v*
+      2016 Muonia      HLT_Dimuon0_Upsilon_Muon_v
+      2016 MuonEG      HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v , HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ_v
+      
+      2017 Charmonium  HLT_Dimuon0_Jpsi3p5_Muon2_v
+      2017 Muonia      HLT_Dimuon12_Upsilon_eta1p5_v , 
+      2017 MuonEG      HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v , HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ_v
+      
+      2018 Charmonium  HLT_Dimuon0_Jpsi3p5_Muon2_v 
+      2018 Muonia      HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v , HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v, 
+      2018 MuonEG      HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v , HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ_v
+
+      */
+
+     
      const edm::TriggerNames &triggerNames = iEvent.triggerNames( *triggerBitsH_ );
 
      //  vector<std::string> const &names = triggerNames.triggerNames();  
-     int triggerBit=0;
+     int HLT2016_Dimuon0_Jpsi_Muon=0;
+     int HLT2016_Dimuon0_Upsilon_Muon=0;
+     int HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL=0;
+     int HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=0;
+     
+     int HLT2017_Dimuon0_Jpsi3p5_Muon2=0;
+     int HLT2017_Dimuon12_Upsilon_eta1p5=0;
+     int HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL=0;
+     int HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=0;
+     
+     int HLT2018_Dimuon0_Jpsi3p5_Muon2=0;
+     int HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon=0;
+     int HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL=0;
+     int HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL=0;
+     int HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=0;
+     /*
      for( unsigned index = 0; index < triggerNames.size(); ++index ) {
+             
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DoubleMu3_DoubleEle")) std::cout << index << " " << triggerNames.triggerName( index ) << " " << triggerBitsH_->accept( index ) << std::endl;
       
-       //  if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_") && triggerBitsH_->accept( index ) == 1) std::cout << index << " " << triggerNames.triggerName( index ) << " " << triggerBitsH_->accept( index ) << std::endl;
-      
-       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Physics") ) triggerBit=triggerBitsH_->accept( index );
+	  if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon0_Jpsi_Muon") )HLT2016_Dimuon0_Jpsi_Muon =triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon0_Upsilon_Muon") ) HLT2016_Dimuon0_Upsilon_Muon=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Mu8_DiEle12_CaloIdL_TrackIdL") )HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL =triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ") ) HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon0_Jpsi3p5_Muon2") ) HLT2017_Dimuon0_Jpsi3p5_Muon2=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon12_Upsilon_eta1p5") )HLT2017_Dimuon12_Upsilon_eta1p5 =triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Mu8_DiEle12_CaloIdL_TrackIdL") ) HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ") )HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ =triggerBitsH_->accept( index );
+          if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon0_Jpsi3p5_Muon2") ) HLT2018_Dimuon0_Jpsi3p5_Muon2=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon") ) HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL") ) HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Mu8_DiEle12_CaloIdL_TrackIdL") ) HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ") ) HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=triggerBitsH_->accept( index );
+
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon") )std::cout<<triggerBitsH_->accept( index )<<std::endl;
 
      }
-
+       */
      // ---------- GENERAL INFOS -------------------- //
      unsigned long int event = iEvent.id().event();   
      int run                 = iEvent.id().run();
@@ -642,6 +905,7 @@ private:
      int nLowPtEleReco=0;
      int nDimuReco=0;
      int nDieleReco=0;
+     int nTQReco=0;
 
      TLorentzVector* lep1=new TLorentzVector();
      TLorentzVector* lep2=new TLorentzVector();
@@ -653,7 +917,7 @@ private:
      float vz;
 
 
-     std::cout<<"-----------------------------------------------------"<<std::endl;
+     //     std::cout<<"-----------------------------------------------------"<<std::endl;
 	
      
      float puw_2016 = 1.;
@@ -665,11 +929,13 @@ private:
      // ---------- GEN LEVEL INFO -------------------- //
      if(sampleID <=0){
      for (const auto & genpar_iter : *genParticlesH_){ // loop over genparticles
+       //       std::cout<<"status: "<<genpar_iter.status()<<" pdgid: "<<genpar_iter.pdgId()<<" pt: "<<genpar_iter.pt()<<" mass: "<<genpar_iter.mass()<<" eta: "<<genpar_iter.eta()<<" phi: "<<genpar_iter.phi()<<" mom pdgId: "<<genpar_iter.mother(0)->pdgId()<<" mom mass: "<<genpar_iter.mother(0)->mass()<<std::endl;
        if(abs(genpar_iter.pdgId())!=13 && abs(genpar_iter.pdgId())!=11)continue;
+
 
        if(genpar_iter.mother(0)->pdgId()<20 || genpar_iter.mother(0)->pdgId()>50) continue;
     
-     //      std::cout<<"status: "<<genpar_iter.status()<<" pdgid: "<<genpar_iter.pdgId()<<" pt: "<<genpar_iter.pt()<<" mass: "<<genpar_iter.mass()<<" eta: "<<genpar_iter.eta()<<" phi: "<<genpar_iter.phi()<<" mom pdgId: "<<genpar_iter.mother(0)->pdgId()<<" mom mass: "<<genpar_iter.mother(0)->mass()<<std::endl;
+       
 
     
        genLep_pt.push_back(genpar_iter.pt());
@@ -770,6 +1036,8 @@ private:
        //compute dR matching w/ each gen muon      
        for(unsigned int i=0;i<genLep_pdgId.size();i++){
  	if(abs(genLep_pdgId[i])!=13)continue;
+	if(genLep_pdgId[i]==13 && recocharge==1)continue;
+	if(genLep_pdgId[i]==-13 && recocharge==-1)continue;
  	dR= deltaR(eta,phi,genLep_eta[i],genLep_phi[i]);
  	if(dR<dRMin1){
  	  dRMin1=dR;
@@ -780,6 +1048,9 @@ private:
     
        for(unsigned int i=0;i<genLep_pdgId.size();i++){
  	if(abs(genLep_pdgId[i])!=13)continue;
+	if(genLep_pdgId[i]==13 && recocharge==1)continue;
+	if(genLep_pdgId[i]==-13 && recocharge==-1)continue;
+
  	if(i==(unsigned int)recomatchid1)continue;
  	dR= deltaR(eta,phi,genLep_eta[i],genLep_phi[i]);
  	if(dR<dRMin2){
@@ -813,9 +1084,9 @@ private:
      // ---------- DIMUONS -------------------- //			
      size_t imu1=-1;
      size_t imu2=-1;
+     std::vector<reco::TransientTrack> recoDimu_TT1;
+     std::vector<reco::TransientTrack> recoDimu_TT2;
 
-     std::cout<<" nMuReco:   "<<nMuReco<<std::endl;
-     //     for (pat::MuonCollection::const_iterator mu1 = patMuonsH_.begin(); mu1 != patMuonsH_.end(); ++mu1){
      for (const pat::Muon & mu1 : *patMuonsH_){
        imu1++;
        if(mu1.pt()<1.)continue;
@@ -828,35 +1099,16 @@ private:
 	 if(imu2<=imu1)continue;
 	 if(mu2.pt()<1.)continue;
 	 if(abs(mu2.eta())>2.5)continue;
-	 if(mu1.charge()*mu2.charge()>0)continue;
+	 //	 if(mu1.charge()*mu2.charge()>0)continue;
     
-	 std::cout<<"-----------------------------------------"<<std::endl;
-	 std::cout<<" pt1: "<<mu1.pt()<<" pt2: "<<mu2.pt()<<" eta1: "<<mu1.eta()<<" eta2: "<<mu2.eta()<<" phi1: "<<mu1.phi()<<" phi2: "<<mu2.phi()<<" ch1: "<<mu1.charge()<<" ch2: "<<mu2.charge()<<std::endl;
+
 	 
-
-       recoDimu_pt1.push_back(mu1.pt());
-       recoDimu_eta1.push_back(mu1.eta());
-       recoDimu_phi1.push_back(mu1.phi());
-       recoDimu_charge1.push_back(mu1.charge());
-       recoDimu_mass1.push_back(mu1.mass());
-
-
-       recoDimu_pt2.push_back(mu2.pt());
-       recoDimu_eta2.push_back(mu2.eta());
-       recoDimu_phi2.push_back(mu2.phi());
-       recoDimu_charge2.push_back(mu2.charge());
-       recoDimu_mass2.push_back(mu2.mass());
-       
+	 
 	
        //run kinematic fit
 	
        reco::TransientTrack mu1TT = theB->build(mu1.bestTrack());
        reco::TransientTrack mu2TT = theB->build(mu2.bestTrack());
-	/*	const reco::TransientTrack mu1TT((*(mu1.bestTrack())),&(*bFieldHandle)); 
-	const reco::TransientTrack mu2TT((*(mu2.bestTrack())),&(*bFieldHandle)); 
-	*/
-       //       std::cout<<mu1TT.isValid()<<" "<<mu2TT.isValid()<<std::endl;
-       //       std::cout<<mu1TT.numberOfValidHits()<<" "<<mu2TT.numberOfValidHits()<<std::endl;
 
 	float chi = 0.;
 	float ndf = 0.;
@@ -870,17 +1122,6 @@ private:
 	allParticles.push_back(pFactory.particle (mu2TT,muon_mass,chi,ndf,muon_sigma));
 	KinematicParticleVertexFitter fitter;
 	
-	/*RefCountedKinematicTree vtx_tree = fitter.fit(allParticles);
-	if(vtx_tree->isEmpty() == 1)
-	  std::cout << "Kinematic Fit unsuccesfull" << std::endl;
-	else{
-	vtx_tree->movePointerToTheTop(); 
-	RefCountedKinematicVertex fitted_vtx_ = vtx_tree->currentDecayVertex();
-
-	float fitted_chi2=fitted_vtx_->chiSquared();
-	std::cout<<" chi2: "<<fitted_chi2<<std::endl;
-	}*/
-
 
 	KinVtxFitter fitter2(
 			   {mu1TT,mu2TT},
@@ -889,23 +1130,47 @@ private:
 		      );
 	
        if(!fitter2.success()) continue; 
+       //       std::cout<<" chi2: "<<fitter2.chi2()<<std::endl;
+       // std::cout<<" dof: "<<fitter2.dof()<<std::endl;
+       //std::cout<<" prob: "<<fitter2.prob()<<std::endl;
+
+       //       std::cout<<"ind1: "<<imu1<<" ind2: "<<imu2<<" pt1: "<<mu1.pt()<<" pt2: "<<mu2.pt()<<" eta1: "<<mu1.eta()<<" eta2: "<<mu2.eta()<<" phi1: "<<mu1.phi()<<" phi2: "<<mu2.phi()<<" ch1: "<<mu1.charge()<<" ch2: "<<mu2.charge()<<std::endl;	 
        
-       std::cout<<" chi2: "<<fitter2.chi2()<<std::endl;
-       std::cout<<" dof: "<<fitter2.dof()<<std::endl;
-       std::cout<<" prob: "<<fitter2.prob()<<std::endl;
+
+       recoDimu_TT1.push_back(mu1TT);
+       recoDimu_TT2.push_back(mu2TT);
+
+       recoDimu_pt1.push_back(mu1.pt());
+       recoDimu_index1.push_back(imu1);
+       recoDimu_index2.push_back(imu2);
+       recoDimu_eta1.push_back(mu1.eta());
+       recoDimu_phi1.push_back(mu1.phi());
+       recoDimu_charge1.push_back(mu1.charge());
+       recoDimu_mass1.push_back(mu1.mass());
+       recoDimu_softID1.push_back(muon::isSoftMuon(mu1, pv));
+
+
+       recoDimu_pt2.push_back(mu2.pt());
+       recoDimu_eta2.push_back(mu2.eta());
+       recoDimu_phi2.push_back(mu2.phi());
+       recoDimu_charge2.push_back(mu2.charge());
+       recoDimu_mass2.push_back(mu2.mass());
+       recoDimu_softID2.push_back(muon::isSoftMuon(mu2, pv));
+
        recoDimu_vx.push_back(fitter2.fitted_vtx().x());
        recoDimu_vy.push_back(fitter2.fitted_vtx().y());
        recoDimu_vz.push_back(fitter2.fitted_vtx().z());
        recoDimu_vtxchi2.push_back(fitter2.chi2());
        recoDimu_vtxndof.push_back(fitter2.dof());
        recoDimu_vtxprob.push_back(fitter2.prob());
-       /*       auto fit_p4 = fitter2.fitted_p4();
+       auto fit_p4 = fitter2.fitted_p4();
        recoDimu_pt.push_back(fit_p4.pt());        
        recoDimu_eta.push_back(fit_p4.eta());        
        recoDimu_phi.push_back(fit_p4.phi());        
-       //       recoDimu_mass.push_back(fitter2.fitted_candidate().mass());        
-       //recoDimu_massErr.push_back(sqrt(fitter2.fitted_candidate().kinematicParametersError().matrix()(6,6)));        
-       */
+       
+       recoDimu_mass.push_back(fitter2.fitted_candidate().mass());        
+       recoDimu_massErr.push_back(sqrt(fitter2.fitted_candidate().kinematicParametersError().matrix()(6,6)));        
+       
 
       nDimuReco++;
 
@@ -944,9 +1209,21 @@ private:
       int recoconvveto=ele.passConversionVeto();
       
 
+
+      float recoptmode=ele.gsfTrack()->ptMode();
+      float recoetamode=ele.gsfTrack()->etaMode();
+      float recophimode=ele.gsfTrack()->phiMode();
+
+
+      float recop=ele.p();
+
       
       for(unsigned int i=0;i<genLep_pdgId.size();i++){
 	if(abs(genLep_pdgId[i])!=11)continue;
+	
+	if(genLep_pdgId[i]==11 && recocharge==1)continue;
+	if(genLep_pdgId[i]==-11 && recocharge==-1)continue;
+	
 	dR= deltaR(recoeta,recophi,genLep_eta[i],genLep_phi[i]);
 	if(dR<dRMin1){
 	  dRMin1=dR;
@@ -957,6 +1234,10 @@ private:
       
       for(unsigned int i=0;i<genLep_pdgId.size();i++){
 	if(abs(genLep_pdgId[i])!=11)continue;
+	if(genLep_pdgId[i]==11 && recocharge==1)continue;
+	if(genLep_pdgId[i]==-11 && recocharge==-1)continue;
+
+
 	if(i==(unsigned int)recomatchid1)continue;
 	dR= deltaR(recoeta,recophi,genLep_eta[i],genLep_phi[i]);
 	if(dR<dRMin2){
@@ -983,6 +1264,14 @@ private:
       recoEle_phi.push_back(recophi);
       recoEle_charge.push_back(recocharge);
 
+
+      recoEle_ptmode.push_back(recoptmode);
+      recoEle_etamode.push_back(recoetamode);
+      recoEle_phimode.push_back(recophimode);
+
+
+      recoEle_p.push_back(recop);
+
       recoEle_vx.push_back(recovx);
       recoEle_vy.push_back(recovy);
       recoEle_vz.push_back(recovz);
@@ -1004,7 +1293,7 @@ private:
       recoEle_mvaPFValue.push_back(mvaPF_value);
       recoEle_mvaValue.push_back(mva_value);
 
-      
+      //      std::cout<<" index: "<<ipfele<<" ch: "<<recoEle_charge[ipfele]<<" pt: "<<recoEle_pt[ipfele]<<" isPF: "<<recoEle_isPF[ipfele]<<" isLP: "<<recoEle_isLowPt[ipfele]<<" overlap: "<<recoEle_isPFoverlap[ipfele]<<std::endl;
       
       float recopre_ecal     = -999.;
       float recopre_ecaltrk  = -999.;
@@ -1043,6 +1332,14 @@ private:
 	float recomass=ele.mass();
 	int recocharge=ele.charge();
 
+	float recoptmode=ele.gsfTrack()->ptMode();
+	float recoetamode=ele.gsfTrack()->etaMode();
+	float recophimode=ele.gsfTrack()->phiMode();
+
+
+	float recop=ele.p();
+
+
 	float recovx=ele.vx();
 	float recovy=ele.vy();
 	float recovz=ele.vz();
@@ -1058,6 +1355,7 @@ private:
 			fabs(recoEle_vz[iEle] - recovz) < dz_cleaning_ &&
 			reco::deltaR(recoeta, recophi, recoEle_eta[iEle], recoEle_phi[iEle]) < dr_cleaning_   );
 	  
+	  //	  std::cout<<"dz: "<<fabs(recoEle_vz[iEle] - recovz)<<" lp eta: "<<recoeta<<" reco eta: "<<recoEle_eta[iEle]<<" lp phi: "<<recophi<<" reco phi: "<<recoEle_phi[iEle]<<" clean? "<<clean_out<<std::endl;
 	}
 	
             
@@ -1078,6 +1376,9 @@ private:
       
       for(unsigned int i=0;i<genLep_pdgId.size();i++){
 	if(abs(genLep_pdgId[i])!=11)continue;
+	if(genLep_pdgId[i]==11 && recocharge==1)continue;
+	if(genLep_pdgId[i]==-11 && recocharge==-1)continue;
+
 	dR= deltaR(recoeta,recophi,genLep_eta[i],genLep_phi[i]);
 	if(dR<dRMin1){
 	  dRMin1=dR;
@@ -1088,6 +1389,9 @@ private:
       
       for(unsigned int i=0;i<genLep_pdgId.size();i++){
 	if(abs(genLep_pdgId[i])!=11)continue;
+	if(genLep_pdgId[i]==11 && recocharge==1)continue;
+	if(genLep_pdgId[i]==-11 && recocharge==-1)continue;
+
 	if(i==(unsigned int)recomatchid1)continue;
 	dR= deltaR(recoeta,recophi,genLep_eta[i],genLep_phi[i]);
 	if(dR<dRMin2){
@@ -1109,6 +1413,13 @@ private:
       recoEle_eta.push_back(recoeta);
       recoEle_phi.push_back(recophi);
       recoEle_charge.push_back(recocharge);
+
+      recoEle_ptmode.push_back(recoptmode);
+      recoEle_etamode.push_back(recoetamode);
+      recoEle_phimode.push_back(recophimode);
+
+      recoEle_p.push_back(recop);
+
 
       recoEle_vx.push_back(recovx);
       recoEle_vy.push_back(recovy);
@@ -1160,43 +1471,27 @@ private:
      // ----------------- DIELECTRON PF-PF -------------------- //
      size_t iel1=-1;
      size_t iel2=-1;
+     std::vector<reco::TransientTrack> recoDiele_TT1;
+     std::vector<reco::TransientTrack> recoDiele_TT2;
+
      for (const pat::Electron & el1 : *pf){
        iel1++;
        if(el1.pt()<1.)continue;
        if(abs(el1.eta())>2.5)continue;
 
        iel2=-1;
-       // for (pat::MuonCollection::const_iterator mu2 = patMuonsH_.begin(); mu2 != patMuonsH_.end(); ++mu2){
+
        for (const pat::Electron & el2 : *pf){
 	 iel2++;
 	 if(iel2<=iel1)continue;
 	 if(el2.pt()<1.)continue;
 	 if(abs(el2.eta())>2.5)continue;
-	 if(el1.charge()*el2.charge()>0)continue;
+	 //	 if(el1.charge()*el2.charge()>0)continue;
     
 
-	 //	std::cout<<" pt1: "<<el1.pt()<<" pt2: "<<el2.pt()<<" eta1: "<<el1.eta()<<" eta2: "<<el2.eta()<<" phi1: "<<el1.phi()<<" phi2: "<<el2.phi()<<" ch1: "<<el1.charge()<<" ch2: "<<el2.charge()<<std::endl;
+	 
 	
 
-       recoDiele_pt1.push_back(el1.pt());
-       recoDiele_eta1.push_back(el1.eta());
-       recoDiele_phi1.push_back(el1.phi());
-       recoDiele_charge1.push_back(el1.charge());
-       recoDiele_mass1.push_back(el1.mass());
-       recoDiele_isPF1.push_back(1);
-       recoDiele_isLowPt1.push_back(0);
-       recoDiele_isPFoverlap1.push_back(0);
-
-
-       recoDiele_pt2.push_back(el2.pt());
-       recoDiele_eta2.push_back(el2.eta());
-       recoDiele_phi2.push_back(el2.phi());
-       recoDiele_charge2.push_back(el2.charge());
-       recoDiele_mass2.push_back(el2.mass());
-       recoDiele_isPF2.push_back(1);
-       recoDiele_isLowPt2.push_back(0);
-       recoDiele_isPFoverlap2.push_back(0);
-	
 	
        //run kinematic fit
 	
@@ -1216,12 +1511,65 @@ private:
 	
        if(!fitter.success()) continue; 
        //       std::cout<<" prob: "<<fitter.prob()<<std::endl;
+
+       recoDiele_TT1.push_back(el1TT);
+       recoDiele_TT2.push_back(el2TT);
+       
        recoDiele_vx.push_back(fitter.fitted_vtx().x());
        recoDiele_vy.push_back(fitter.fitted_vtx().y());
        recoDiele_vz.push_back(fitter.fitted_vtx().z());
        recoDiele_vtxchi2.push_back(fitter.chi2());
        recoDiele_vtxndof.push_back(fitter.dof());
        recoDiele_vtxprob.push_back(fitter.prob());
+       auto fit_p4 = fitter.fitted_p4();
+       recoDiele_pt.push_back(fit_p4.pt());
+       recoDiele_eta.push_back(fit_p4.eta());
+       recoDiele_phi.push_back(fit_p4.phi());
+       recoDiele_mass.push_back(fitter.fitted_candidate().mass());
+       recoDiele_massErr.push_back(sqrt(fitter.fitted_candidate().kinematicParametersError().matrix()(6,6)));
+
+       //       std::cout<<"ind1: "<<iel1<<" ind2: "<<iel2<<" pt1: "<<el1.pt()<<" pt2: "<<el2.pt()<<" eta1: "<<el1.eta()<<" eta2: "<<el2.eta()<<" phi1: "<<el1.phi()<<" phi2: "<<el2.phi()<<" ch1: "<<el1.charge()<<" ch2: "<<el2.charge()<<std::endl;
+       
+       recoDiele_index1.push_back(iel1);
+       recoDiele_index2.push_back(iel2);
+       recoDiele_pt1.push_back(el1.pt());
+       recoDiele_eta1.push_back(el1.eta());
+       recoDiele_phi1.push_back(el1.phi());
+       recoDiele_charge1.push_back(el1.charge());
+       recoDiele_mass1.push_back(el1.mass());
+       recoDiele_isPF1.push_back(1);
+       recoDiele_isLowPt1.push_back(0);
+       recoDiele_isPFoverlap1.push_back(0);
+       recoDiele_mvaValue1.push_back(-999.);
+
+       float mvaPF_value1 = -999.;
+       edm::Ref<pat::ElectronCollection> ref1(pf,iel1);
+       mvaPF_value1 = float((*mvaValuePFH_)[ref1]);
+       recoDiele_mvaPFValue1.push_back(mvaPF_value1);
+
+
+       recoDiele_pt1mode.push_back(el1.gsfTrack()->pt());
+       recoDiele_eta1mode.push_back(el1.gsfTrack()->eta());
+       recoDiele_phi1mode.push_back(el1.gsfTrack()->phi());
+       recoDiele_pt2mode.push_back(el2.gsfTrack()->pt());
+       recoDiele_eta2mode.push_back(el2.gsfTrack()->eta());
+       recoDiele_phi2mode.push_back(el2.gsfTrack()->phi());
+
+
+       recoDiele_pt2.push_back(el2.pt());
+       recoDiele_eta2.push_back(el2.eta());
+       recoDiele_phi2.push_back(el2.phi());
+       recoDiele_charge2.push_back(el2.charge());
+       recoDiele_mass2.push_back(el2.mass());
+       recoDiele_isPF2.push_back(1);
+       recoDiele_isLowPt2.push_back(0);
+       recoDiele_isPFoverlap2.push_back(0);
+       recoDiele_mvaValue2.push_back(-999.);
+       float mvaPF_value2 = -999.;
+       edm::Ref<pat::ElectronCollection> ref2(pf,iel2);
+       mvaPF_value2 = float((*mvaValuePFH_)[ref2]);
+       recoDiele_mvaPFValue2.push_back(mvaPF_value2);
+
        
        nDieleReco++;
 
@@ -1232,7 +1580,7 @@ private:
 
 
 
-     // ----------------- DLP_IELECTRON LP-LP -------------------- //
+     // ----------------- DIELECTRON LP-LP -------------------- //
      size_t lp_iel1=-1;
      size_t lp_iel2=-1;
      for (const pat::Electron & el1 : *lowpt){
@@ -1242,16 +1590,55 @@ private:
 
        lp_iel2=-1;
        // for (pat::MuonCollection::const_iterator mu2 = patMuonsH_.begin(); mu2 != patMuonsH_.end(); ++mu2){
-       for (const pat::Electron & el2 : *pf){
+       for (const pat::Electron & el2 : *lowpt){
 	 lp_iel2++;
 	 if(lp_iel2<=lp_iel1)continue;
 	 if(el2.pt()<1.)continue;
 	 if(abs(el2.eta())>2.5)continue;
-	 if(el1.charge()*el2.charge()>0)continue;
+	 //	 if(el1.charge()*el2.charge()>0)continue;
     
 
 	 //	std::cout<<" pt1: "<<el1.pt()<<" pt2: "<<el2.pt()<<" eta1: "<<el1.eta()<<" eta2: "<<el2.eta()<<" phi1: "<<el1.phi()<<" phi2: "<<el2.phi()<<" ch1: "<<el1.charge()<<" ch2: "<<el2.charge()<<std::endl;
-	bool clean_out1 = false;
+
+	
+       //run kinematic fit
+	
+       reco::TransientTrack el1TT = (*theB).build( el1.gsfTrack() );
+       reco::TransientTrack el2TT = (*theB).build( el2.gsfTrack() );
+
+	float chi = 0.;
+	float ndf = 0.;
+	double elon_mass = 0.005056583;
+	float elon_sigma = 0.0000001;
+
+	KinVtxFitter fitter(
+			   {el1TT,el2TT},
+			   {elon_mass,elon_mass},
+			   {elon_sigma,elon_sigma} //some small sigma for the lepton mass
+		      );
+	
+       if(!fitter.success()) continue; 
+
+       recoDiele_TT1.push_back(el1TT);
+       recoDiele_TT2.push_back(el2TT);
+
+
+       //       std::cout<<" prob: "<<fitter.prob()<<std::endl;
+       recoDiele_vx.push_back(fitter.fitted_vtx().x());
+       recoDiele_vy.push_back(fitter.fitted_vtx().y());
+       recoDiele_vz.push_back(fitter.fitted_vtx().z());
+       recoDiele_vtxchi2.push_back(fitter.chi2());
+       recoDiele_vtxndof.push_back(fitter.dof());
+       recoDiele_vtxprob.push_back(fitter.prob());
+       auto fit_p4 = fitter.fitted_p4();
+       recoDiele_pt.push_back(fit_p4.pt());
+       recoDiele_eta.push_back(fit_p4.eta());
+       recoDiele_phi.push_back(fit_p4.phi());
+       recoDiele_mass.push_back(fitter.fitted_candidate().mass());
+       recoDiele_massErr.push_back(sqrt(fitter.fitted_candidate().kinematicParametersError().matrix()(6,6)));
+
+
+       	bool clean_out1 = false;
 	bool clean_out2 = false;
 	for(unsigned int iEle=0; iEle<nPFEle; ++iEle) {
 	  
@@ -1273,6 +1660,8 @@ private:
       else recoisoverlap2=0;
 	
 
+       recoDiele_index1.push_back(lp_iel1);
+       recoDiele_index2.push_back(lp_iel2);
        recoDiele_pt1.push_back(el1.pt());
        recoDiele_eta1.push_back(el1.eta());
        recoDiele_phi1.push_back(el1.phi());
@@ -1281,7 +1670,20 @@ private:
        recoDiele_isPF1.push_back(0);
        recoDiele_isLowPt1.push_back(1);
        recoDiele_isPFoverlap1.push_back(recoisoverlap1);
+       recoDiele_mvaPFValue1.push_back(-999.);
 
+       recoDiele_pt1mode.push_back(el1.gsfTrack()->pt());
+       recoDiele_eta1mode.push_back(el1.gsfTrack()->eta());
+       recoDiele_phi1mode.push_back(el1.gsfTrack()->phi());
+       recoDiele_pt2mode.push_back(el2.gsfTrack()->pt());
+       recoDiele_eta2mode.push_back(el2.gsfTrack()->eta());
+       recoDiele_phi2mode.push_back(el2.gsfTrack()->phi());
+
+
+       float mva_value1 = -999.;
+       mva_value1=el1.isElectronIDAvailable("ID") ? el1.electronID("ID") : -100. ;
+       recoDiele_mvaValue1.push_back(mva_value1);
+       //       std::cout<<"lplp"<<std::endl;
 
        recoDiele_pt2.push_back(el2.pt());
        recoDiele_eta2.push_back(el2.eta());
@@ -1291,7 +1693,40 @@ private:
        recoDiele_isPF2.push_back(0);
        recoDiele_isLowPt2.push_back(1);
        recoDiele_isPFoverlap2.push_back(recoisoverlap2);
-	
+       recoDiele_mvaPFValue2.push_back(-999.);
+       float mva_value2 = -999.;
+       mva_value2=el2.isElectronIDAvailable("ID") ? el2.electronID("ID") : -100. ;
+       recoDiele_mvaValue2.push_back(mva_value2);
+
+       
+       nDieleReco++;
+
+
+
+    }
+ }
+
+
+
+     // ----------------- DIELECTRON LP-PF -------------------- //
+     size_t llpp_iel1=-1;
+     size_t pf_iel2=-1;
+     for (const pat::Electron & el1 : *lowpt){
+       llpp_iel1++;
+       if(el1.pt()<1.)continue;
+       if(abs(el1.eta())>2.5)continue;
+
+       pf_iel2=-1;
+       // for (pat::MuonCollection::const_iterator mu2 = patMuonsH_.begin(); mu2 != patMuonsH_.end(); ++mu2){
+       for (const pat::Electron & el2 : *pf){
+	 pf_iel2++;
+	 if(el2.pt()<1.)continue;
+	 if(abs(el2.eta())>2.5)continue;
+	 //	 if(el1.charge()*el2.charge()>0)continue;
+    
+
+	 //	std::cout<<" pt1: "<<el1.pt()<<" pt2: "<<el2.pt()<<" eta1: "<<el1.eta()<<" eta2: "<<el2.eta()<<" phi1: "<<el1.phi()<<" phi2: "<<el2.phi()<<" ch1: "<<el1.charge()<<" ch2: "<<el2.charge()<<std::endl;
+
 	
        //run kinematic fit
 	
@@ -1310,6 +1745,10 @@ private:
 		      );
 	
        if(!fitter.success()) continue; 
+
+       recoDiele_TT1.push_back(el1TT);
+       recoDiele_TT2.push_back(el2TT);
+
        //       std::cout<<" prob: "<<fitter.prob()<<std::endl;
        recoDiele_vx.push_back(fitter.fitted_vtx().x());
        recoDiele_vy.push_back(fitter.fitted_vtx().y());
@@ -1317,13 +1756,205 @@ private:
        recoDiele_vtxchi2.push_back(fitter.chi2());
        recoDiele_vtxndof.push_back(fitter.dof());
        recoDiele_vtxprob.push_back(fitter.prob());
+       auto fit_p4 = fitter.fitted_p4();
+       recoDiele_pt.push_back(fit_p4.pt());
+       recoDiele_eta.push_back(fit_p4.eta());
+       recoDiele_phi.push_back(fit_p4.phi());
+       recoDiele_mass.push_back(fitter.fitted_candidate().mass());
+       recoDiele_massErr.push_back(sqrt(fitter.fitted_candidate().kinematicParametersError().matrix()(6,6)));
+
+
+       	bool clean_out1 = false;
+
+	for(unsigned int iEle=0; iEle<nPFEle; ++iEle) {
+	  
+	  clean_out1 |= (
+			 fabs(recoEle_vz[iEle] - el1.vz()) < dz_cleaning_ &&
+			 reco::deltaR(el1.eta(), el1.phi(), recoEle_eta[iEle], recoEle_phi[iEle]) < dr_cleaning_   );
+	}
+	
+            
+      int recoisoverlap1=0;
+      if(clean_out1) recoisoverlap1=1;
+      else recoisoverlap1=0;
+	
+      recoDiele_index1.push_back(llpp_iel1);
+      recoDiele_index2.push_back(pf_iel2);
+      recoDiele_pt1.push_back(el1.pt());
+      recoDiele_eta1.push_back(el1.eta());
+      recoDiele_phi1.push_back(el1.phi());
+      recoDiele_charge1.push_back(el1.charge());
+      recoDiele_mass1.push_back(el1.mass());
+      recoDiele_isPF1.push_back(0);
+      recoDiele_isLowPt1.push_back(1);
+      recoDiele_isPFoverlap1.push_back(recoisoverlap1);
+      recoDiele_mvaPFValue1.push_back(-999.);
+       
+       recoDiele_pt1mode.push_back(el1.gsfTrack()->pt());
+       recoDiele_eta1mode.push_back(el1.gsfTrack()->eta());
+       recoDiele_phi1mode.push_back(el1.gsfTrack()->phi());
+       recoDiele_pt2mode.push_back(el2.gsfTrack()->pt());
+       recoDiele_eta2mode.push_back(el2.gsfTrack()->eta());
+       recoDiele_phi2mode.push_back(el2.gsfTrack()->phi());
+
+
+       float mva_value1 = -999.;
+       mva_value1=el1.isElectronIDAvailable("ID") ? el1.electronID("ID") : -100. ;
+       recoDiele_mvaValue1.push_back(mva_value1);
+
+       //       std::cout<<"lppf"<<std::endl;
+       recoDiele_pt2.push_back(el2.pt());
+       recoDiele_eta2.push_back(el2.eta());
+       recoDiele_phi2.push_back(el2.phi());
+       recoDiele_charge2.push_back(el2.charge());
+       recoDiele_mass2.push_back(el2.mass());
+       recoDiele_isPF2.push_back(1);
+       recoDiele_isLowPt2.push_back(0);
+       recoDiele_isPFoverlap2.push_back(0);
+       recoDiele_mvaValue2.push_back(-999.);
+       float mvaPF_value2 = -999.;
+       edm::Ref<pat::ElectronCollection> ref(pf,pf_iel2);
+       mvaPF_value2 = float((*mvaValuePFH_)[ref]);
+       recoDiele_mvaPFValue2.push_back(mvaPF_value2);
+
        
        nDieleReco++;
 
 
 
-    }
- }
+       }
+     }
+
+
+
+       //reconstruct TQ
+
+       for(int idimu=0;idimu<nDimuReco;idimu++){
+
+
+	 reco::TransientTrack mu1TT = recoDimu_TT1[idimu];
+	 reco::TransientTrack mu2TT = recoDimu_TT2[idimu];
+
+
+	 int idiel=0;
+	 for( idiel=0;idiel<nDieleReco;idiel++){
+
+	 reco::TransientTrack el1TT = recoDiele_TT1[idiel] ;
+	 reco::TransientTrack el2TT = recoDiele_TT2[idiel] ;
+
+
+
+	 float chi = 0.;
+	 float ndf = 0.;
+	 double muon_mass = 0.1056583;
+	 float muon_sigma = 0.0000001;
+	 double elon_mass = 0.005056583;
+	 float elon_sigma = 0.0000001;
+	 
+	 KinVtxFitter fitter(
+			     {mu1TT,mu2TT,el1TT,el2TT},
+			     {muon_mass,muon_mass,elon_mass,elon_mass},
+			     {muon_sigma,muon_sigma,elon_sigma,elon_sigma} //some small sigma for the lepton mass
+			      );
+	 
+	 if(!fitter.success()) continue; 
+       
+	 recoTQ_vtxchi2.push_back(fitter.chi2());
+	 recoTQ_vtxndof.push_back(fitter.dof());
+	 recoTQ_vtxprob.push_back(fitter.prob());
+	 
+	 auto fit_p4 = fitter.fitted_p4();
+	 recoTQ_pt.push_back(fit_p4.pt());
+	 recoTQ_eta.push_back(fit_p4.eta());
+	 recoTQ_phi.push_back(fit_p4.phi());
+	 recoTQ_mass.push_back(fitter.fitted_candidate().mass());
+	 recoTQ_massErr.push_back(sqrt(fitter.fitted_candidate().kinematicParametersError().matrix()(6,6)));
+
+	 recoTQ_Y1pt.push_back(recoDimu_pt[idimu]);
+	 recoTQ_Y1eta.push_back(recoDimu_eta[idimu]);
+	 recoTQ_Y1phi.push_back(recoDimu_phi[idimu]);
+	 recoTQ_Y1mass.push_back(recoDimu_mass[idimu]);
+	 recoTQ_Y1massErr.push_back(recoDimu_massErr[idimu]);
+	 recoTQ_Y1vtxchi2.push_back(recoDimu_vtxchi2[idimu]);
+	 recoTQ_Y1vtxndof.push_back(recoDimu_vtxndof[idimu]);
+	 recoTQ_Y1vtxprob.push_back(recoDimu_vtxprob[idimu]);
+
+
+	 recoTQ_leptype1.push_back(0); //0 muons 1 electrons
+	 recoTQ_pt1.push_back(recoDimu_pt1[idimu]);
+	 recoTQ_eta1.push_back(recoDimu_eta1[idimu]);
+	 recoTQ_phi1.push_back(recoDimu_phi1[idimu]);
+	 recoTQ_charge1.push_back(recoDimu_charge1[idimu]);
+	 recoTQ_mass1.push_back(recoDimu_mass1[idimu]);
+	 recoTQ_softID1.push_back(recoDimu_softID1[idimu]);
+	 
+
+	 recoTQ_leptype2.push_back(0); 
+	 recoTQ_pt2.push_back(recoDimu_pt2[idimu]);
+	 recoTQ_eta2.push_back(recoDimu_eta2[idimu]);
+	 recoTQ_phi2.push_back(recoDimu_phi2[idimu]);
+	 recoTQ_charge2.push_back(recoDimu_charge2[idimu]);
+	 recoTQ_mass2.push_back(recoDimu_mass2[idimu]);
+	 recoTQ_softID2.push_back(recoDimu_softID2[idimu]);
+  
+
+	 recoTQ_Y2pt.push_back(recoDiele_pt[idiel]);
+	 recoTQ_Y2eta.push_back(recoDiele_eta[idiel]);
+	 recoTQ_Y2phi.push_back(recoDiele_phi[idiel]);
+	 recoTQ_Y2mass.push_back(recoDiele_mass[idiel]);
+	 recoTQ_Y2massErr.push_back(recoDiele_massErr[idiel]);
+	 recoTQ_Y2vtxchi2.push_back(recoDiele_vtxchi2[idiel]);
+	 recoTQ_Y2vtxndof.push_back(recoDiele_vtxndof[idiel]);
+	 recoTQ_Y2vtxprob.push_back(recoDiele_vtxprob[idiel]);
+
+
+
+	 //	 std::cout<<"idimu: "<<idimu<<" idiel: "<<idiel<<" TQmass: "<<fitter.fitted_candidate().mass()<<" Y1: " << recoDimu_mass[idimu]<<" Y2: "<<recoDiele_mass[idiel]<<std::endl;
+
+	 recoTQ_leptype3.push_back(1);
+         recoTQ_pt3.push_back(recoDiele_pt1[idiel]);
+         recoTQ_pt3mode.push_back(recoDiele_pt1mode[idiel]);
+         recoTQ_eta3.push_back(recoDiele_eta1mode[idiel]);
+         recoTQ_phi3.push_back(recoDiele_phi1mode[idiel]);
+         recoTQ_charge3.push_back(recoDiele_charge1[idiel]);
+         recoTQ_mass3.push_back(recoDiele_mass1[idiel]);
+         recoTQ_softID3.push_back(-999);
+         recoTQ_mvaValue3.push_back(recoDiele_mvaValue1[idiel]);
+         recoTQ_mvaPFValue3.push_back(recoDiele_mvaPFValue1[idiel]);
+         recoTQ_isPF3.push_back(recoDiele_isPF1[idiel]);
+         recoTQ_isLowPt3.push_back(recoDiele_isLowPt1[idiel]);
+         recoTQ_isPFoverlap3.push_back(recoDiele_isPFoverlap1[idiel]);
+
+
+	 recoTQ_leptype4.push_back(1);
+         recoTQ_pt4.push_back(recoDiele_pt2[idiel]);
+         recoTQ_pt4mode.push_back(recoDiele_pt2mode[idiel]);
+         recoTQ_eta4.push_back(recoDiele_eta2mode[idiel]);
+         recoTQ_phi4.push_back(recoDiele_phi2mode[idiel]);
+         recoTQ_charge4.push_back(recoDiele_charge2[idiel]);
+         recoTQ_mass4.push_back(recoDiele_mass2[idiel]);
+         recoTQ_softID4.push_back(-999);
+         recoTQ_mvaValue4.push_back(recoDiele_mvaValue2[idiel]);
+         recoTQ_mvaPFValue4.push_back(recoDiele_mvaPFValue2[idiel]);
+         recoTQ_isPF4.push_back(recoDiele_isPF2[idiel]);
+         recoTQ_isLowPt4.push_back(recoDiele_isLowPt2[idiel]);
+         recoTQ_isPFoverlap4.push_back(recoDiele_isPFoverlap2[idiel]);
+
+
+	 nTQReco++;
+	 }
+
+	 
+       }
+
+
+
+
+
+
+
+
+    
 
 
 
@@ -1349,7 +1980,25 @@ private:
     tree_.puw_2017=puw_2017;
     tree_.puw_2018=puw_2018;
     tree_.puw_ALL=puw_ALL;
-    tree_.triggerBit=triggerBit;
+
+    tree_.HLT2016_Dimuon0_Jpsi_Muon=				         HLT2016_Dimuon0_Jpsi_Muon;				    
+    tree_.HLT2016_Dimuon0_Upsilon_Muon=			         HLT2016_Dimuon0_Upsilon_Muon;			    
+    tree_.HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL=		         HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL;		    
+    tree_.HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=		         HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ;		    
+    
+    tree_.HLT2017_Dimuon0_Jpsi3p5_Muon2=			         HLT2017_Dimuon0_Jpsi3p5_Muon2;			    
+    tree_.HLT2017_Dimuon12_Upsilon_eta1p5=			         HLT2017_Dimuon12_Upsilon_eta1p5;			    
+    tree_.HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL=		         HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL;		    
+    tree_.HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=		         HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ;		    
+    
+    tree_.HLT2018_Dimuon0_Jpsi3p5_Muon2=			         HLT2018_Dimuon0_Jpsi3p5_Muon2;			    
+    tree_.HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon=      HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon; 
+    tree_.HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL=        HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL;   
+    tree_.HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL=		         HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL;		    
+    tree_.HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=                       HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ;                  
+    
+
+
     tree_.sampleID=sampleID;
     tree_.xsec=xsec;
 
@@ -1409,22 +2058,27 @@ private:
       tree_.recoDimu_vtxchi2.push_back(     recoDimu_vtxchi2[i]);  
       tree_.recoDimu_vtxndof.push_back(     recoDimu_vtxndof[i]);  
       tree_.recoDimu_vtxprob.push_back(     recoDimu_vtxprob[i]);  
+      tree_.recoDimu_index1.push_back(  	     recoDimu_index1[i]);      
+      tree_.recoDimu_index2.push_back(  	     recoDimu_index2[i]);      
+      tree_.recoDimu_pt1.push_back(  	     recoDimu_pt1[i]);      
       tree_.recoDimu_pt1.push_back(  	     recoDimu_pt1[i]);      
       tree_.recoDimu_eta1.push_back(	     recoDimu_eta1[i]);     
       tree_.recoDimu_phi1.push_back(	     recoDimu_phi1[i]);     
       tree_.recoDimu_charge1.push_back(     recoDimu_charge1[i]);  
       tree_.recoDimu_mass1.push_back(       recoDimu_mass1[i]);     
+      tree_.recoDimu_softID1.push_back(       recoDimu_softID1[i]);     
       tree_.recoDimu_pt2.push_back(  	     recoDimu_pt2[i]);      
       tree_.recoDimu_eta2.push_back(	     recoDimu_eta2[i]);     
       tree_.recoDimu_phi2.push_back(	     recoDimu_phi2[i]);     
       tree_.recoDimu_charge2.push_back(     recoDimu_charge2[i]);  
-      tree_.recoDimu_mass2.push_back(       recoDimu_mass2[i]);           
-      /*      tree_.recoDimu_pt.push_back(       recoDimu_pt[i]);           
+      tree_.recoDimu_mass2.push_back(       recoDimu_mass2[i]);         
+      tree_.recoDimu_softID2.push_back(       recoDimu_softID2[i]);       
+      tree_.recoDimu_pt.push_back(       recoDimu_pt[i]);           
       tree_.recoDimu_eta.push_back(       recoDimu_eta[i]);           
       tree_.recoDimu_phi.push_back(       recoDimu_phi[i]);           
       tree_.recoDimu_mass.push_back(       recoDimu_mass[i]);           
       tree_.recoDimu_massErr.push_back(       recoDimu_massErr[i]);           
-      */       
+      
       }
 
 
@@ -1437,6 +2091,12 @@ private:
       tree_.recoEle_eta.push_back(recoEle_eta[i]);
       tree_.recoEle_phi.push_back(recoEle_phi[i]);   
       tree_.recoEle_charge.push_back(recoEle_charge[i]);   
+
+      tree_.recoEle_ptmode.push_back(recoEle_ptmode[i]);
+      tree_.recoEle_etamode.push_back(recoEle_etamode[i]);
+      tree_.recoEle_phimode.push_back(recoEle_phimode[i]);
+
+      tree_.recoEle_p.push_back(recoEle_p[i]);
 
       tree_.recoEle_vx.push_back(recoEle_vx[i]);   
       tree_.recoEle_vy.push_back(recoEle_vy[i]);   
@@ -1466,18 +2126,22 @@ private:
 
     tree_.nDieleReco=nDieleReco;
     for(unsigned int i=0;i<recoDiele_vx.size();i++){
-       
+      
       tree_.recoDiele_vx.push_back(           recoDiele_vx[i]);	      
       tree_.recoDiele_vy.push_back(	     recoDiele_vy[i]);	      
       tree_.recoDiele_vz.push_back(	     recoDiele_vz[i]);	      
       tree_.recoDiele_vtxchi2.push_back(     recoDiele_vtxchi2[i]);  
       tree_.recoDiele_vtxndof.push_back(     recoDiele_vtxndof[i]);  
       tree_.recoDiele_vtxprob.push_back(     recoDiele_vtxprob[i]);  
+      tree_.recoDiele_index1.push_back(  	     recoDiele_index1[i]);      
+      tree_.recoDiele_index2.push_back(  	     recoDiele_index2[i]);      
       tree_.recoDiele_pt1.push_back(  	     recoDiele_pt1[i]);      
       tree_.recoDiele_eta1.push_back(	     recoDiele_eta1[i]);     
       tree_.recoDiele_phi1.push_back(	     recoDiele_phi1[i]);     
       tree_.recoDiele_charge1.push_back(     recoDiele_charge1[i]);  
       tree_.recoDiele_mass1.push_back(       recoDiele_mass1[i]);     
+      tree_.recoDiele_mvaValue1.push_back(       recoDiele_mvaValue1[i]);     
+      tree_.recoDiele_mvaPFValue1.push_back(       recoDiele_mvaPFValue1[i]);     
       tree_.recoDiele_isPF1.push_back(       recoDiele_isPF1[i]);     
       tree_.recoDiele_isLowPt1.push_back(       recoDiele_isLowPt1[i]);     
       tree_.recoDiele_isPFoverlap1.push_back(       recoDiele_isPFoverlap1[i]);     
@@ -1486,16 +2150,108 @@ private:
       tree_.recoDiele_phi2.push_back(	     recoDiele_phi2[i]);     
       tree_.recoDiele_charge2.push_back(     recoDiele_charge2[i]);  
       tree_.recoDiele_mass2.push_back(       recoDiele_mass2[i]);           
+      tree_.recoDiele_mvaValue2.push_back(       recoDiele_mvaValue2[i]);     
+      tree_.recoDiele_mvaPFValue2.push_back(       recoDiele_mvaPFValue2[i]);     
       tree_.recoDiele_isPF2.push_back(       recoDiele_isPF2[i]);     
       tree_.recoDiele_isLowPt2.push_back(       recoDiele_isLowPt2[i]);     
       tree_.recoDiele_isPFoverlap2.push_back(       recoDiele_isPFoverlap2[i]);     
-      /*      tree_.recoDiele_pt.push_back(       recoDiele_pt[i]);           
+      tree_.recoDiele_pt.push_back(       recoDiele_pt[i]);           
       tree_.recoDiele_eta.push_back(       recoDiele_eta[i]);           
       tree_.recoDiele_phi.push_back(       recoDiele_phi[i]);           
       tree_.recoDiele_mass.push_back(       recoDiele_mass[i]);           
       tree_.recoDiele_massErr.push_back(       recoDiele_massErr[i]);           
-      */       
+
+      tree_.recoDiele_pt1mode.push_back(recoDiele_pt1mode[i]);
+      tree_.recoDiele_eta1mode.push_back(recoDiele_eta1mode[i]);
+      tree_.recoDiele_phi1mode.push_back(recoDiele_phi1mode[i]);
+      tree_.recoDiele_pt2mode.push_back(recoDiele_pt2mode[i]);
+      tree_.recoDiele_eta2mode.push_back(recoDiele_eta2mode[i]);
+      tree_.recoDiele_phi2mode.push_back(recoDiele_phi2mode[i]);
+
+             
     }
+
+
+  // TQ
+    tree_.nTQReco=nTQReco;
+    for(unsigned int i=0;i<recoTQ_pt.size();i++){
+        tree_.recoTQ_pt.push_back(	  	       recoTQ_pt[i]);		       
+	tree_.recoTQ_eta.push_back(	  	       recoTQ_eta[i]);		       
+	tree_.recoTQ_phi.push_back(	  	       recoTQ_phi[i]);		       
+	tree_.recoTQ_mass.push_back(	  	       recoTQ_mass[i]);		       
+	tree_.recoTQ_massErr.push_back(	          recoTQ_massErr[i]);	  	       
+	tree_.recoTQ_vtxchi2.push_back(	          recoTQ_vtxchi2[i]);	  	       
+	tree_.recoTQ_vtxndof.push_back(	          recoTQ_vtxndof[i]);	  	       
+	tree_.recoTQ_vtxprob.push_back(	          recoTQ_vtxprob[i]);	  	       
+
+        tree_.recoTQ_Y1pt.push_back(	  	       recoTQ_Y1pt[i]);		       
+	tree_.recoTQ_Y1eta.push_back(	  	       recoTQ_Y1eta[i]);		       
+	tree_.recoTQ_Y1phi.push_back(	  	       recoTQ_Y1phi[i]);		       
+	tree_.recoTQ_Y1mass.push_back(	  	       recoTQ_Y1mass[i]);		       
+	tree_.recoTQ_Y1massErr.push_back(	          recoTQ_Y1massErr[i]);	  	       
+	tree_.recoTQ_Y1vtxchi2.push_back(	          recoTQ_Y1vtxchi2[i]);	  	       
+	tree_.recoTQ_Y1vtxndof.push_back(	          recoTQ_Y1vtxndof[i]);	  	       
+	tree_.recoTQ_Y1vtxprob.push_back(	          recoTQ_Y1vtxprob[i]);	  	       
+
+
+        tree_.recoTQ_Y2pt.push_back(	  	       recoTQ_Y2pt[i]);		       
+	tree_.recoTQ_Y2eta.push_back(	  	       recoTQ_Y2eta[i]);		       
+	tree_.recoTQ_Y2phi.push_back(	  	       recoTQ_Y2phi[i]);		       
+	tree_.recoTQ_Y2mass.push_back(	  	       recoTQ_Y2mass[i]);		       
+	tree_.recoTQ_Y2massErr.push_back(	          recoTQ_Y2massErr[i]);	  	       
+	tree_.recoTQ_Y2vtxchi2.push_back(	          recoTQ_Y2vtxchi2[i]);	  	       
+	tree_.recoTQ_Y2vtxndof.push_back(	          recoTQ_Y2vtxndof[i]);	  	       
+	tree_.recoTQ_Y2vtxprob.push_back(	          recoTQ_Y2vtxprob[i]);	  	       
+        				                                               
+
+        tree_.recoTQ_leptype1.push_back(       	     recoTQ_leptype1[i]);	       
+	tree_.recoTQ_pt1.push_back(	       	       recoTQ_pt1[i]);		       
+	tree_.recoTQ_eta1.push_back(	       	       recoTQ_eta1[i]);		       
+	tree_.recoTQ_phi1.push_back(	       	       recoTQ_phi1[i]);		       
+	tree_.recoTQ_charge1.push_back(	          recoTQ_charge1[i]);	  	       
+	tree_.recoTQ_mass1.push_back(	       	       recoTQ_mass1[i]);	       	  
+        tree_.recoTQ_softID1.push_back(	       	     recoTQ_softID1[i]);	       	  
+        				                                               
+        tree_.recoTQ_leptype2.push_back(       	     recoTQ_leptype2[i]);	       
+	tree_.recoTQ_pt2.push_back(	       	       recoTQ_pt2[i]);		       
+	tree_.recoTQ_eta2.push_back(	       	       recoTQ_eta2[i]);		       
+	tree_.recoTQ_phi2.push_back(	       	       recoTQ_phi2[i]);		       
+	tree_.recoTQ_charge2.push_back(	          recoTQ_charge2[i]);	  	       
+	tree_.recoTQ_mass2.push_back(	       	       recoTQ_mass2[i]);	       	  
+        tree_.recoTQ_softID2.push_back(	       	     recoTQ_softID2[i]);	       	  
+
+        tree_.recoTQ_leptype3.push_back(       	     recoTQ_leptype3[i]);	       
+	tree_.recoTQ_pt3.push_back(	       	       recoTQ_pt3[i]);		       
+	tree_.recoTQ_pt3mode.push_back(	       	       recoTQ_pt3mode[i]);		       
+	tree_.recoTQ_eta3.push_back(	       	       recoTQ_eta3[i]);		       
+	tree_.recoTQ_phi3.push_back(	       	       recoTQ_phi3[i]);		       
+	tree_.recoTQ_charge3.push_back(	          recoTQ_charge3[i]);	  	       
+	tree_.recoTQ_mass3.push_back(	       	       recoTQ_mass3[i]);	       	  
+        tree_.recoTQ_softID3.push_back(	       	     recoTQ_softID3[i]);	       	  
+	tree_.recoTQ_mvaValue3.push_back(      	       recoTQ_mvaValue3[i]);	       
+	tree_.recoTQ_mvaPFValue3.push_back(    	       recoTQ_mvaPFValue3[i]);	       
+        tree_.recoTQ_isPF3.push_back(	       	     recoTQ_isPF3[i]);		       
+        tree_.recoTQ_isLowPt3.push_back(       	     recoTQ_isLowPt3[i]);	       
+        tree_.recoTQ_isPFoverlap3.push_back(      	     recoTQ_isPFoverlap3[i]);    	  
+        				                                               
+        				                                               
+        tree_.recoTQ_leptype4.push_back(       	     recoTQ_leptype4[i]);	       
+	tree_.recoTQ_pt4.push_back(	       	       recoTQ_pt4[i]);		       
+	tree_.recoTQ_pt4mode.push_back(	       	       recoTQ_pt4mode[i]);		       
+	tree_.recoTQ_eta4.push_back(	       	       recoTQ_eta4[i]);		       
+	tree_.recoTQ_phi4.push_back(	       	       recoTQ_phi4[i]);		       
+	tree_.recoTQ_charge4.push_back(	          recoTQ_charge4[i]);	  	       
+	tree_.recoTQ_mass4.push_back(	       	       recoTQ_mass4[i]);	       	  
+        tree_.recoTQ_softID4.push_back(	       	     recoTQ_softID4[i]);	       	  
+	tree_.recoTQ_mvaValue4.push_back(      	       recoTQ_mvaValue4[i]);	       
+	tree_.recoTQ_mvaPFValue4.push_back(    	       recoTQ_mvaPFValue4[i]);	       
+        tree_.recoTQ_isPF4.push_back(	       	     recoTQ_isPF4[i]);		       
+        tree_.recoTQ_isLowPt4.push_back(       	     recoTQ_isLowPt4[i]);	       
+        tree_.recoTQ_isPFoverlap4.push_back(            recoTQ_isPFoverlap4[i]);       
+
+ }
+
+
 
 
     tree->Fill();
@@ -1529,7 +2285,22 @@ void TQGenAnalyzer::beginJob()
   tree->Branch("puw_2017", &tree_.puw_2017, "puw_2017/F");
   tree->Branch("puw_2018", &tree_.puw_2018, "puw_2018/F");
   tree->Branch("puw_ALL", &tree_.puw_ALL, "puw_ALL/F");
-  tree->Branch("triggerBit", &tree_.triggerBit, "triggerBit/I");
+
+
+  tree->Branch("HLT2016_Dimuon0_Jpsi_Muon", &tree_.HLT2016_Dimuon0_Jpsi_Muon, "HLT2016_Dimuon0_Jpsi_Muon");
+  tree->Branch("HLT2016_Dimuon0_Upsilon_Muon", &tree_.HLT2016_Dimuon0_Upsilon_Muon, "HLT2016_Dimuon0_Upsilon_Muon");	
+  tree->Branch("HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL", &tree_.HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL, "HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL");
+  tree->Branch("HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ", &tree_.HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ, "HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ");  
+  tree->Branch("HLT2017_Dimuon0_Jpsi3p5_Muon2", &tree_.HLT2017_Dimuon0_Jpsi3p5_Muon2, "HLT2017_Dimuon0_Jpsi3p5_Muon2");	
+  tree->Branch("HLT2017_Dimuon12_Upsilon_eta1p5", &tree_.HLT2017_Dimuon12_Upsilon_eta1p5, "HLT2017_Dimuon12_Upsilon_eta1p5"); 
+  tree->Branch("HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL", &tree_.HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL, "HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL");
+  tree->Branch("HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ", &tree_.HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ, "HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ");
+  tree->Branch("HLT2018_Dimuon0_Jpsi3p5_Muon2", &tree_.HLT2018_Dimuon0_Jpsi3p5_Muon2, "HLT2018_Dimuon0_Jpsi3p5_Muon2");	
+  tree->Branch("HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon", &tree_.HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon, "HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon"); 
+  tree->Branch("HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL", &tree_.HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL, "HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL");   
+  tree->Branch("HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL", &tree_.HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL, "HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL");		    
+  tree->Branch("HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ", &tree_.HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ, "HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ");         
+  
 
   tree->Branch("TQ_genMass", &tree_.TQ_genMass, "TQ_genMass/F");
   tree->Branch("genLep_pt",     &tree_.genLep_pt);
@@ -1568,16 +2339,20 @@ void TQGenAnalyzer::beginJob()
   tree->Branch("recoDimu_vtxchi2",     &tree_.recoDimu_vtxchi2);
   tree->Branch("recoDimu_vtxndof",     &tree_.recoDimu_vtxndof);
   tree->Branch("recoDimu_vtxprob",     &tree_.recoDimu_vtxprob);
+  tree->Branch("recoDimu_index1",     &tree_.recoDimu_index1);
+  tree->Branch("recoDimu_index2",     &tree_.recoDimu_index2);
   tree->Branch("recoDimu_pt1",     &tree_.recoDimu_pt1);
   tree->Branch("recoDimu_eta1",     &tree_.recoDimu_eta1);
   tree->Branch("recoDimu_phi1",     &tree_.recoDimu_phi1);
   tree->Branch("recoDimu_charge1",     &tree_.recoDimu_charge1);
   tree->Branch("recoDimu_mass1",     &tree_.recoDimu_mass1);
+  tree->Branch("recoDimu_softID1",     &tree_.recoDimu_softID1);
   tree->Branch("recoDimu_pt2",     &tree_.recoDimu_pt2);
   tree->Branch("recoDimu_eta2",     &tree_.recoDimu_eta2);
   tree->Branch("recoDimu_phi2",     &tree_.recoDimu_phi2);
   tree->Branch("recoDimu_charge2",     &tree_.recoDimu_charge2);
   tree->Branch("recoDimu_mass2",     &tree_.recoDimu_mass2);
+  tree->Branch("recoDimu_softID2",     &tree_.recoDimu_softID2);
   tree->Branch("recoDimu_pt",     &tree_.recoDimu_pt);
   tree->Branch("recoDimu_eta",     &tree_.recoDimu_eta);
   tree->Branch("recoDimu_phi",     &tree_.recoDimu_phi);
@@ -1593,6 +2368,12 @@ void TQGenAnalyzer::beginJob()
   tree->Branch("recoEle_eta",&tree_.recoEle_eta);
   tree->Branch("recoEle_phi",&tree_.recoEle_phi);
   tree->Branch("recoEle_charge",&tree_.recoEle_charge);
+
+  tree->Branch("recoEle_ptmode",     &tree_.recoEle_ptmode);
+  tree->Branch("recoEle_etamode",     &tree_.recoEle_etamode);
+  tree->Branch("recoEle_phimode",     &tree_.recoEle_phimode);
+
+  tree->Branch("recoEle_p",     &tree_.recoEle_p);
 
   tree->Branch("recoEle_vx",&tree_.recoEle_vx);
   tree->Branch("recoEle_vy",&tree_.recoEle_vy);
@@ -1629,11 +2410,15 @@ void TQGenAnalyzer::beginJob()
   tree->Branch("recoDiele_vtxchi2",     &tree_.recoDiele_vtxchi2);
   tree->Branch("recoDiele_vtxndof",     &tree_.recoDiele_vtxndof);
   tree->Branch("recoDiele_vtxprob",     &tree_.recoDiele_vtxprob);
+  tree->Branch("recoDiele_index1",     &tree_.recoDiele_index1);
+  tree->Branch("recoDiele_index2",     &tree_.recoDiele_index2);
   tree->Branch("recoDiele_pt1",     &tree_.recoDiele_pt1);
   tree->Branch("recoDiele_eta1",     &tree_.recoDiele_eta1);
   tree->Branch("recoDiele_phi1",     &tree_.recoDiele_phi1);
   tree->Branch("recoDiele_charge1",     &tree_.recoDiele_charge1);
   tree->Branch("recoDiele_mass1",     &tree_.recoDiele_mass1);
+  tree->Branch("recoDiele_mvaValue1",     &tree_.recoDiele_mvaValue1);
+  tree->Branch("recoDiele_mvaPFValue1",     &tree_.recoDiele_mvaPFValue1);
   tree->Branch("recoDiele_isPF1",     &tree_.recoDiele_isPF1);
   tree->Branch("recoDiele_isLowPt1",     &tree_.recoDiele_isLowPt1);
   tree->Branch("recoDiele_isPFoverlap1",     &tree_.recoDiele_isPFoverlap1);
@@ -1642,6 +2427,8 @@ void TQGenAnalyzer::beginJob()
   tree->Branch("recoDiele_phi2",     &tree_.recoDiele_phi2);
   tree->Branch("recoDiele_charge2",     &tree_.recoDiele_charge2);
   tree->Branch("recoDiele_mass2",     &tree_.recoDiele_mass2);
+  tree->Branch("recoDiele_mvaValue2",     &tree_.recoDiele_mvaValue2);
+  tree->Branch("recoDiele_mvaPFValue2",     &tree_.recoDiele_mvaPFValue2);
   tree->Branch("recoDiele_isPF2",     &tree_.recoDiele_isPF2);
   tree->Branch("recoDiele_isLowPt2",     &tree_.recoDiele_isLowPt2);
   tree->Branch("recoDiele_isPFoverlap2",     &tree_.recoDiele_isPFoverlap2);
@@ -1650,6 +2437,93 @@ void TQGenAnalyzer::beginJob()
   tree->Branch("recoDiele_phi",     &tree_.recoDiele_phi);
   tree->Branch("recoDiele_mass",     &tree_.recoDiele_mass);
   tree->Branch("recoDiele_massErr",     &tree_.recoDiele_massErr);
+  
+  tree->Branch("recoDiele_pt1mode",     &tree_.recoDiele_pt1mode);
+  tree->Branch("recoDiele_eta1mode",     &tree_.recoDiele_eta1mode);
+  tree->Branch("recoDiele_phi1mode",     &tree_.recoDiele_phi1mode);
+  tree->Branch("recoDiele_pt2mode",     &tree_.recoDiele_pt2mode);
+  tree->Branch("recoDiele_eta2mode",     &tree_.recoDiele_eta2mode);
+  tree->Branch("recoDiele_phi2mode",     &tree_.recoDiele_phi2mode);
+
+
+  tree->Branch("nTQReco", &tree_.nTQReco, "nTQReco/I");
+  tree->Branch("recoTQ_pt"            ,&tree_.recoTQ_pt);		      	
+  tree->Branch("recoTQ_eta"           ,&tree_.recoTQ_eta);		      
+  tree->Branch("recoTQ_phi"           ,&tree_.recoTQ_phi);		      
+  tree->Branch("recoTQ_mass"          ,&tree_.recoTQ_mass);		      
+  tree->Branch("recoTQ_massErr"       ,&tree_.recoTQ_massErr);	  	      
+  tree->Branch("recoTQ_vtxchi2"       ,&tree_.recoTQ_vtxchi2);	  	      
+  tree->Branch("recoTQ_vtxndof"       ,&tree_.recoTQ_vtxndof);	  	      
+  tree->Branch("recoTQ_vtxprob"       ,&tree_.recoTQ_vtxprob);	  	      
+
+
+tree->Branch("recoTQ_Y1pt"            ,&tree_.recoTQ_Y1pt);		      	
+tree->Branch("recoTQ_Y1eta"           ,&tree_.recoTQ_Y1eta);		      
+tree->Branch("recoTQ_Y1phi"           ,&tree_.recoTQ_Y1phi);		      
+tree->Branch("recoTQ_Y1mass"          ,&tree_.recoTQ_Y1mass);		      
+tree->Branch("recoTQ_Y1massErr"       ,&tree_.recoTQ_Y1massErr);	  	      
+tree->Branch("recoTQ_Y1vtxchi2"       ,&tree_.recoTQ_Y1vtxchi2);	  	      
+tree->Branch("recoTQ_Y1vtxndof"       ,&tree_.recoTQ_Y1vtxndof);	  	      
+tree->Branch("recoTQ_Y1vtxprob"       ,&tree_.recoTQ_Y1vtxprob);	  	      
+
+
+
+tree->Branch("recoTQ_Y2pt"            ,&tree_.recoTQ_Y2pt);		      	
+tree->Branch("recoTQ_Y2eta"           ,&tree_.recoTQ_Y2eta);		      
+tree->Branch("recoTQ_Y2phi"           ,&tree_.recoTQ_Y2phi);		      
+tree->Branch("recoTQ_Y2mass"          ,&tree_.recoTQ_Y2mass);		      
+tree->Branch("recoTQ_Y2massErr"       ,&tree_.recoTQ_Y2massErr);	  	      
+tree->Branch("recoTQ_Y2vtxchi2"       ,&tree_.recoTQ_Y2vtxchi2);	  	      
+tree->Branch("recoTQ_Y2vtxndof"       ,&tree_.recoTQ_Y2vtxndof);	  	      
+tree->Branch("recoTQ_Y2vtxprob"       ,&tree_.recoTQ_Y2vtxprob);	  	      
+                                      					
+                                      					
+ tree->Branch("recoTQ_leptype1"     ,&tree_.recoTQ_leptype1);	      	
+ tree->Branch("recoTQ_pt1"          ,&tree_.recoTQ_pt1   );		      
+ tree->Branch("recoTQ_eta1"         ,&tree_.recoTQ_eta1  );		      
+ tree->Branch("recoTQ_phi1"         ,&tree_.recoTQ_phi1  );		      
+ tree->Branch("recoTQ_charge1"      ,&tree_.recoTQ_charge1  );	  	      
+ tree->Branch("recoTQ_mass1"        ,&tree_.recoTQ_mass1 );	      	
+ tree->Branch("recoTQ_softID1"      ,&tree_.recoTQ_softID1 );	      	
+				                                        
+ tree->Branch("recoTQ_leptype2"     ,&tree_.recoTQ_leptype2);	      	
+ tree->Branch("recoTQ_pt2"          ,&tree_.recoTQ_pt2   );		      
+ tree->Branch("recoTQ_eta2"         ,&tree_.recoTQ_eta2  );		      
+ tree->Branch("recoTQ_phi2"         ,&tree_.recoTQ_phi2  );		      
+ tree->Branch("recoTQ_charge2"      ,&tree_.recoTQ_charge2  );	  	      
+ tree->Branch("recoTQ_mass2"        ,&tree_.recoTQ_mass2 );	      	
+ tree->Branch("recoTQ_softID2"      ,&tree_.recoTQ_softID2 );	      	
+				                                        
+ tree->Branch("recoTQ_leptype3"     ,&tree_.recoTQ_leptype3);	      	
+ tree->Branch("recoTQ_pt3"          ,&tree_.recoTQ_pt3   );		      
+ tree->Branch("recoTQ_pt3mode"          ,&tree_.recoTQ_pt3mode   );		      
+ tree->Branch("recoTQ_eta3"         ,&tree_.recoTQ_eta3  );		      
+ tree->Branch("recoTQ_phi3"         ,&tree_.recoTQ_phi3  );		      
+ tree->Branch("recoTQ_charge3"      ,&tree_.recoTQ_charge3  );	  	      
+ tree->Branch("recoTQ_mass3"        ,&tree_.recoTQ_mass3 );	      	
+ tree->Branch("recoTQ_softID3"      ,&tree_.recoTQ_softID3 );	      	
+ tree->Branch("recoTQ_mvaValue3"    ,&tree_.recoTQ_mvaValue3);	      	
+ tree->Branch("recoTQ_mvaPFValue3"  ,&tree_.recoTQ_mvaPFValue3);	      
+ tree->Branch("recoTQ_isPF3"        ,&tree_.recoTQ_isPF3   );		      
+ tree->Branch("recoTQ_isLowPt3"     ,&tree_.recoTQ_isLowPt3);	      	
+ tree->Branch("recoTQ_isPFoverlap3" ,&tree_.recoTQ_isPFoverlap3);	      
+				                                        
+ tree->Branch("recoTQ_leptype4"     ,&tree_.recoTQ_leptype4);	      	
+ tree->Branch("recoTQ_pt4"          ,&tree_.recoTQ_pt4   );		      
+ tree->Branch("recoTQ_pt4mode"          ,&tree_.recoTQ_pt4mode   );		      
+ tree->Branch("recoTQ_eta4"         ,&tree_.recoTQ_eta4  );		      
+ tree->Branch("recoTQ_phi4"         ,&tree_.recoTQ_phi4  );		      
+ tree->Branch("recoTQ_charge4"      ,&tree_.recoTQ_charge4  );	  	      
+ tree->Branch("recoTQ_mass4"        ,&tree_.recoTQ_mass4 );	      	
+ tree->Branch("recoTQ_softID4"      ,&tree_.recoTQ_softID4 );	      	
+ tree->Branch("recoTQ_mvaValue4"    ,&tree_.recoTQ_mvaValue4);	      	
+ tree->Branch("recoTQ_mvaPFValue4"  ,&tree_.recoTQ_mvaPFValue4);	      
+ tree->Branch("recoTQ_isPF4"        ,&tree_.recoTQ_isPF4   );		      
+ tree->Branch("recoTQ_isLowPt4"     ,&tree_.recoTQ_isLowPt4);	      	
+ tree->Branch("recoTQ_isPFoverlap4" ,&tree_.recoTQ_isPFoverlap4);	      
+                                      
+
+
 
 
 }
@@ -1722,16 +2596,20 @@ void TQGenAnalyzer::clearVectors()
   tree_.recoDimu_vtxchi2.clear();
   tree_.recoDimu_vtxndof.clear();
   tree_.recoDimu_vtxprob.clear();
+  tree_.recoDimu_index1.clear();
+  tree_.recoDimu_index2.clear();
   tree_.recoDimu_pt1.clear();
   tree_.recoDimu_eta1.clear();
   tree_.recoDimu_phi1.clear();
   tree_.recoDimu_charge1.clear();
   tree_.recoDimu_mass1.clear();
+  tree_.recoDimu_softID1.clear();
   tree_.recoDimu_pt2.clear();
   tree_.recoDimu_eta2.clear();
   tree_.recoDimu_phi2.clear();
   tree_.recoDimu_charge2.clear();
   tree_.recoDimu_mass2.clear();
+  tree_.recoDimu_softID2.clear();
   tree_.recoDimu_pt.clear();
   tree_.recoDimu_eta.clear();
   tree_.recoDimu_phi.clear();
@@ -1744,6 +2622,12 @@ void TQGenAnalyzer::clearVectors()
   tree_.recoEle_eta.clear();
   tree_.recoEle_phi.clear();
   tree_.recoEle_charge.clear();
+
+  tree_.recoEle_ptmode.clear();
+  tree_.recoEle_etamode.clear();
+  tree_.recoEle_phimode.clear();
+
+  tree_.recoEle_p.clear();
 
   tree_.recoEle_vx.clear();
   tree_.recoEle_vy.clear();
@@ -1778,11 +2662,15 @@ void TQGenAnalyzer::clearVectors()
   tree_.recoDiele_vtxchi2.clear();
   tree_.recoDiele_vtxndof.clear();
   tree_.recoDiele_vtxprob.clear();
+  tree_.recoDiele_index1.clear();
+  tree_.recoDiele_index2.clear();
   tree_.recoDiele_pt1.clear();
   tree_.recoDiele_eta1.clear();
   tree_.recoDiele_phi1.clear();
   tree_.recoDiele_charge1.clear();
   tree_.recoDiele_mass1.clear();
+  tree_.recoDiele_mvaValue1.clear();
+  tree_.recoDiele_mvaPFValue1.clear();
   tree_.recoDiele_isPF1.clear();
   tree_.recoDiele_isLowPt1.clear();
   tree_.recoDiele_isPFoverlap1.clear();
@@ -1791,6 +2679,9 @@ void TQGenAnalyzer::clearVectors()
   tree_.recoDiele_phi2.clear();
   tree_.recoDiele_charge2.clear();
   tree_.recoDiele_mass2.clear();
+  tree_.recoDiele_mvaValue1.clear();
+  tree_.recoDiele_mvaPFValue1.clear();
+
   tree_.recoDiele_isPF2.clear();
   tree_.recoDiele_isLowPt2.clear();
   tree_.recoDiele_isPFoverlap2.clear();
@@ -1799,6 +2690,93 @@ void TQGenAnalyzer::clearVectors()
   tree_.recoDiele_phi.clear();
   tree_.recoDiele_mass.clear();
   tree_.recoDiele_massErr.clear();
+
+  tree_.recoDiele_pt1mode.clear();
+  tree_.recoDiele_eta1mode.clear();
+  tree_.recoDiele_phi1mode.clear();
+  tree_.recoDiele_pt2mode.clear();
+  tree_.recoDiele_eta2mode.clear();
+  tree_.recoDiele_phi2mode.clear();
+
+tree_.recoTQ_pt.clear();		      	
+tree_.recoTQ_eta.clear();		
+tree_.recoTQ_phi.clear();		
+tree_.recoTQ_mass.clear();		
+tree_.recoTQ_massErr.clear();	  	
+tree_.recoTQ_vtxchi2.clear();	  	
+tree_.recoTQ_vtxndof.clear();	  	
+tree_.recoTQ_vtxprob.clear();	  	
+
+
+tree_.recoTQ_Y1pt.clear();		      	
+tree_.recoTQ_Y1eta.clear();		
+tree_.recoTQ_Y1phi.clear();		
+tree_.recoTQ_Y1mass.clear();		
+tree_.recoTQ_Y1massErr.clear();	  	
+tree_.recoTQ_Y1vtxchi2.clear();	  	
+tree_.recoTQ_Y1vtxndof.clear();	  	
+tree_.recoTQ_Y1vtxprob.clear();	  	
+
+
+tree_.recoTQ_Y2pt.clear();		      	
+tree_.recoTQ_Y2eta.clear();		
+tree_.recoTQ_Y2phi.clear();		
+tree_.recoTQ_Y2mass.clear();		
+tree_.recoTQ_Y2massErr.clear();	  	
+tree_.recoTQ_Y2vtxchi2.clear();	  	
+tree_.recoTQ_Y2vtxndof.clear();	  	
+tree_.recoTQ_Y2vtxprob.clear();	  	
+					
+					
+tree_.recoTQ_leptype1.clear();	      	
+tree_.recoTQ_pt1   .clear();		
+tree_.recoTQ_eta1  .clear();		
+tree_.recoTQ_phi1  .clear();		
+tree_.recoTQ_charge1  .clear();	  	
+tree_.recoTQ_mass1 .clear();	      	
+tree_.recoTQ_softID1 .clear();	      	
+                                  
+tree_.recoTQ_leptype2.clear();	      	
+tree_.recoTQ_pt2   .clear();		
+tree_.recoTQ_eta2  .clear();		
+tree_.recoTQ_phi2  .clear();		
+tree_.recoTQ_charge2  .clear();	  	
+tree_.recoTQ_mass2 .clear();	      	
+tree_.recoTQ_softID2 .clear();	      	
+                                  
+tree_.recoTQ_leptype3.clear();	      	
+tree_.recoTQ_pt3   .clear();		
+tree_.recoTQ_pt3mode   .clear();		
+tree_.recoTQ_eta3  .clear();		
+tree_.recoTQ_phi3  .clear();		
+tree_.recoTQ_charge3  .clear();	  	
+tree_.recoTQ_mass3 .clear();	      	
+tree_.recoTQ_softID3 .clear();	      	
+tree_.recoTQ_mvaValue3.clear();	      	
+tree_.recoTQ_mvaPFValue3.clear();	
+tree_.recoTQ_isPF3   .clear();		
+tree_.recoTQ_isLowPt3.clear();	      	
+tree_.recoTQ_isPFoverlap3.clear();	
+                                  
+tree_.recoTQ_leptype4.clear();	      	
+tree_.recoTQ_pt4   .clear();		
+tree_.recoTQ_pt4mode   .clear();		
+tree_.recoTQ_eta4  .clear();		
+tree_.recoTQ_phi4  .clear();		
+tree_.recoTQ_charge4  .clear();	  	
+tree_.recoTQ_mass4 .clear();	      	
+tree_.recoTQ_softID4 .clear();	      	
+tree_.recoTQ_mvaValue4.clear();	      	
+tree_.recoTQ_mvaPFValue4.clear();	
+tree_.recoTQ_isPF4   .clear();		
+tree_.recoTQ_isLowPt4.clear();	      	
+tree_.recoTQ_isPFoverlap4.clear();	
+
+
+
+
+
+
 
 }
 
