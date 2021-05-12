@@ -7,7 +7,8 @@ from os import path
 
 mvaTag = "BParkRetrain"
 
-weightFileDir = "/afs/cern.ch/work/s/soffi/TQ-WORK/CMSSW-10-6-20-LowPtEle/src/data/PFRetrainWeightFiles"
+#weightFileDir = "/afs/cern.ch/work/s/soffi/TQ-WORK/CMSSW-10-6-20-LowPtEle/src/data/PFRetrainWeightFiles"
+weightFileDir = "RecoEgamma/EgammaTools/data/PFRetrainWeightFiles"
 
 mvaWeightFiles = [
      path.join(weightFileDir, "BParkRetrain_LowPt_unbiased.xml.gz"),

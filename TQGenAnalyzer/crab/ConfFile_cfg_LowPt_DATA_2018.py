@@ -25,31 +25,14 @@ process.ntuplizer_seq = cms.Sequence()
 
 #1. setting GT
 from Configuration.AlCa.GlobalTag import GlobalTag
-#process.GlobalTag = GlobalTag(process.GlobalTag, '106X_upgrade2018_realistic_v4')
-process.GlobalTag = GlobalTag(process.GlobalTag, '106X_upgrade2018_realistic_v16_L1v1')
+process.GlobalTag = GlobalTag(process.GlobalTag, '106X_dataRun2_v24')
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 process.source = cms.Source("PoolSource",
                                 # replace 'myfile.root' with the source file you want to use
                                 fileNames = cms.untracked.vstring(
-#            'file:/afs/cern.ch/user/s/soffi/public/10C23D4F-94BD-E811-9588-E0071B7B2320.root'
-#                                '/store/mc/RunIIAutumn18MiniAOD/BuToKJpsi_Toee_Mufilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/MINIAODSIM/PUPoissonAve20_BParking_102X_upgrade2018_realistic_v15-v2/60000/854B1DC0-2F71-694D-A3F5-8DC1CDE1EF18.root'
-#                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/GenProduction/BPH-RunIISummer20UL18MiniAODv2-00008.root'
-#                                    '/store/cmst3/group/bpark/BToKmumu_1000Events_MINIAOD.root'
-#                                '/store/data/Run2018B/ParkingBPH4/MINIAOD/05May2019-v2/230000/6B5A24B1-0E6E-504B-8331-BD899EB60110.root'
-#                                'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/BPH-RunIISummer20UL18MiniAODv2-00008.root'
-#                                    'file:/afs/cern.ch/user/m/mcampana/public/MiniAOD_Y.root'
-#                                    '/store/user/mcampana/BPH_Production/private_XToYYTo2mu2e_step2/privateBPH_2021Apr28/210428_062206/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_2.root',
-#          '/store/user/mcampana/BPH_Production/private_XToYYTo2mu2e_step2/privateBPH_2021Apr28/210428_062206/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_3.root',
-#          '/store/user/mcampana/BPH_Production/private_XToYYTo2mu2e_step2/privateBPH_2021Apr28/210428_062206/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_4.root',
-#          '/store/user/mcampana/BPH_Production/private_XToYYTo2mu2e_step2/privateBPH_2021Apr28/210428_062206/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_5.root',
-#          '/store/user/mcampana/BPH_Production/private_XToYYTo2mu2e_step2/privateBPH_2021Apr28/210428_062206/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_6.root',
-#          '/store/user/mcampana/BPH_Production/private_XToYYTo2mu2e_step2/privateBPH_2021Apr28/210428_062206/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_7.root',
-#          '/store/user/mcampana/BPH_Production/private_XToYYTo2mu2e_step2/privateBPH_2021Apr28/210428_062206/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_8.root',
-#          '/store/user/mcampana/BPH_Production/private_XToYYTo2mu2e_step2/privateBPH_2021Apr28/210428_062206/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_9.root'
-                                    '/store/user/mcampana/BPH_Production/private_XToYYTo2mu2e_26GeV_pseudoscalar/privateBPH_2021Apr30/210430_141958/0000/BPH-RunIISummer20UL18MiniAOD-26GeV_22.root'
-
+                                    'file:/afs/cern.ch/work/m/mcampana/public/Tetraquark/file_Livia/3BD19FEE-D15E-E94A-8BD6-6E9FD51C30DD.root'
               )
                             )
 
@@ -61,12 +44,12 @@ process.TFileService = cms.Service("TFileService",
 #2. setting input variables
 options = VarParsing.VarParsing('analysis')
 options.register ('isMC',
-                  True, # default value
+                  False, # default value
                   VarParsing.VarParsing.multiplicity.singleton, # singleton or list
                   VarParsing.VarParsing.varType.bool,           # string, int, float, bool
                   "Bool isMC")
 options.register ('isSignal',
-                  True, # default value
+                  False, # default value
                   VarParsing.VarParsing.multiplicity.singleton, # singleton or list
                   VarParsing.VarParsing.varType.bool,           # string, int, float, bool
                   "Bool isSignal")
@@ -75,13 +58,14 @@ options.parseArguments()
 if options.isMC and options.isSignal :
     print'Sample is MC Signal'
     xsec=1.
+if not options.isMC : xsec=1.
 
 if options.isMC and not options.isSignal : print'Sample is MC Background'
-if options.isMC == 0 : print'Sample is Data'
+if not options.isMC  : print'Sample is Data'
 
 if options.isMC and options.isSignal : index = 0
 if options.isMC and not options.isSignal : index = -100
-if options.isMC ==0 : index==100
+if not options.isMC : index=100
 
 
 
@@ -96,7 +80,7 @@ if (options.isMC==False):
     print "applying json"
     process.source.lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange())
     #change json below once you run on new data
-    JSONfile = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/PromptReco/Cert_294927-305636_13TeV_PromptReco_Collisions17_JSON.txt'
+    JSONfile = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt'
     myLumis = LumiList.LumiList(filename = JSONfile).getCMSSWString().split(',')
     process.source.lumisToProcess.extend(myLumis)
 #    print myLumis

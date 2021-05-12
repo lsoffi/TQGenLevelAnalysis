@@ -1,0 +1,11 @@
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToYYTo2mu2e/privateBPH_2021May09/210509_175620/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_1.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToYYTo2mu2e/privateBPH_2021May09/210509_175620/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_10.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToYYTo2mu2e/privateBPH_2021May09/210509_175620/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_2.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToYYTo2mu2e/privateBPH_2021May09/210509_175620/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_3.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToYYTo2mu2e/privateBPH_2021May09/210509_175620/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_4.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToYYTo2mu2e/privateBPH_2021May09/210509_175620/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_5.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToYYTo2mu2e/privateBPH_2021May09/210509_175620/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_6.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToYYTo2mu2e/privateBPH_2021May09/210509_175620/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_7.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToYYTo2mu2e/privateBPH_2021May09/210509_175620/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_8.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToYYTo2mu2e/privateBPH_2021May09/210509_175620/0000/BPH-RunIISummer20UL18MiniAOD-14GeV_9.root
+

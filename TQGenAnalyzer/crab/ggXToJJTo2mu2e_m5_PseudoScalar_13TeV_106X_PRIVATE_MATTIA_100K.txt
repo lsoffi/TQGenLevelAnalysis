@@ -1,0 +1,10 @@
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToJJTo2mu2e_5GeV_pseudoscalar/privateBPH_2021May09/210509_061040/0000/BPH-RunIISummer20UL18MiniAOD-5GeV_1.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToJJTo2mu2e_5GeV_pseudoscalar/privateBPH_2021May09/210509_061040/0000/BPH-RunIISummer20UL18MiniAOD-5GeV_2.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToJJTo2mu2e_5GeV_pseudoscalar/privateBPH_2021May09/210509_061040/0000/BPH-RunIISummer20UL18MiniAOD-5GeV_3.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToJJTo2mu2e_5GeV_pseudoscalar/privateBPH_2021May09/210509_061040/0000/BPH-RunIISummer20UL18MiniAOD-5GeV_4.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToJJTo2mu2e_5GeV_pseudoscalar/privateBPH_2021May09/210509_061040/0000/BPH-RunIISummer20UL18MiniAOD-5GeV_5.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToJJTo2mu2e_5GeV_pseudoscalar/privateBPH_2021May09/210509_061040/0000/BPH-RunIISummer20UL18MiniAOD-5GeV_6.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToJJTo2mu2e_5GeV_pseudoscalar/privateBPH_2021May09/210509_061040/0000/BPH-RunIISummer20UL18MiniAOD-5GeV_7.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToJJTo2mu2e_5GeV_pseudoscalar/privateBPH_2021May09/210509_061040/0000/BPH-RunIISummer20UL18MiniAOD-5GeV_8.root
+root://cmsxrootd.fnal.gov//store/user/mcampana/BPH_Production/private_XToJJTo2mu2e_5GeV_pseudoscalar/privateBPH_2021May09/210509_061040/0000/BPH-RunIISummer20UL18MiniAOD-5GeV_9.root
+
