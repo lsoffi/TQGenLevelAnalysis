@@ -218,9 +218,11 @@ namespace reco { typedef edm::Ptr<GsfElectron> GsfElectronPtr; }
 
 
 struct tree_struc_{
-
+  
+  int year;
   int sampleID;
   float xsec;
+  float massRef;
   int nvtx;
   float rho;
   int npu;
@@ -234,22 +236,26 @@ struct tree_struc_{
   int nEle;
   int nMu;
   float TQ_genMass;
+
+  //2016 MuOnia
+  int HLT_Dimuon13_Upsilon_v_2016;
+  int HLT_Dimuon8_Upsilon_Barrel_v_2016;
+
+
+  //2017 MuOnia
+  int HLT_Dimuon12_Upsilon_eta1p5_v_2017;
+  int HLT_Dimuon24_Upsilon_noCorrL1_v_2017;
+  int HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2017;
+  int HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017;
   
-  int HLT2016_Dimuon0_Jpsi_Muon;
-  int HLT2016_Dimuon0_Upsilon_Muon;
-  int HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL;
-  int HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ;
-  
-  int HLT2017_Dimuon0_Jpsi3p5_Muon2;
-  int HLT2017_Dimuon12_Upsilon_eta1p5;
-  int HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL;
-  int HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ;
-  
-  int HLT2018_Dimuon0_Jpsi3p5_Muon2;
-  int HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon;
-  int HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL;
-  int HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL;
-  int HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ;
+
+  //2018 MuOnia
+  int HLT_Dimuon12_Upsilon_y1p4_v_2018;
+  int HLT_Dimuon24_Upsilon_noCorrL1_v_2018;
+  int HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018;
+  int HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2018;
+
+
   
   std::vector<float>            genLep_pt;
   std::vector<float>            genLep_eta;
@@ -263,6 +269,7 @@ struct tree_struc_{
   std::vector<int>            genMom_pdgId;
 
 
+  /*
   int nMuReco;
   std::vector<float>            recoMu_pt;
   std::vector<float>            recoMu_eta;
@@ -388,6 +395,7 @@ struct tree_struc_{
   std::vector<float>            recoDiele_eta2mode;
   std::vector<float>            recoDiele_phi2mode;
 
+  */
   //TQ
   int nTQReco;
   std::vector<float>            recoTQ_pt;
@@ -527,19 +535,20 @@ private:
    const edm::EDGetTokenT< edm::ValueMap<float> > mvaValuePF_; 
    edm::Handle< edm::ValueMap<float> > mvaValuePFH_;
 
-
-   int sampleIndex_;
-   float xsec_;    // pb
-
+  int year_;
+  int sampleIndex_;
+  float xsec_;    // pb
+  float massRef_;
    double puweights2016_[100];
    double puweights2017_[100];
    double puweights2018_[100];
    double puweightsALL_[100];
 
    // setup tree;
-   TTree* tree;
-   tree_struc_ tree_;
+  TTree* tree;
+  tree_struc_ tree_;
 
+  TH1F* h_counter;
 
 };
 
@@ -572,8 +581,10 @@ private:
 
 
    // Event stuff
+   year_   = iConfig.getUntrackedParameter<int>("year",0);
    sampleIndex_   = iConfig.getUntrackedParameter<int>("sampleIndex",0);
    xsec_          = iConfig.getUntrackedParameter<double>("sampleXsec",1.);
+   massRef_          = iConfig.getUntrackedParameter<double>("massRef",1.);
 
  }
 
@@ -617,6 +628,22 @@ private:
 
      using namespace edm;
 
+     //2016 MuOnia                                                                                                                                               
+     int HLT_Dimuon13_Upsilon_v_2016=0;
+     int HLT_Dimuon8_Upsilon_Barrel_v_2016=0;
+
+     //2017 MuOnia                                                                                                                                               
+     int HLT_Dimuon12_Upsilon_eta1p5_v_2017=0;
+     int HLT_Dimuon24_Upsilon_noCorrL1_v_2017=0;
+     int HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2017=0;
+     int HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017=0;
+
+     //2018 MuOnia
+     
+     int HLT_Dimuon12_Upsilon_y1p4_v_2018=0;
+     int HLT_Dimuon24_Upsilon_noCorrL1_v_2018=0;
+     int HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018=0;
+     int HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2018=0;
 
 
      std::vector<float>genLep_pt;
@@ -828,8 +855,9 @@ private:
 
      // --- sample info (0:signal, <0 background, >0 data)
      int sampleID = sampleIndex_;
+     int year=year_;
      float xsec=1.;
-  
+     float massRef=massRef_;//3.09 if JPsi 9.46 is Upsilon
      if(sampleID<=0) xsec=xsec_;
 
      // ---------- TRIGGER -------------------- //
@@ -837,17 +865,18 @@ private:
       -----------------------------------------
       year dataset     unprescaled
       -----------------------------------------
-`      2016 Charmonium  HLT_Dimuon0_Jpsi_Muon_v*
-      2016 Muonia      HLT_Dimuon0_Upsilon_Muon_v
-      2016 MuonEG      HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v , HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ_v
+      2016 MuOnia HLT_Dimuon13_Upsilon_v_2016=0;
+      2016 MuOnia HLT_Dimuon8_Upsilon_Barrel_v_2016=0;
+
+     2017 MuOnia   HLT_Dimuon12_Upsilon_eta1p5_v_2017=0;
+     2017 MuOnia   HLT_Dimuon24_Upsilon_noCorrL1_v_2017=0;
+     2017 MuOnia   HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2017=0;
+     2017 MuOnia   HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017=0;
       
-      2017 Charmonium  HLT_Dimuon0_Jpsi3p5_Muon2_v
-      2017 Muonia      HLT_Dimuon12_Upsilon_eta1p5_v , 
-      2017 MuonEG      HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v , HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ_v
-      
-      2018 Charmonium  HLT_Dimuon0_Jpsi3p5_Muon2_v 
-      2018 Muonia      HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v , HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v, 
-      2018 MuonEG      HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v , HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ_v
+      2018 MuOnia  HLT_Dimuon12_Upsilon_y1p4_v_2018;
+      2018 MuOnia  HLT_Dimuon24_Upsilon_noCorrL1_v_2018;
+      2018 MuOnia  HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018;
+      2018 MuOnia  HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2018;
 
       */
 
@@ -855,44 +884,30 @@ private:
      const edm::TriggerNames &triggerNames = iEvent.triggerNames( *triggerBitsH_ );
 
      //  vector<std::string> const &names = triggerNames.triggerNames();  
-     int HLT2016_Dimuon0_Jpsi_Muon=0;
-     int HLT2016_Dimuon0_Upsilon_Muon=0;
-     int HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL=0;
-     int HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=0;
      
-     int HLT2017_Dimuon0_Jpsi3p5_Muon2=0;
-     int HLT2017_Dimuon12_Upsilon_eta1p5=0;
-     int HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL=0;
-     int HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=0;
-     
-     int HLT2018_Dimuon0_Jpsi3p5_Muon2=0;
-     int HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon=0;
-     int HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL=0;
-     int HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL=0;
-     int HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=0;
-     /*
      for( unsigned index = 0; index < triggerNames.size(); ++index ) {
-             
-       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DoubleMu3_DoubleEle")) std::cout << index << " " << triggerNames.triggerName( index ) << " " << triggerBitsH_->accept( index ) << std::endl;
-      
-	  if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon0_Jpsi_Muon") )HLT2016_Dimuon0_Jpsi_Muon =triggerBitsH_->accept( index );
-       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon0_Upsilon_Muon") ) HLT2016_Dimuon0_Upsilon_Muon=triggerBitsH_->accept( index );
-       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Mu8_DiEle12_CaloIdL_TrackIdL") )HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL =triggerBitsH_->accept( index );
-       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ") ) HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=triggerBitsH_->accept( index );
-       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon0_Jpsi3p5_Muon2") ) HLT2017_Dimuon0_Jpsi3p5_Muon2=triggerBitsH_->accept( index );
-       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon12_Upsilon_eta1p5") )HLT2017_Dimuon12_Upsilon_eta1p5 =triggerBitsH_->accept( index );
-       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Mu8_DiEle12_CaloIdL_TrackIdL") ) HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL=triggerBitsH_->accept( index );
-       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ") )HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ =triggerBitsH_->accept( index );
-          if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon0_Jpsi3p5_Muon2") ) HLT2018_Dimuon0_Jpsi3p5_Muon2=triggerBitsH_->accept( index );
-       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon") ) HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon=triggerBitsH_->accept( index );
-       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL") ) HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL=triggerBitsH_->accept( index );
-       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Mu8_DiEle12_CaloIdL_TrackIdL") ) HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL=triggerBitsH_->accept( index );
-       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ") ) HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=triggerBitsH_->accept( index );
 
-       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon") )std::cout<<triggerBitsH_->accept( index )<<std::endl;
+       //2016
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon13_Upsilon") )HLT_Dimuon13_Upsilon_v_2016=triggerBitsH_->accept( index ); 
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon8_Upsilon_Barrel") )HLT_Dimuon8_Upsilon_Barrel_v_2016=triggerBitsH_->accept( index ); 
 
+
+       //2017
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon12_Upsilon_eta1p5") )HLT_Dimuon12_Upsilon_eta1p5_v_2017=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon24_Upsilon_noCorrL1") )HLT_Dimuon24_Upsilon_noCorrL1_v_2017=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon") )HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2017=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon") )HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017=triggerBitsH_->accept( index );
+
+       //2018
+       //       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("") )triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon12_Upsilon_y1p4") )HLT_Dimuon12_Upsilon_y1p4_v_2018=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon24_Upsilon_noCorrL1") )HLT_Dimuon24_Upsilon_noCorrL1_v_2018=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon") )HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon") )HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2018=triggerBitsH_->accept( index );
+
+       
      }
-       */
+       
      // ---------- GENERAL INFOS -------------------- //
      unsigned long int event = iEvent.id().event();   
      int run                 = iEvent.id().run();
@@ -1089,7 +1104,7 @@ private:
 
      for (const pat::Muon & mu1 : *patMuonsH_){
        imu1++;
-       if(mu1.pt()<1.)continue;
+       if(mu1.pt()<2.5)continue;
        if(abs(mu1.eta())>2.5)continue;
 
        imu2=-1;
@@ -1097,14 +1112,14 @@ private:
        for (const pat::Muon & mu2 : *patMuonsH_){
 	 imu2++;
 	 if(imu2<=imu1)continue;
-	 if(mu2.pt()<1.)continue;
+	 if(mu2.pt()<2.5)continue;
 	 if(abs(mu2.eta())>2.5)continue;
-	 //	 if(mu1.charge()*mu2.charge()>0)continue;
+	 if(mu1.charge()*mu2.charge()>0)continue;
     
 
 	 
 	 
-	
+	 
        //run kinematic fit
 	
        reco::TransientTrack mu1TT = theB->build(mu1.bestTrack());
@@ -1129,50 +1144,48 @@ private:
 			   {muon_sigma,muon_sigma} //some small sigma for the lepton mass
 		      );
 	
-       if(!fitter2.success()) continue; 
-       //       std::cout<<" chi2: "<<fitter2.chi2()<<std::endl;
-       // std::cout<<" dof: "<<fitter2.dof()<<std::endl;
-       //std::cout<<" prob: "<<fitter2.prob()<<std::endl;
+	if(!fitter2.success()) continue; 
+	if(fitter2.prob()<0.05)continue;
 
        //       std::cout<<"ind1: "<<imu1<<" ind2: "<<imu2<<" pt1: "<<mu1.pt()<<" pt2: "<<mu2.pt()<<" eta1: "<<mu1.eta()<<" eta2: "<<mu2.eta()<<" phi1: "<<mu1.phi()<<" phi2: "<<mu2.phi()<<" ch1: "<<mu1.charge()<<" ch2: "<<mu2.charge()<<std::endl;	 
        
 
-       recoDimu_TT1.push_back(mu1TT);
-       recoDimu_TT2.push_back(mu2TT);
-
-       recoDimu_pt1.push_back(mu1.pt());
-       recoDimu_index1.push_back(imu1);
-       recoDimu_index2.push_back(imu2);
-       recoDimu_eta1.push_back(mu1.eta());
-       recoDimu_phi1.push_back(mu1.phi());
-       recoDimu_charge1.push_back(mu1.charge());
-       recoDimu_mass1.push_back(mu1.mass());
-       recoDimu_softID1.push_back(muon::isSoftMuon(mu1, pv));
-
-
-       recoDimu_pt2.push_back(mu2.pt());
-       recoDimu_eta2.push_back(mu2.eta());
-       recoDimu_phi2.push_back(mu2.phi());
-       recoDimu_charge2.push_back(mu2.charge());
-       recoDimu_mass2.push_back(mu2.mass());
-       recoDimu_softID2.push_back(muon::isSoftMuon(mu2, pv));
-
-       recoDimu_vx.push_back(fitter2.fitted_vtx().x());
-       recoDimu_vy.push_back(fitter2.fitted_vtx().y());
-       recoDimu_vz.push_back(fitter2.fitted_vtx().z());
-       recoDimu_vtxchi2.push_back(fitter2.chi2());
-       recoDimu_vtxndof.push_back(fitter2.dof());
-       recoDimu_vtxprob.push_back(fitter2.prob());
-       auto fit_p4 = fitter2.fitted_p4();
-       recoDimu_pt.push_back(fit_p4.pt());        
-       recoDimu_eta.push_back(fit_p4.eta());        
-       recoDimu_phi.push_back(fit_p4.phi());        
+	recoDimu_TT1.push_back(mu1TT);
+	recoDimu_TT2.push_back(mu2TT);
+	
+	recoDimu_pt1.push_back(mu1.pt());
+	recoDimu_index1.push_back(imu1);
+	recoDimu_index2.push_back(imu2);
+	recoDimu_eta1.push_back(mu1.eta());
+	recoDimu_phi1.push_back(mu1.phi());
+	recoDimu_charge1.push_back(mu1.charge());
+	recoDimu_mass1.push_back(mu1.mass());
+	recoDimu_softID1.push_back(muon::isSoftMuon(mu1, pv));
+	
+	
+	recoDimu_pt2.push_back(mu2.pt());
+	recoDimu_eta2.push_back(mu2.eta());
+	recoDimu_phi2.push_back(mu2.phi());
+	recoDimu_charge2.push_back(mu2.charge());
+	recoDimu_mass2.push_back(mu2.mass());
+	recoDimu_softID2.push_back(muon::isSoftMuon(mu2, pv));
+	
+	recoDimu_vx.push_back(fitter2.fitted_vtx().x());
+	recoDimu_vy.push_back(fitter2.fitted_vtx().y());
+	recoDimu_vz.push_back(fitter2.fitted_vtx().z());
+	recoDimu_vtxchi2.push_back(fitter2.chi2());
+	recoDimu_vtxndof.push_back(fitter2.dof());
+	recoDimu_vtxprob.push_back(fitter2.prob());
+	auto fit_p4 = fitter2.fitted_p4();
+	recoDimu_pt.push_back(fit_p4.pt());        
+	recoDimu_eta.push_back(fit_p4.eta());        
+	recoDimu_phi.push_back(fit_p4.phi());        
+	
+	recoDimu_mass.push_back(fitter2.fitted_candidate().mass());        
+	recoDimu_massErr.push_back(sqrt(fitter2.fitted_candidate().kinematicParametersError().matrix()(6,6)));        
        
-       recoDimu_mass.push_back(fitter2.fitted_candidate().mass());        
-       recoDimu_massErr.push_back(sqrt(fitter2.fitted_candidate().kinematicParametersError().matrix()(6,6)));        
-       
-
-      nDimuReco++;
+	
+	nDimuReco++;
 
 
 
@@ -1468,6 +1481,8 @@ private:
     }
 
 
+
+
      // ----------------- DIELECTRON PF-PF -------------------- //
      size_t iel1=-1;
      size_t iel2=-1;
@@ -1476,7 +1491,7 @@ private:
 
      for (const pat::Electron & el1 : *pf){
        iel1++;
-       if(el1.pt()<1.)continue;
+       if(el1.pt()<2.)continue;
        if(abs(el1.eta())>2.5)continue;
 
        iel2=-1;
@@ -1484,7 +1499,7 @@ private:
        for (const pat::Electron & el2 : *pf){
 	 iel2++;
 	 if(iel2<=iel1)continue;
-	 if(el2.pt()<1.)continue;
+	 if(el2.pt()<2.)continue;
 	 if(abs(el2.eta())>2.5)continue;
 	 //	 if(el1.charge()*el2.charge()>0)continue;
     
@@ -1585,7 +1600,7 @@ private:
      size_t lp_iel2=-1;
      for (const pat::Electron & el1 : *lowpt){
        lp_iel1++;
-       if(el1.pt()<1.)continue;
+       if(el1.pt()<2.)continue;
        if(abs(el1.eta())>2.5)continue;
 
        lp_iel2=-1;
@@ -1593,9 +1608,9 @@ private:
        for (const pat::Electron & el2 : *lowpt){
 	 lp_iel2++;
 	 if(lp_iel2<=lp_iel1)continue;
-	 if(el2.pt()<1.)continue;
+	 if(el2.pt()<2.)continue;
 	 if(abs(el2.eta())>2.5)continue;
-	 //	 if(el1.charge()*el2.charge()>0)continue;
+	 //if(el1.charge()*el2.charge()>0)continue;
     
 
 	 //	std::cout<<" pt1: "<<el1.pt()<<" pt2: "<<el2.pt()<<" eta1: "<<el1.eta()<<" eta2: "<<el2.eta()<<" phi1: "<<el1.phi()<<" phi2: "<<el2.phi()<<" ch1: "<<el1.charge()<<" ch2: "<<el2.charge()<<std::endl;
@@ -1713,14 +1728,14 @@ private:
      size_t pf_iel2=-1;
      for (const pat::Electron & el1 : *lowpt){
        llpp_iel1++;
-       if(el1.pt()<1.)continue;
+       if(el1.pt()<2.)continue;
        if(abs(el1.eta())>2.5)continue;
 
        pf_iel2=-1;
        // for (pat::MuonCollection::const_iterator mu2 = patMuonsH_.begin(); mu2 != patMuonsH_.end(); ++mu2){
        for (const pat::Electron & el2 : *pf){
 	 pf_iel2++;
-	 if(el2.pt()<1.)continue;
+	 if(el2.pt()<2.)continue;
 	 if(abs(el2.eta())>2.5)continue;
 	 //	 if(el1.charge()*el2.charge()>0)continue;
     
@@ -1826,11 +1841,25 @@ private:
      }
 
 
+     //select now best mumu pair:
+     double deltamass_dimucand=999;
+     int dimucand;
+
+     for(int idimu=0;idimu<nDimuReco;idimu++){
+       if(abs(recoDimu_mass[idimu]-massRef)<deltamass_dimucand){
+	 deltamass_dimucand=abs(recoDimu_mass[idimu]-massRef);
+	 dimucand=idimu;
+       }
+
+     }
+
+
 
        //reconstruct TQ
 
        for(int idimu=0;idimu<nDimuReco;idimu++){
 
+	 if(idimu!=dimucand)continue;
 
 	 reco::TransientTrack mu1TT = recoDimu_TT1[idimu];
 	 reco::TransientTrack mu2TT = recoDimu_TT2[idimu];
@@ -1948,21 +1977,22 @@ private:
        }
 
 
+       h_counter->Fill(1);
+     
+       bool triggerOK;
+       if(sampleID <=0)triggerOK=1;
+       else if(year==2016){
+	 triggerOK = HLT_Dimuon13_Upsilon_v_2016||HLT_Dimuon8_Upsilon_Barrel_v_2016 ;
+       }else if(year==2017){
+	 triggerOK = HLT_Dimuon12_Upsilon_eta1p5_v_2017 || HLT_Dimuon24_Upsilon_noCorrL1_v_2017 ||HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2017 ||HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017;
+       }else if(year==2018){
+	 triggerOK = HLT_Dimuon12_Upsilon_y1p4_v_2018 || HLT_Dimuon24_Upsilon_noCorrL1_v_2018 || HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018 || HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2018;
+       }
 
-
-
-
-
-
-    
-
-
-
-
-
-    
-    initTreeStructure();
-    clearVectors();
+       if(triggerOK)h_counter->Fill(3);
+              
+       initTreeStructure();
+       clearVectors();
 
 
     tree_.run=run;
@@ -1980,27 +2010,27 @@ private:
     tree_.puw_2017=puw_2017;
     tree_.puw_2018=puw_2018;
     tree_.puw_ALL=puw_ALL;
-
-    tree_.HLT2016_Dimuon0_Jpsi_Muon=				         HLT2016_Dimuon0_Jpsi_Muon;				    
-    tree_.HLT2016_Dimuon0_Upsilon_Muon=			         HLT2016_Dimuon0_Upsilon_Muon;			    
-    tree_.HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL=		         HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL;		    
-    tree_.HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=		         HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ;		    
-    
-    tree_.HLT2017_Dimuon0_Jpsi3p5_Muon2=			         HLT2017_Dimuon0_Jpsi3p5_Muon2;			    
-    tree_.HLT2017_Dimuon12_Upsilon_eta1p5=			         HLT2017_Dimuon12_Upsilon_eta1p5;			    
-    tree_.HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL=		         HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL;		    
-    tree_.HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=		         HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ;		    
-    
-    tree_.HLT2018_Dimuon0_Jpsi3p5_Muon2=			         HLT2018_Dimuon0_Jpsi3p5_Muon2;			    
-    tree_.HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon=      HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon; 
-    tree_.HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL=        HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL;   
-    tree_.HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL=		         HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL;		    
-    tree_.HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ=                       HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ;                  
     
 
+    tree_.HLT_Dimuon13_Upsilon_v_2016=HLT_Dimuon13_Upsilon_v_2016;
+    tree_.HLT_Dimuon8_Upsilon_Barrel_v_2016=HLT_Dimuon8_Upsilon_Barrel_v_2016;
 
+
+    tree_.HLT_Dimuon12_Upsilon_eta1p5_v_2017=HLT_Dimuon12_Upsilon_eta1p5_v_2017;
+    tree_.HLT_Dimuon24_Upsilon_noCorrL1_v_2017=HLT_Dimuon24_Upsilon_noCorrL1_v_2017;
+    tree_.HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2017=HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2017;
+    tree_.HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017=HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017;
+
+
+    tree_.HLT_Dimuon12_Upsilon_y1p4_v_2018=HLT_Dimuon12_Upsilon_y1p4_v_2018;
+    tree_.HLT_Dimuon24_Upsilon_noCorrL1_v_2018=HLT_Dimuon24_Upsilon_noCorrL1_v_2018;
+    tree_.HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018=HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018;
+    tree_.HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2018=HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2018;
+
+    tree_.year=year;
     tree_.sampleID=sampleID;
     tree_.xsec=xsec;
+
 
     for(unsigned int i=0;i<genLep_pt.size();i++){
       tree_.genLep_pt.push_back(genLep_pt[i]);
@@ -2025,6 +2055,7 @@ private:
     TLorentzVector TQ(*lep0+*lep1+*lep2+*lep3);
     tree_.TQ_genMass=TQ.M();
 
+    /*
     tree_.nMuReco=nMuReco;
     for(unsigned int i=0;i<recoMu_pt.size();i++){
       tree_.recoMu_pt.push_back(recoMu_pt[i]);
@@ -2170,7 +2201,7 @@ private:
 
              
     }
-
+    */
 
   // TQ
     tree_.nTQReco=nTQReco;
@@ -2254,7 +2285,7 @@ private:
 
 
 
-    tree->Fill();
+    if(nTQReco>0 && triggerOK)    tree->Fill();
 
  }
 
@@ -2266,8 +2297,11 @@ void TQGenAnalyzer::beginJob()
   SetPuWeights(2017,puweights2017_);
   SetPuWeights(2018,puweights2018_);
   SetPuWeights(0,puweightsALL_);
+
   // --- set up output tree
+  h_counter = fs->make<TH1F>("h_counter","h_counter",2,0,4);
   tree = fs->make<TTree>("tree","tree");
+  tree->Branch("year", &tree_.year, "year/I");
   tree->Branch("sampleID", &tree_.sampleID, "sampleID/I");
   tree->Branch("xsec", &tree_.xsec, "xsec/F");
   tree->Branch("run", &tree_.run, "run/I");
@@ -2287,21 +2321,22 @@ void TQGenAnalyzer::beginJob()
   tree->Branch("puw_ALL", &tree_.puw_ALL, "puw_ALL/F");
 
 
-  tree->Branch("HLT2016_Dimuon0_Jpsi_Muon", &tree_.HLT2016_Dimuon0_Jpsi_Muon, "HLT2016_Dimuon0_Jpsi_Muon");
-  tree->Branch("HLT2016_Dimuon0_Upsilon_Muon", &tree_.HLT2016_Dimuon0_Upsilon_Muon, "HLT2016_Dimuon0_Upsilon_Muon");	
-  tree->Branch("HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL", &tree_.HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL, "HLT2016_Mu8_DiEle12_CaloIdL_TrackIdL");
-  tree->Branch("HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ", &tree_.HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ, "HLT2016_DiMu9_Ele9_CaloIdL_TrackIdL_DZ");  
-  tree->Branch("HLT2017_Dimuon0_Jpsi3p5_Muon2", &tree_.HLT2017_Dimuon0_Jpsi3p5_Muon2, "HLT2017_Dimuon0_Jpsi3p5_Muon2");	
-  tree->Branch("HLT2017_Dimuon12_Upsilon_eta1p5", &tree_.HLT2017_Dimuon12_Upsilon_eta1p5, "HLT2017_Dimuon12_Upsilon_eta1p5"); 
-  tree->Branch("HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL", &tree_.HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL, "HLT2017_Mu8_DiEle12_CaloIdL_TrackIdL");
-  tree->Branch("HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ", &tree_.HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ, "HLT2017_DiMu9_Ele9_CaloIdL_TrackIdL_DZ");
-  tree->Branch("HLT2018_Dimuon0_Jpsi3p5_Muon2", &tree_.HLT2018_Dimuon0_Jpsi3p5_Muon2, "HLT2018_Dimuon0_Jpsi3p5_Muon2");	
-  tree->Branch("HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon", &tree_.HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon, "HLT2018_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon"); 
-  tree->Branch("HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL", &tree_.HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL, "HLT2018_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL");   
-  tree->Branch("HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL", &tree_.HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL, "HLT2018_Mu8_DiEle12_CaloIdL_TrackIdL");		    
-  tree->Branch("HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ", &tree_.HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ, "HLT2018_DiMu9_Ele9_CaloIdL_TrackIdL_DZ");         
-  
 
+  tree->Branch("HLT_Dimuon13_Upsilon_v_2016",&tree_.HLT_Dimuon13_Upsilon_v_2016,"HLT_Dimuon13_Upsilon_v_2016/I");
+  tree->Branch("HLT_Dimuon8_Upsilon_Barrel_v_2016",&tree_.HLT_Dimuon8_Upsilon_Barrel_v_2016,"HLT_Dimuon8_Upsilon_Barrel_v_2016/I");
+
+  tree->Branch("HLT_Dimuon12_Upsilon_eta1p5_v_2017",&tree_.HLT_Dimuon12_Upsilon_eta1p5_v_2017,"HLT_Dimuon12_Upsilon_eta1p5_v_2017/I");
+  tree->Branch("HLT_Dimuon24_Upsilon_noCorrL1_v_2017",&tree_.HLT_Dimuon24_Upsilon_noCorrL1_v_2017,"HLT_Dimuon24_Upsilon_noCorrL1_v_2017/I");
+  tree->Branch("HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2017",&tree_.HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2017,"HLT_Dimuon24_Upsilon_noCorrL1_v_2017/I");
+  tree->Branch("HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017",&tree_.HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017,"HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017/I");
+
+  tree->Branch("HLT_Dimuon12_Upsilon_y1p4_v_2018",&tree_.HLT_Dimuon12_Upsilon_y1p4_v_2018,"HLT_Dimuon12_Upsilon_y1p4_v_2018/I");
+  tree->Branch("HLT_Dimuon24_Upsilon_noCorrL1_v_2018",&tree_.HLT_Dimuon24_Upsilon_noCorrL1_v_2018,"HLT_Dimuon24_Upsilon_noCorrL1_v_2018/I");
+  tree->Branch("HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018",&tree_.HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018,"HLT_Dimuon24_Upsilon_noCorrL1_v_2018/I");
+  tree->Branch("HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2018",&tree_.HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2018,"HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2018/I");
+
+
+ 
   tree->Branch("TQ_genMass", &tree_.TQ_genMass, "TQ_genMass/F");
   tree->Branch("genLep_pt",     &tree_.genLep_pt);
   tree->Branch("genLep_mass",      &tree_.genLep_mass);
@@ -2313,7 +2348,7 @@ void TQGenAnalyzer::beginJob()
   tree->Branch("genMom_eta",&tree_.genMom_eta);
   tree->Branch("genMom_phi",&tree_.genMom_phi);
   tree->Branch("genMom_pdgId",&tree_.genMom_pdgId);
-
+  /*
   tree->Branch("nMuReco", &tree_.nMuReco, "nMuReco/I");
   tree->Branch("recoMu_pt",     &tree_.recoMu_pt);
   tree->Branch("recoMu_mass",      &tree_.recoMu_mass);
@@ -2445,7 +2480,7 @@ void TQGenAnalyzer::beginJob()
   tree->Branch("recoDiele_eta2mode",     &tree_.recoDiele_eta2mode);
   tree->Branch("recoDiele_phi2mode",     &tree_.recoDiele_phi2mode);
 
-
+  */
   tree->Branch("nTQReco", &tree_.nTQReco, "nTQReco/I");
   tree->Branch("recoTQ_pt"            ,&tree_.recoTQ_pt);		      	
   tree->Branch("recoTQ_eta"           ,&tree_.recoTQ_eta);		      
@@ -2573,6 +2608,7 @@ void TQGenAnalyzer::clearVectors()
   tree_.genMom_phi.clear();
   tree_.genMom_pdgId.clear();
 
+  /*
   tree_.recoMu_pt.clear();
   tree_.recoMu_mass.clear();
   tree_.recoMu_eta.clear();
@@ -2697,7 +2733,7 @@ void TQGenAnalyzer::clearVectors()
   tree_.recoDiele_pt2mode.clear();
   tree_.recoDiele_eta2mode.clear();
   tree_.recoDiele_phi2mode.clear();
-
+  */
 tree_.recoTQ_pt.clear();		      	
 tree_.recoTQ_eta.clear();		
 tree_.recoTQ_phi.clear();		
