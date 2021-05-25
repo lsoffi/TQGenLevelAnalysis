@@ -250,6 +250,7 @@ struct tree_struc_{
   
 
   //2018 MuOnia
+  int HLT_Dimuon0_prescaled_2018;
   int HLT_Dimuon12_Upsilon_y1p4_v_2018;
   int HLT_Dimuon24_Upsilon_noCorrL1_v_2018;
   int HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018;
@@ -288,6 +289,8 @@ struct tree_struc_{
   std::vector<int>              recoMu_isHQ;
   std::vector<float>              recoMu_dxy;
   std::vector<float>              recoMu_dz;
+  std::vector<int>              recoMu_isTrigMatch;
+  std::vector<float>              recoMu_drTrigMatch;
 
 
   //dimuon pairs
@@ -317,6 +320,11 @@ struct tree_struc_{
   std::vector<float>            recoDimu_phi;        
   std::vector<float>            recoDimu_mass;        
   std::vector<float>            recoDimu_massErr;        
+  std::vector<int>              recoDimu_isTrigMatch1;
+  std::vector<float>              recoDimu_drTrigMatch1;
+  std::vector<int>              recoDimu_isTrigMatch2;
+  std::vector<float>              recoDimu_drTrigMatch2;
+
 
   //electrons
   int nEleReco;
@@ -394,8 +402,8 @@ struct tree_struc_{
   std::vector<float>            recoDiele_pt2mode;
   std::vector<float>            recoDiele_eta2mode;
   std::vector<float>            recoDiele_phi2mode;
-
   */
+ 
   //TQ
   int nTQReco;
   std::vector<float>            recoTQ_pt;
@@ -442,6 +450,11 @@ struct tree_struc_{
   std::vector<float>            recoTQ_charge2;
   std::vector<float>            recoTQ_mass2;
   std::vector<int>            recoTQ_softID2;
+
+  std::vector<int>              recoTQ_isTrigMatch1;                                                                                                        
+  std::vector<float>              recoTQ_drTrigMatch1;                                                                                                      
+  std::vector<int>              recoTQ_isTrigMatch2;                                                                                                        
+  std::vector<float>              recoTQ_drTrigMatch2;
 
   std::vector<int>            recoTQ_leptype3;
   std::vector<float>            recoTQ_pt3;
@@ -511,22 +524,23 @@ private:
   edm::Handle< std::vector<pat::Muon> > patMuonsH_;
 
   const edm::EDGetTokenT<pat::ElectronCollection> lowpt_src_;
-   const edm::EDGetTokenT<pat::ElectronCollection> pf_src_;
-
-   const edm::EDGetTokenT< std::vector<reco::Vertex> > vtx_; // MINIAOD
-   edm::Handle< std::vector<reco::Vertex>> vtxH_;
-
-   const edm::EDGetTokenT< double > rho_; // MINIAOD
-   edm::Handle< double> rhoH_;
-
-   const edm::EDGetTokenT<edm::View<PileupSummaryInfo> > PileUp_;
-   edm:: Handle<edm::View< PileupSummaryInfo> > PileUpH_;
-
-   const edm::EDGetTokenT< edm::TriggerResults> triggerBits_;
-   edm::Handle<edm::TriggerResults> triggerBitsH_;
-   const edm::EDGetTokenT<edm::TriggerResults> triggerFlags_;
-   edm::Handle<edm::TriggerResults> triggerFlagsH_;
-
+  const edm::EDGetTokenT<pat::ElectronCollection> pf_src_;
+  
+  const edm::EDGetTokenT< std::vector<reco::Vertex> > vtx_; // MINIAOD
+  edm::Handle< std::vector<reco::Vertex>> vtxH_;
+  
+  const edm::EDGetTokenT< double > rho_; // MINIAOD
+  edm::Handle< double> rhoH_;
+  
+  const edm::EDGetTokenT<edm::View<PileupSummaryInfo> > PileUp_;
+  edm:: Handle<edm::View< PileupSummaryInfo> > PileUpH_;
+  
+  const edm::EDGetTokenT< edm::TriggerResults> triggerBits_;
+  edm::Handle<edm::TriggerResults> triggerBitsH_;
+  
+  const edm::EDGetTokenT<std::vector<pat::TriggerObjectStandAlone>> triggerObjects_;
+  edm::Handle<std::vector<pat::TriggerObjectStandAlone>> triggerObjectsH_;
+  std::vector<std::string> HLTPaths_;
    const double dr_cleaning_;
    const double dz_cleaning_;
 
@@ -535,6 +549,8 @@ private:
    const edm::EDGetTokenT< edm::ValueMap<float> > mvaValuePF_; 
    edm::Handle< edm::ValueMap<float> > mvaValuePFH_;
 
+
+  
   int year_;
   int sampleIndex_;
   float xsec_;    // pb
@@ -569,8 +585,9 @@ private:
    PileUpH_(),
    triggerBits_( consumes<edm::TriggerResults>( iConfig.getParameter<edm::InputTag>( "bits" ))),
    triggerBitsH_(),
-   triggerFlags_( consumes<edm::TriggerResults>( iConfig.getParameter<edm::InputTag>( "flags" ))),
-   triggerFlagsH_(),
+   triggerObjects_(consumes<std::vector<pat::TriggerObjectStandAlone>>(iConfig.getParameter<edm::InputTag>("objects"))),
+   triggerObjectsH_(),
+   HLTPaths_(iConfig.getParameter<std::vector<std::string>>("HLTPaths")),
    dr_cleaning_(iConfig.getParameter<double>("drForCleaning")),
    dz_cleaning_(iConfig.getParameter<double>("dzForCleaning")),
    mvaValuePF_(consumes< edm::ValueMap<float> >(iConfig.getParameter<edm::InputTag>("mvaValuePF"))),
@@ -617,7 +634,6 @@ private:
      iEvent.getByToken(rho_,rhoH_);
      iEvent.getByToken(PileUp_,PileUpH_);
      iEvent.getByToken( triggerBits_, triggerBitsH_ );
-     iEvent.getByToken( triggerFlags_, triggerFlagsH_ );
      iEvent.getByToken(mvaValuePF_, mvaValuePFH_); 
 
      edm::ESHandle<MagneticField> bFieldHandle;
@@ -639,7 +655,13 @@ private:
      int HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017=0;
 
      //2018 MuOnia
-     
+     int     HLT_Dimuon0_1_2018=0;
+     int     HLT_Dimuon0_2_2018=0;
+     int     HLT_Dimuon0_3_2018=0;
+     int     HLT_Dimuon0_4_2018=0;
+     int     HLT_Dimuon0_5_2018=0;
+
+     int HLT_Dimuon0_prescaled_2018=0;
      int HLT_Dimuon12_Upsilon_y1p4_v_2018=0;
      int HLT_Dimuon24_Upsilon_noCorrL1_v_2018=0;
      int HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018=0;
@@ -674,6 +696,8 @@ private:
      std::vector<int>              recoMu_isHQ;
      std::vector<float>              recoMu_dxy;
      std::vector<float>              recoMu_dz;
+     std::vector<int>              recoMu_isTrigMatch;
+     std::vector<float>              recoMu_drTrigMatch;
 
      std::vector<float>            recoDimu_vx;
      std::vector<float>            recoDimu_vy;
@@ -701,7 +725,11 @@ private:
      std::vector<float>            recoDimu_phi;        
      std::vector<float>            recoDimu_mass;        
      std::vector<float>            recoDimu_massErr;        
-
+     std::vector<int>              recoDimu_isTrigMatch1;
+     std::vector<float>              recoDimu_drTrigMatch1;
+     std::vector<int>              recoDimu_isTrigMatch2;
+     std::vector<float>              recoDimu_drTrigMatch2;
+  
 
      std::vector<float>recoEle_pt;
      std::vector<float>recoEle_mass;
@@ -815,6 +843,7 @@ private:
   std::vector<float>            recoTQ_mass1;
   std::vector<int>            recoTQ_softID1;
 
+
   std::vector<int>            recoTQ_leptype2;
   std::vector<float>            recoTQ_pt2;
   std::vector<float>            recoTQ_eta2;
@@ -822,6 +851,13 @@ private:
   std::vector<float>            recoTQ_charge2;
   std::vector<float>            recoTQ_mass2;
   std::vector<int>            recoTQ_softID2;
+
+
+  std::vector<int>              recoTQ_isTrigMatch1;                                                                                                        
+  std::vector<float>              recoTQ_drTrigMatch1;                                                                                                      
+  std::vector<int>              recoTQ_isTrigMatch2;                                                                                                        
+  std::vector<float>              recoTQ_drTrigMatch2;
+
 
   std::vector<int>            recoTQ_leptype3;
   std::vector<float>            recoTQ_pt3;
@@ -877,6 +913,10 @@ private:
       2018 MuOnia  HLT_Dimuon24_Upsilon_noCorrL1_v_2018;
       2018 MuOnia  HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018;
       2018 MuOnia  HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2018;
+      
+
+                   prescaled
+       2018 MuOnia HLT_Dimuon0_Upsilon_L1_4p5NoOS_v || HLT_Dimuon0_Upsilon_L1_4p5_v ||HLT_Dimuon0_Upsilon_L1_4p5er2p0M_v || HLT_Dimuon0_Upsilon_L1_4p5er2p0_v || HLT_Dimuon0_Upsilon_L1_5M_v
 
       */
 
@@ -905,8 +945,22 @@ private:
        if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon") )HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018=triggerBitsH_->accept( index );
        if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon") )HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2018=triggerBitsH_->accept( index );
 
+
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon0_Upsilon_L1_4p5NoOS_v")) HLT_Dimuon0_1_2018=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon0_Upsilon_L1_4p5_v")) HLT_Dimuon0_2_2018=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon0_Upsilon_L1_4p5er2p0M_v")) HLT_Dimuon0_3_2018=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon0_Upsilon_L1_4p5er2p0_v")) HLT_Dimuon0_4_2018=triggerBitsH_->accept( index );
+       if( (TString::Format((triggerNames.triggerName( index )).c_str())).Contains("HLT_Dimuon0_Upsilon_L1_5M_v")) HLT_Dimuon0_5_2018=triggerBitsH_->accept( index );
+
+
+ 
+	 
        
      }
+
+     HLT_Dimuon0_prescaled_2018 = HLT_Dimuon0_1_2018 || HLT_Dimuon0_2_2018 || HLT_Dimuon0_3_2018 || HLT_Dimuon0_4_2018 || HLT_Dimuon0_5_2018 ;
+
+
        
      // ---------- GENERAL INFOS -------------------- //
      unsigned long int event = iEvent.id().event();   
@@ -1093,6 +1147,53 @@ private:
        recoMu_isHQ.push_back(recoishq);
        recoMu_dxy.push_back(recodxy);
        recoMu_dz.push_back(recodz);
+
+
+       //check if this muon fires a trigger
+       std::vector<int> frs(HLTPaths_.size(),0); //path fires for each reco muon
+       std::vector<float> temp_matched_to(HLTPaths_.size(),1000.);
+       std::vector<float> temp_DR(HLTPaths_.size(),1000.);
+       std::vector<float> temp_DPT(HLTPaths_.size(),1000.);
+       
+       int whichTrigFired=999;
+       float drMin=1;
+       int ipath=-1;
+       if(mu_iter.triggerObjectMatches().size()==0)continue;
+	 
+       for (const std::string path: HLTPaths_){
+	 ipath++;
+	 char cstr[ (path+"*").size() + 1];
+	 strcpy( cstr, (path+"*").c_str() );
+	 std::vector<float> temp_dr(mu_iter.triggerObjectMatches().size(),1000.);
+	 std::vector<float> temp_dpt(mu_iter.triggerObjectMatches().size(),1000.);
+	 std::vector<float> temp_pt(mu_iter.triggerObjectMatches().size(),1000.);
+
+	   for(size_t i=0; i<mu_iter.triggerObjectMatches().size();i++){
+
+	     if(mu_iter.triggerObjectMatch(i)!=0 && mu_iter.triggerObjectMatch(i)->hasPathName(cstr,true,true)){
+	       frs[ipath]=1;
+	       float dr=deltaR(mu_iter.triggerObjectMatch(i)->eta(),mu_iter.triggerObjectMatch(i)->phi(),mu_iter.eta(),mu_iter.phi());
+	       float dpt=(mu_iter.triggerObjectMatch(i)->pt()-mu_iter.pt())/mu_iter.triggerObjectMatch(i)->pt();
+	       temp_dr[i]=dr;
+	       temp_dpt[i]=dpt;
+	       temp_pt[i]=mu_iter.triggerObjectMatch(i)->pt(); 
+	     }
+	   }
+	   temp_DR[ipath]=*min_element(temp_dr.begin(),temp_dr.end());
+	   int position=std::min_element(temp_dr.begin(),temp_dr.end()) - temp_dr.begin();
+	   temp_DPT[ipath]=temp_dpt[position];
+	   temp_matched_to[ipath]=temp_pt[position];
+	   
+	   if(temp_DR[ipath]<drMin){
+	     whichTrigFired = ipath;
+	     drMin= temp_DR[ipath];
+	   }
+		  
+       }       
+       recoMu_isTrigMatch.push_back(whichTrigFired);
+       recoMu_drTrigMatch.push_back(drMin);
+
+
      }
 
 
@@ -1107,6 +1208,48 @@ private:
        if(mu1.pt()<2.5)continue;
        if(abs(mu1.eta())>2.5)continue;
 
+
+       //check if this muon fires a trigger
+
+       std::vector<float> temp_matched_to(HLTPaths_.size(),1000.);
+       std::vector<float> temp_DR(HLTPaths_.size(),1000.);
+       std::vector<float> temp_DPT(HLTPaths_.size(),1000.);
+       
+       int whichTrigFired1=999;
+       float drMin1=1;
+       int ipath=-1;
+       if(mu1.triggerObjectMatches().size()==0)continue;
+	 
+       for (const std::string path: HLTPaths_){
+	 ipath++;
+	 char cstr[ (path+"*").size() + 1];
+	 strcpy( cstr, (path+"*").c_str() );
+	 std::vector<float> temp_dr(mu1.triggerObjectMatches().size(),1000.);
+	 std::vector<float> temp_dpt(mu1.triggerObjectMatches().size(),1000.);
+	 std::vector<float> temp_pt(mu1.triggerObjectMatches().size(),1000.);
+
+	   for(size_t i=0; i<mu1.triggerObjectMatches().size();i++){
+
+	     if(mu1.triggerObjectMatch(i)!=0 && mu1.triggerObjectMatch(i)->hasPathName(cstr,true,true)){
+	       float dr=deltaR(mu1.triggerObjectMatch(i)->eta(),mu1.triggerObjectMatch(i)->phi(),mu1.eta(),mu1.phi());
+	       float dpt=(mu1.triggerObjectMatch(i)->pt()-mu1.pt())/mu1.triggerObjectMatch(i)->pt();
+	       temp_dr[i]=dr;
+	       temp_dpt[i]=dpt;
+	       temp_pt[i]=mu1.triggerObjectMatch(i)->pt(); 
+	     }
+	   }
+	   temp_DR[ipath]=*min_element(temp_dr.begin(),temp_dr.end());
+	   int position=std::min_element(temp_dr.begin(),temp_dr.end()) - temp_dr.begin();
+	   temp_DPT[ipath]=temp_dpt[position];
+	   temp_matched_to[ipath]=temp_pt[position];
+	   
+	   if(temp_DR[ipath]<drMin1){
+	     whichTrigFired1 = ipath;
+	     drMin1= temp_DR[ipath];
+	   }
+		  
+       }       
+
        imu2=-1;
        // for (pat::MuonCollection::const_iterator mu2 = patMuonsH_.begin(); mu2 != patMuonsH_.end(); ++mu2){
        for (const pat::Muon & mu2 : *patMuonsH_){
@@ -1115,27 +1258,23 @@ private:
 	 if(mu2.pt()<2.5)continue;
 	 if(abs(mu2.eta())>2.5)continue;
 	 if(mu1.charge()*mu2.charge()>0)continue;
-    
-
-	 
-	 
-	 
-       //run kinematic fit
+    	 		 
+	 //run kinematic fit
 	
-       reco::TransientTrack mu1TT = theB->build(mu1.bestTrack());
-       reco::TransientTrack mu2TT = theB->build(mu2.bestTrack());
-
-	float chi = 0.;
-	float ndf = 0.;
-	double muon_mass = 0.1056583;
-	float muon_sigma = 0.0000001;
-
+	 reco::TransientTrack mu1TT = theB->build(mu1.bestTrack());
+	 reco::TransientTrack mu2TT = theB->build(mu2.bestTrack());
+	 
+	 float chi = 0.;
+	 float ndf = 0.;
+	 double muon_mass = 0.1056583;
+	 float muon_sigma = 0.0000001;
+	 
 	
-	KinematicParticleFactoryFromTransientTrack pFactory;
-	std::vector<RefCountedKinematicParticle> allParticles;
-	allParticles.push_back(pFactory.particle (mu1TT,muon_mass,chi,ndf,muon_sigma));
-	allParticles.push_back(pFactory.particle (mu2TT,muon_mass,chi,ndf,muon_sigma));
-	KinematicParticleVertexFitter fitter;
+	 KinematicParticleFactoryFromTransientTrack pFactory;
+	 std::vector<RefCountedKinematicParticle> allParticles;
+	 allParticles.push_back(pFactory.particle (mu1TT,muon_mass,chi,ndf,muon_sigma));
+	 allParticles.push_back(pFactory.particle (mu2TT,muon_mass,chi,ndf,muon_sigma));
+	 KinematicParticleVertexFitter fitter;
 	
 
 	KinVtxFitter fitter2(
@@ -1149,6 +1288,52 @@ private:
 
        //       std::cout<<"ind1: "<<imu1<<" ind2: "<<imu2<<" pt1: "<<mu1.pt()<<" pt2: "<<mu2.pt()<<" eta1: "<<mu1.eta()<<" eta2: "<<mu2.eta()<<" phi1: "<<mu1.phi()<<" phi2: "<<mu2.phi()<<" ch1: "<<mu1.charge()<<" ch2: "<<mu2.charge()<<std::endl;	 
        
+
+	//check if this muon fires a trigger
+	std::vector<float> temp_matched_to(HLTPaths_.size(),1000.);
+	std::vector<float> temp_DR(HLTPaths_.size(),1000.);
+	std::vector<float> temp_DPT(HLTPaths_.size(),1000.);
+       
+	int whichTrigFired2=999;
+	float drMin2=1;
+	int ipath=-1;
+	if(mu2.triggerObjectMatches().size()==0)continue;
+	
+	for (const std::string path: HLTPaths_){
+	  ipath++;
+	  char cstr[ (path+"*").size() + 1];
+	  strcpy( cstr, (path+"*").c_str() );
+	  std::vector<float> temp_dr(mu2.triggerObjectMatches().size(),1000.);
+	  std::vector<float> temp_dpt(mu2.triggerObjectMatches().size(),1000.);
+	  std::vector<float> temp_pt(mu2.triggerObjectMatches().size(),1000.);
+	  
+	  for(size_t i=0; i<mu2.triggerObjectMatches().size();i++){
+
+	    if(mu2.triggerObjectMatch(i)!=0 && mu2.triggerObjectMatch(i)->hasPathName(cstr,true,true)){
+	      float dr=deltaR(mu2.triggerObjectMatch(i)->eta(),mu2.triggerObjectMatch(i)->phi(),mu2.eta(),mu2.phi());
+	      float dpt=(mu2.triggerObjectMatch(i)->pt()-mu2.pt())/mu2.triggerObjectMatch(i)->pt();
+	      temp_dr[i]=dr;
+	      temp_dpt[i]=dpt;
+	      temp_pt[i]=mu2.triggerObjectMatch(i)->pt(); 
+	    }
+	  }
+	  temp_DR[ipath]=*min_element(temp_dr.begin(),temp_dr.end());
+	  int position=std::min_element(temp_dr.begin(),temp_dr.end()) - temp_dr.begin();
+	  temp_DPT[ipath]=temp_dpt[position];
+	  temp_matched_to[ipath]=temp_pt[position];
+	  
+	  if(temp_DR[ipath]<drMin2){
+	    whichTrigFired2 = ipath;
+	    drMin2= temp_DR[ipath];
+	  }
+		  
+       }       
+       recoDimu_isTrigMatch1.push_back(whichTrigFired1);
+       recoDimu_drTrigMatch1.push_back(drMin1);
+       recoDimu_isTrigMatch2.push_back(whichTrigFired2);
+       recoDimu_drTrigMatch2.push_back(drMin2);
+
+
 
 	recoDimu_TT1.push_back(mu1TT);
 	recoDimu_TT2.push_back(mu2TT);
@@ -1846,6 +2031,8 @@ private:
      int dimucand;
 
      for(int idimu=0;idimu<nDimuReco;idimu++){
+       //       if(recoDimu_isTrigMatch1[idimu]>10 || recoDimu_isTrigMatch2[idimu]>10 || recoDimu_drTrigMatch1[idimu]>1 || recoDimu_drTrigMatch2[idimu]>1)continue;
+       //if(recoDimu_isTrigMatch1[idimu]!=recoDimu_isTrigMatch2[idimu])continue;
        if(abs(recoDimu_mass[idimu]-massRef)<deltamass_dimucand){
 	 deltamass_dimucand=abs(recoDimu_mass[idimu]-massRef);
 	 dimucand=idimu;
@@ -1925,6 +2112,12 @@ private:
 	 recoTQ_charge2.push_back(recoDimu_charge2[idimu]);
 	 recoTQ_mass2.push_back(recoDimu_mass2[idimu]);
 	 recoTQ_softID2.push_back(recoDimu_softID2[idimu]);
+
+         recoTQ_isTrigMatch1.push_back(recoDimu_isTrigMatch1[idimu]);                                                                                    
+	 recoTQ_drTrigMatch1.push_back(recoDimu_drTrigMatch1[idimu]);
+         recoTQ_isTrigMatch2.push_back(recoDimu_isTrigMatch2[idimu]); 
+	 recoTQ_drTrigMatch2.push_back(recoDimu_drTrigMatch2[idimu]);
+
   
 
 	 recoTQ_Y2pt.push_back(recoDiele_pt[idiel]);
@@ -1989,6 +2182,7 @@ private:
 	 triggerOK = HLT_Dimuon12_Upsilon_y1p4_v_2018 || HLT_Dimuon24_Upsilon_noCorrL1_v_2018 || HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018 || HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2018;
        }
 
+    
        if(triggerOK)h_counter->Fill(3);
               
        initTreeStructure();
@@ -2021,7 +2215,7 @@ private:
     tree_.HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2017=HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2017;
     tree_.HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017=HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017;
 
-
+    tree_.HLT_Dimuon0_prescaled_2018 = HLT_Dimuon0_prescaled_2018;
     tree_.HLT_Dimuon12_Upsilon_y1p4_v_2018=HLT_Dimuon12_Upsilon_y1p4_v_2018;
     tree_.HLT_Dimuon24_Upsilon_noCorrL1_v_2018=HLT_Dimuon24_Upsilon_noCorrL1_v_2018;
     tree_.HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018=HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018;
@@ -2075,10 +2269,12 @@ private:
       tree_.recoMu_isHQ.push_back(recoMu_isHQ[i]);   
       tree_.recoMu_dxy.push_back(recoMu_dxy[i]);   
       tree_.recoMu_dz.push_back(recoMu_dz[i]);   
+      tree_.recoMu_isTrigMatch.push_back(recoMu_isTrigMatch[i]);   
+      tree_.recoMu_drTrigMatch.push_back(recoMu_drTrigMatch[i]);   
       
     }
 
-
+    
     
     tree_.nDimuReco=nDimuReco;
     for(unsigned int i=0;i<recoDimu_vx.size();i++){
@@ -2109,10 +2305,14 @@ private:
       tree_.recoDimu_phi.push_back(       recoDimu_phi[i]);           
       tree_.recoDimu_mass.push_back(       recoDimu_mass[i]);           
       tree_.recoDimu_massErr.push_back(       recoDimu_massErr[i]);           
+      tree_.recoDimu_isTrigMatch1.push_back(recoDimu_isTrigMatch1[i]);   
+      tree_.recoDimu_drTrigMatch1.push_back(recoDimu_drTrigMatch1[i]);   
+      tree_.recoDimu_isTrigMatch2.push_back(recoDimu_isTrigMatch2[i]);   
+      tree_.recoDimu_drTrigMatch2.push_back(recoDimu_drTrigMatch2[i]);   
       
       }
 
-
+    
     tree_.nEleReco=nEleReco;
     tree_.nPFEleReco=nPFEleReco;
     tree_.nLowPtEleReco=nLowPtEleReco;
@@ -2201,7 +2401,7 @@ private:
 
              
     }
-    */
+    */    
 
   // TQ
     tree_.nTQReco=nTQReco;
@@ -2251,6 +2451,12 @@ private:
 	tree_.recoTQ_mass2.push_back(	       	       recoTQ_mass2[i]);	       	  
         tree_.recoTQ_softID2.push_back(	       	     recoTQ_softID2[i]);	       	  
 
+	tree_.recoTQ_isTrigMatch1.push_back(    recoTQ_isTrigMatch1[i]);
+	tree_.recoTQ_drTrigMatch1.push_back(    recoTQ_drTrigMatch1[i]);
+	tree_.recoTQ_isTrigMatch2.push_back(    recoTQ_isTrigMatch2[i]);
+	tree_.recoTQ_drTrigMatch2.push_back(    recoTQ_drTrigMatch2[i]);
+                                                                                                       
+
         tree_.recoTQ_leptype3.push_back(       	     recoTQ_leptype3[i]);	       
 	tree_.recoTQ_pt3.push_back(	       	       recoTQ_pt3[i]);		       
 	tree_.recoTQ_pt3mode.push_back(	       	       recoTQ_pt3mode[i]);		       
@@ -2283,7 +2489,7 @@ private:
  }
 
 
-
+    triggerOK=1;
 
     if(nTQReco>0 && triggerOK)    tree->Fill();
 
@@ -2330,6 +2536,7 @@ void TQGenAnalyzer::beginJob()
   tree->Branch("HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2017",&tree_.HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2017,"HLT_Dimuon24_Upsilon_noCorrL1_v_2017/I");
   tree->Branch("HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017",&tree_.HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017,"HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL_v_2017/I");
 
+  tree->Branch("HLT_Dimuon0_prescaled_2018",&tree_.HLT_Dimuon0_prescaled_2018,"HLT_Dimuon0_prescaled_2018/I");
   tree->Branch("HLT_Dimuon12_Upsilon_y1p4_v_2018",&tree_.HLT_Dimuon12_Upsilon_y1p4_v_2018,"HLT_Dimuon12_Upsilon_y1p4_v_2018/I");
   tree->Branch("HLT_Dimuon24_Upsilon_noCorrL1_v_2018",&tree_.HLT_Dimuon24_Upsilon_noCorrL1_v_2018,"HLT_Dimuon24_Upsilon_noCorrL1_v_2018/I");
   tree->Branch("HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018",&tree_.HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon_v_2018,"HLT_Dimuon24_Upsilon_noCorrL1_v_2018/I");
@@ -2480,7 +2687,7 @@ void TQGenAnalyzer::beginJob()
   tree->Branch("recoDiele_eta2mode",     &tree_.recoDiele_eta2mode);
   tree->Branch("recoDiele_phi2mode",     &tree_.recoDiele_phi2mode);
 
-  */
+  */  
   tree->Branch("nTQReco", &tree_.nTQReco, "nTQReco/I");
   tree->Branch("recoTQ_pt"            ,&tree_.recoTQ_pt);		      	
   tree->Branch("recoTQ_eta"           ,&tree_.recoTQ_eta);		      
@@ -2529,6 +2736,12 @@ tree->Branch("recoTQ_Y2vtxprob"       ,&tree_.recoTQ_Y2vtxprob);
  tree->Branch("recoTQ_mass2"        ,&tree_.recoTQ_mass2 );	      	
  tree->Branch("recoTQ_softID2"      ,&tree_.recoTQ_softID2 );	      	
 				                                        
+
+  tree->Branch("recoTQ_isTrigMatch1"      ,&tree_.recoTQ_isTrigMatch1 );
+  tree->Branch("recoTQ_drTrigMatch1"      ,&tree_.recoTQ_drTrigMatch1 );
+  tree->Branch("recoTQ_isTrigMatch2"      ,&tree_.recoTQ_isTrigMatch2 );
+  tree->Branch("recoTQ_drTrigMatch2"      ,&tree_.recoTQ_drTrigMatch2 );
+
  tree->Branch("recoTQ_leptype3"     ,&tree_.recoTQ_leptype3);	      	
  tree->Branch("recoTQ_pt3"          ,&tree_.recoTQ_pt3   );		      
  tree->Branch("recoTQ_pt3mode"          ,&tree_.recoTQ_pt3mode   );		      
@@ -2733,7 +2946,7 @@ void TQGenAnalyzer::clearVectors()
   tree_.recoDiele_pt2mode.clear();
   tree_.recoDiele_eta2mode.clear();
   tree_.recoDiele_phi2mode.clear();
-  */
+  */  
 tree_.recoTQ_pt.clear();		      	
 tree_.recoTQ_eta.clear();		
 tree_.recoTQ_phi.clear();		
@@ -2777,10 +2990,15 @@ tree_.recoTQ_pt2   .clear();
 tree_.recoTQ_eta2  .clear();		
 tree_.recoTQ_phi2  .clear();		
 tree_.recoTQ_charge2  .clear();	  	
-tree_.recoTQ_mass2 .clear();	      	
-tree_.recoTQ_softID2 .clear();	      	
-                                  
-tree_.recoTQ_leptype3.clear();	      	
+ tree_.recoTQ_mass2 .clear();	      	
+ tree_.recoTQ_softID2 .clear();	      	
+ 
+ tree_.recoTQ_isTrigMatch1.clear();
+ tree_.recoTQ_drTrigMatch1.clear();
+ tree_.recoTQ_isTrigMatch2.clear();
+ tree_.recoTQ_drTrigMatch2.clear();
+
+ tree_.recoTQ_leptype3.clear();	      	
 tree_.recoTQ_pt3   .clear();		
 tree_.recoTQ_pt3mode   .clear();		
 tree_.recoTQ_eta3  .clear();		
