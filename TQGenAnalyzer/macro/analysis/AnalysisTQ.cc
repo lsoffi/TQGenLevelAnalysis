@@ -26,7 +26,7 @@ void AnalysisTQ::Loop(std::string mass,int tot,int trigger)
 
    Long64_t nbytes = 0, nb = 0;
    
-   int counter[13]={0};
+   int counter[14]={0};
    int counterBIS=0;
    int counterTRIS=0;
 
@@ -70,6 +70,10 @@ void AnalysisTQ::Loop(std::string mass,int tot,int trigger)
    Float_t Ym_eta; 
    Float_t Ye_eta; 
    Float_t mass_Err;
+   Float_t x_sec;
+   Float_t puw2018;
+   Float_t nvtxw2018;
+   Int_t n_vtx;
 
 
    
@@ -105,7 +109,10 @@ void AnalysisTQ::Loop(std::string mass,int tot,int trigger)
    tree_red.Branch("Ym_eta",&Ym_eta,"Ym_eta/F");
    tree_red.Branch("Ye_eta",&Ye_eta,"Ye_eta/F");
    tree_red.Branch("mass_Err", &mass_Err, "mass_Err/F");
-
+   tree_red.Branch("x_sec", &x_sec, "x_sec/F");
+   tree_red.Branch("puw2018", &puw2018, "puw2018/F");
+   tree_red.Branch("nvtxw2018", &nvtxw2018, "nvtxw2018/F");
+   tree_red.Branch("n_vtx", &n_vtx, "n_vtx/I");
 
 
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -123,6 +130,7 @@ void AnalysisTQ::Loop(std::string mass,int tot,int trigger)
       int nTQwithAtLeast2elOverPtEtaID=0;
       int nTQwithAtLeast2elOverPtEtaIDLp=0;
       int nTQwithAtLeast2elOverPtEtaIDLpVtxProb=0;
+      int nTQwithAtLeast2elOverPtEtaIDLpVtxProbMass=0;
       int nTQwithDeltaR=0;
       int nTQwithVtxProb=0;
       //      std::cout<< "---------------------------------------------" <<std::endl;
@@ -152,11 +160,13 @@ void AnalysisTQ::Loop(std::string mass,int tot,int trigger)
       
         nTQwithAtLeast2muPtEtaIDVtxProb++;
 
-        if((*recoTQ_Y1mass)[i]<7.) continue;      
-
-        nTQwithAtLeast2muPtEtaIDVtxProbMass++;
 
         if ((*recoTQ_Y1pt)[i]<12.) continue;
+
+      
+        nTQwithAtLeast2muPtEtaIDVtxProbMass++;
+
+        if((*recoTQ_Y1mass)[i]<7.) continue;
 
         nTQwithAtLeast2muPtEtaIDVtxProbMassPt++;
 
@@ -199,6 +209,9 @@ void AnalysisTQ::Loop(std::string mass,int tot,int trigger)
 
         nTQwithAtLeast2elOverPtEtaIDLpVtxProb++;
 
+        if((*recoTQ_Y2mass)[i]<4.) continue;
+ 
+        nTQwithAtLeast2elOverPtEtaIDLpVtxProbMass++;
 
 	float dR12=DeltaR((*recoTQ_eta1)[i],(*recoTQ_phi1)[i],(*recoTQ_eta2)[i],(*recoTQ_phi2)[i]);
 	float dR13=DeltaR((*recoTQ_eta1)[i],(*recoTQ_phi1)[i],(*recoTQ_eta3)[i],(*recoTQ_phi3)[i]);
@@ -251,7 +264,7 @@ void AnalysisTQ::Loop(std::string mass,int tot,int trigger)
 
       //increase counters
       if(nTQwithAtLeast2mu>0)counter[1]++;
-      if(nTQwithAtLeast2muPtEtaID>0)counter[2]++;
+      if(nTQwithAtLeast2muPtEtaID>0)counter[2]++;      
       if(nTQwithAtLeast2muPtEtaIDVtxProb>0)counter[3]++;
       if(nTQwithAtLeast2muPtEtaIDVtxProbMass>0)counter[4]++;
       if(nTQwithAtLeast2muPtEtaIDVtxProbMassPt>0)counter[5]++;
@@ -261,8 +274,9 @@ void AnalysisTQ::Loop(std::string mass,int tot,int trigger)
       if(nTQwithAtLeast2elOverPtEtaID>0)counter[8]++;
       if(nTQwithAtLeast2elOverPtEtaIDLp>0)counter[9]++;
       if(nTQwithAtLeast2elOverPtEtaIDLpVtxProb>0)counter[10]++;
-      if(nTQwithDeltaR>0)counter[11]++;
-      if(nTQwithVtxProb>0)counter[12]++;
+      if(nTQwithAtLeast2elOverPtEtaIDLpVtxProbMass>0)counter[11]++;
+      if(nTQwithDeltaR>0)counter[12]++;
+      if(nTQwithVtxProb>0)counter[13]++;
       
       //fillign reduced tree with candidate infos
       if(best_cand<999){
@@ -304,6 +318,10 @@ void AnalysisTQ::Loop(std::string mass,int tot,int trigger)
 	TQ_pt=(*recoTQ_pt)[best_cand]; 
 	TQ_eta=(*recoTQ_eta)[best_cand];
         mass_Err= (*recoTQ_massErr)[best_cand]; 
+        x_sec = xsec;
+        puw2018 = puw_2018;
+        nvtxw2018 = nvtxw_2018;
+        n_vtx = nvtx;
 
 	tree_red.Fill();
       }
@@ -324,68 +342,19 @@ void AnalysisTQ::Loop(std::string mass,int tot,int trigger)
    std::cout<<" 2e reco no overlap pt eta id : "<<counter[8]<<std::endl;
    std::cout<<" 2e reco no overlap pt eta id no lp: "<<counter[9]<<std::endl;
    std::cout<<" 2e reco no overlap pt eta id no lp vtx: "<<counter[10]<<std::endl;
-   std::cout<<" TQ deltaR: "<<counter[11]<<std::endl;
-   std::cout<<" TQ vtx: "<<counter[12]<<std::endl;
+   std::cout<<" 2e reco no overlap pt eta id no lp vtx mass(Ye): "<<counter[11]<<std::endl;
+   std::cout<<" TQ deltaR: "<<counter[12]<<std::endl;
+   std::cout<<" TQ vtx: "<<counter[13]<<std::endl;
       
-   TH1F* h_counter = new TH1F("h_counter", "",15,0,15);
-   h_counter->GetXaxis()->SetBinLabel(1 ," Total");
-   h_counter->GetXaxis()->SetBinLabel(2 ," Trigger");
-   h_counter->GetXaxis()->SetBinLabel(3 ," nTQ >=1");
-   h_counter->GetXaxis()->SetBinLabel(4 ," nDiMu >1");
-   h_counter->GetXaxis()->SetBinLabel(5 ,"softID==1");
-   h_counter->GetXaxis()->SetBinLabel(6 ,"#mu#mu vtx prob >0.1");
-   h_counter->GetXaxis()->SetBinLabel(7 ,"#mu#mu m > 7 GeV");
-   h_counter->GetXaxis()->SetBinLabel(8 ,"#mu#mu p_{T} > 12 GeV");
 
-   h_counter->GetXaxis()->SetBinLabel(9,"nDiEle>1");
-   h_counter->GetXaxis()->SetBinLabel(10,"no overlap");
-   h_counter->GetXaxis()->SetBinLabel(11,"ID==1");
-   h_counter->GetXaxis()->SetBinLabel(12,"!LP-LP");
-   h_counter->GetXaxis()->SetBinLabel(13 ,"ee vtx prob >0.1");
-   h_counter->GetXaxis()->SetBinLabel(14 ,"TQ all dR ok");
-   h_counter->GetXaxis()->SetBinLabel(15 ,"TQ vtx prob >0.1");
    //creating efficiency counters
-
-   TH1F* eff_counter = new TH1F("eff_counter", "",15,0,15);
-   eff_counter->GetXaxis()->SetBinLabel(1 ," Total");
-   eff_counter->GetXaxis()->SetBinLabel(2 ," Trigger");
-   eff_counter->GetXaxis()->SetBinLabel(3 ," nTQ >=1");
-   eff_counter->GetXaxis()->SetBinLabel(4 ," nDiMu >1");
-   eff_counter->GetXaxis()->SetBinLabel(5 ,"softID==1");
-   eff_counter->GetXaxis()->SetBinLabel(6 ,"#mu#mu vtx prob >0.1");
-   eff_counter->GetXaxis()->SetBinLabel(7 ,"#mu#mu m > 7 GeV");
-   eff_counter->GetXaxis()->SetBinLabel(8 ,"#mu#mu p_{T} > 12 GeV");
-
-   eff_counter->GetXaxis()->SetBinLabel(9,"nDiEle>1");
-   eff_counter->GetXaxis()->SetBinLabel(10,"no overlap");
-   eff_counter->GetXaxis()->SetBinLabel(11,"ID==1");
-   eff_counter->GetXaxis()->SetBinLabel(12,"!LP-LP");
-   eff_counter->GetXaxis()->SetBinLabel(13 ,"ee vtx prob >0.1");
-   eff_counter->GetXaxis()->SetBinLabel(14 ,"TQ all dR ok");
-   eff_counter->GetXaxis()->SetBinLabel(15 ,"TQ vtx prob >0.1");
-
-   TH1F* effrel_counter = new TH1F("effrel_counter", "",15,0,15);
-   effrel_counter->GetXaxis()->SetBinLabel(1 ," Total");
-   effrel_counter->GetXaxis()->SetBinLabel(2 ," Trigger");
-   effrel_counter->GetXaxis()->SetBinLabel(3 ," nTQ >=1");
-   effrel_counter->GetXaxis()->SetBinLabel(4 ," nDiMu >1");
-   effrel_counter->GetXaxis()->SetBinLabel(5 ,"softID==1");
-   effrel_counter->GetXaxis()->SetBinLabel(6 ,"#mu#mu vtx prob >0.1");
-   effrel_counter->GetXaxis()->SetBinLabel(7 ,"#mu#mu m > 7 GeV");
-   effrel_counter->GetXaxis()->SetBinLabel(8 ,"#mu#mu p_{T} > 12 GeV");
-
-   effrel_counter->GetXaxis()->SetBinLabel(9,"nDiEle>1");
-   effrel_counter->GetXaxis()->SetBinLabel(10,"no overlap");
-   effrel_counter->GetXaxis()->SetBinLabel(11,"ID==1");
-   effrel_counter->GetXaxis()->SetBinLabel(12,"!LP-LP");
-   effrel_counter->GetXaxis()->SetBinLabel(13 ,"ee vtx prob >0.1");
-   effrel_counter->GetXaxis()->SetBinLabel(14 ,"TQ all dR ok");
-   effrel_counter->GetXaxis()->SetBinLabel(15 ,"TQ vtx prob >0.1");
-
+   TH1F* h_counter = new TH1F("h_counter", "",16,0,16);
+   TH1F* eff_counter = new TH1F("eff_counter", "",16,0,16);
+   TH1F* effrel_counter = new TH1F("effrel_counter", "",16,0,16);
    h_counter->SetBinContent(1,tot);
    h_counter->SetBinContent(2,trigger);
-   for(int i=0;i<13;i++) h_counter->SetBinContent(i+3, counter[i]);
-   for(int i=0;i<13;i++) {
+   for(int i=0;i<14;i++) h_counter->SetBinContent(i+3, counter[i]);
+   for(int i=0;i<14;i++) {
      double eff= (float)counter[i]/counter[0];
      eff_counter->SetBinContent(i+3, eff);
      eff_counter->SetBinError(i+3, sqrt((eff*(1-eff))/counter[0]));
@@ -395,7 +364,7 @@ void AnalysisTQ::Loop(std::string mass,int tot,int trigger)
    eff_counter->SetBinContent(2, (int)trigger/tot);
    eff_counter->SetBinError(1, sqrt(((int)trigger/tot*(1-(int)trigger/tot))/tot));
    
-   for(int i=0;i<13;i++) {
+   for(int i=0;i<14;i++) {
      double eff;
      if(i!=0) eff= (float)counter[i]/counter[i-1];
      else eff=(float)counter[i]/trigger;
@@ -411,6 +380,59 @@ void AnalysisTQ::Loop(std::string mass,int tot,int trigger)
    effrel_counter->SetBinContent(2, (int)trigger/tot);
    effrel_counter->SetBinError(1, sqrt(((int)trigger/tot*(1-(int)trigger/tot))/tot));
    
+
+   h_counter->GetXaxis()->SetBinLabel(1 ," Total");
+   h_counter->GetXaxis()->SetBinLabel(2 ," Trigger");
+   h_counter->GetXaxis()->SetBinLabel(3 ," >= 1 TQ");
+   h_counter->GetXaxis()->SetBinLabel(4 ," nDiMu >1");
+   h_counter->GetXaxis()->SetBinLabel(5 ,"softID==1");
+   h_counter->GetXaxis()->SetBinLabel(6 ,"#mu#mu vtx prob >0.1");
+   h_counter->GetXaxis()->SetBinLabel(7 ,"#mu#mu mass> 7 GeV");
+   h_counter->GetXaxis()->SetBinLabel(8 ,"#mu#mu p_{T} > 12 GeV");
+   h_counter->GetXaxis()->SetBinLabel(9,"nDiEle>1");
+   h_counter->GetXaxis()->SetBinLabel(10,"no overlap");
+   h_counter->GetXaxis()->SetBinLabel(11,"ID==1");
+   h_counter->GetXaxis()->SetBinLabel(12 ,"no LP-LP");
+   h_counter->GetXaxis()->SetBinLabel(13 ,"ee vtx prob >0.1");
+   h_counter->GetXaxis()->SetBinLabel(14 ,"ee mass > 4 GeV");
+   h_counter->GetXaxis()->SetBinLabel(15 ,"TQ all dR ok");
+   h_counter->GetXaxis()->SetBinLabel(16 ,"TQ vtx prob >0.1");
+
+   eff_counter->GetXaxis()->SetBinLabel(1 ," Total");
+   eff_counter->GetXaxis()->SetBinLabel(2 ," Trigger");
+   eff_counter->GetXaxis()->SetBinLabel(3 ," >= 1 TQ");
+   eff_counter->GetXaxis()->SetBinLabel(4 ," nDiMu >1");
+   eff_counter->GetXaxis()->SetBinLabel(5 ,"softID==1");
+   eff_counter->GetXaxis()->SetBinLabel(6 ,"#mu#mu vtx prob >0.1");
+   eff_counter->GetXaxis()->SetBinLabel(7 ,"#mu#mu mass > 7 GeV");
+   eff_counter->GetXaxis()->SetBinLabel(8 , "#mu#mu p_{T} >12 GeV");
+   eff_counter->GetXaxis()->SetBinLabel(9 ,"nDiEle>0");
+   eff_counter->GetXaxis()->SetBinLabel(10,"no overlap");
+   eff_counter->GetXaxis()->SetBinLabel(11 ,"ID==1");
+   eff_counter->GetXaxis()->SetBinLabel(12 , "no LP-LP");
+   eff_counter->GetXaxis()->SetBinLabel(13 ,"ee vtx prob >0.1");
+   eff_counter->GetXaxis()->SetBinLabel(14 , "ee mass > 4 GeV");
+   eff_counter->GetXaxis()->SetBinLabel(15 , "TQ all dR ok");
+   eff_counter->GetXaxis()->SetBinLabel(16 , "TQ vtx prob >0.1");
+
+   effrel_counter->GetXaxis()->SetBinLabel(1 ," Total");
+   effrel_counter->GetXaxis()->SetBinLabel(2 ," Trigger");
+   effrel_counter->GetXaxis()->SetBinLabel(3 ," nTQ >=1");
+   effrel_counter->GetXaxis()->SetBinLabel(4 ," nDiMu >1");
+   effrel_counter->GetXaxis()->SetBinLabel(5 ,"softID==1");
+   effrel_counter->GetXaxis()->SetBinLabel(6 ,"#mu#mu vtx prob >0.1");
+   effrel_counter->GetXaxis()->SetBinLabel(7 ,"#mu#mu m > 7 GeV");
+   effrel_counter->GetXaxis()->SetBinLabel(8 ,"#mu#mu p_{T} > 12 GeV");
+   effrel_counter->GetXaxis()->SetBinLabel(9,"nDiEle>1");
+   effrel_counter->GetXaxis()->SetBinLabel(10,"no overlap");
+   effrel_counter->GetXaxis()->SetBinLabel(11,"ID==1");
+   effrel_counter->GetXaxis()->SetBinLabel(12,"!LP-LP");
+   effrel_counter->GetXaxis()->SetBinLabel(13, "ee mass > 4 GeV");
+   effrel_counter->GetXaxis()->SetBinLabel(14 ,"ee vtx prob >0.1");
+   effrel_counter->GetXaxis()->SetBinLabel(15 ,"TQ all dR ok");
+   effrel_counter->GetXaxis()->SetBinLabel(16 ,"TQ vtx prob >0.1");
+
+
 
 
    //saving on file   
