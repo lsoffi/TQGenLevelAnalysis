@@ -2233,7 +2233,7 @@ private:
 
 
        //perform trigger studies: need prescaled trigger fired
-       if(sampleID <=0)triggerOK=1;
+       //       if(sampleID <=0)triggerOK=1;
        //       triggerOK=HLT_Dimuon0_prescaled_2018;    
        
        if(triggerOK)h_counter->Fill(3);
