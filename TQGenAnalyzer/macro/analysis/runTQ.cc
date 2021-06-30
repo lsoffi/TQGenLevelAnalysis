@@ -64,6 +64,10 @@ int runTQ(std::string mass, std::string region){
     t.Add("/eos/cms/store/group/phys_egamma/soffi/ggXToYYTo2mu2e/ntuple_ggXToYYTo2mu2e_m22_PseudoScalar_13TeV_106X_PRIVATE_MATTIA_100K.root");
     TFile* f = new TFile("/eos/cms/store/group/phys_egamma/soffi/ggXToYYTo2mu2e/ntuple_ggXToYYTo2mu2e_m22_PseudoScalar_13TeV_106X_PRIVATE_MATTIA_100K.root");
     h_counter=(TH1F*)f->Get("GenAnalysis/h_counter");
+  }else if(mass=="22wTrigger"){
+    t.Add("/eos/cms/store/group/phys_egamma/soffi/ggXToYYTo2mu2e/ntuple_ggXToYYTo2mu2e_m22_PseudoScalar_13TeV_106X_PRIVATE_MATTIA_100K_wTrigger.root");
+    TFile* f = new TFile("/eos/cms/store/group/phys_egamma/soffi/ggXToYYTo2mu2e/ntuple_ggXToYYTo2mu2e_m22_PseudoScalar_13TeV_106X_PRIVATE_MATTIA_100K_wTrigger.root");
+    h_counter=(TH1F*)f->Get("GenAnalysis/h_counter");
   }else if(mass=="26"){
     t.Add("/eos/cms/store/group/phys_egamma/soffi/ggXToYYTo2mu2e/ntuple_ggXToYYTo2mu2e_m26_PseudoScalar_13TeV_106X_PRIVATE_MATTIA_100K.root");
     TFile* f = new TFile("/eos/cms/store/group/phys_egamma/soffi/ggXToYYTo2mu2e/ntuple_ggXToYYTo2mu2e_m26_PseudoScalar_13TeV_106X_PRIVATE_MATTIA_100K.root");
@@ -144,6 +148,7 @@ void runTQAll(){
   //runTQ("14", "TQ");
   runTQ("18wTrigger", "TQ");
   runTQ("20wTrigger", "TQ");
+  runTQ("22wTrigger", "TQ");
   runTQ("26wTrigger", "TQ");
   //  runTQ("Run2018ABCD_trigger", "TQ");
 }

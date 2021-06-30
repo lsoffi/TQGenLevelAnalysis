@@ -386,7 +386,7 @@ void compareEffDi(){
   */
   TFile* f26= new TFile("analysis/fout_m26wTrigger_TQ.root");
   TFile* f20= new TFile("analysis/fout_m20wTrigger_TQ.root");
-  //TFile* f22= new TFile("analysis/fout_m22_TQ.root");
+  TFile* f22= new TFile("analysis/fout_m22wTrigger_TQ.root");
   TFile* f18= new TFile("analysis/fout_m18wTrigger_TQ.root");
   //TFile* f14= new TFile("analysis/fout_m14_TQ.root");
   /*
@@ -401,8 +401,8 @@ void compareEffDi(){
   */
   TH1F* eff_18 =  (TH1F*)f18->Get("eff_counter");
   TH1F* effrel_18 =  (TH1F*)f18->Get("effrel_counter");
-  //TH1F* eff_22 =  (TH1F*)f22->Get("eff_counter");
-  //TH1F* effrel_22 =  (TH1F*)f22->Get("effrel_counter");
+  TH1F* eff_22 =  (TH1F*)f22->Get("eff_counter");
+  TH1F* effrel_22 =  (TH1F*)f22->Get("effrel_counter");
   TH1F* eff_20 =  (TH1F*)f20->Get("eff_counter");
   TH1F* effrel_20 =  (TH1F*)f20->Get("effrel_counter");
   TH1F* eff_26 =  (TH1F*)f26->Get("eff_counter");
@@ -420,6 +420,7 @@ void compareEffDi(){
   //  leg1->AddEntry(eff_14," m_{TQ} = 14 GeV" , "PLE");
   leg1->AddEntry(eff_18," m_{TQ} = 18 GeV" , "PLE");
   leg1->AddEntry(eff_20," m_{TQ} = 20 GeV" , "PLE");
+  leg1->AddEntry(eff_22," m_{TQ} = 22 GeV" , "PLE");
   leg1->AddEntry(eff_26," m_{TQ} = 26 GeV" , "PLE");
 
 
@@ -441,10 +442,10 @@ void compareEffDi(){
   eff_18->SetMarkerColor(kGreen-6);
   eff_18->SetMarkerStyle(22);
   eff_18->SetLineColor(kGreen-6);
-  /*  eff_22->SetMarkerColor(kOrange-3);
+  eff_22->SetMarkerColor(kOrange-3);
   eff_22->SetMarkerStyle(21);
   eff_22->SetLineColor(kOrange-3);
-  */
+  
   eff_20->SetMarkerColor(kOrange+6);
   eff_20->SetMarkerStyle(21);
   eff_20->SetLineColor(kOrange+6);
@@ -458,6 +459,7 @@ void compareEffDi(){
   */
   eff_18->Draw("PE");
   eff_20->Draw("PEsame");
+  eff_22->Draw("PEsame");
   eff_26->Draw("PEsame");
   leg1->Draw("same");
   c->SaveAs("~/www/TQ-WORK/eff/efftot_compareEffDi.png");
@@ -482,10 +484,10 @@ void compareEffDi(){
   */  effrel_18->SetMarkerColor(kGreen-6);
   effrel_18->SetMarkerStyle(22);
   effrel_18->SetLineColor(kGreen-6);
-  /*  effrel_22->SetMarkerColor(kOrange-3);
+  effrel_22->SetMarkerColor(kOrange-3);
   effrel_22->SetMarkerStyle(21);
   effrel_22->SetLineColor(kOrange-3);
-  */  effrel_20->SetMarkerColor(kOrange+6);
+  effrel_20->SetMarkerColor(kOrange+6);
   effrel_20->SetMarkerStyle(21);
   effrel_20->SetLineColor(kOrange+6);
   effrel_26->SetMarkerColor(kPink-9);
@@ -497,6 +499,7 @@ void compareEffDi(){
   */
   effrel_18->Draw("pe");
   effrel_20->Draw("pesame");
+  effrel_22->Draw("pesame");
   effrel_26->Draw("pesame");
   //  leg2->Draw("same");
   c->SaveAs("~/www/TQ-WORK/eff/effrel_compareEffDi.png");
@@ -504,11 +507,11 @@ void compareEffDi(){
  
   
   //plot eff vs mass (last bin of absolute trend
-  double effvsmass[3] = {(double)eff_18->GetBinContent(13),(double)eff_20->GetBinContent(13),(double)eff_26->GetBinContent(13)};
-  double efferrvsmass[3] = {(double)eff_18->GetBinError(13),(double)eff_20->GetBinError(13),(double)eff_26->GetBinError(13)};
-  double mass[3] = {18,20,26};
-  double masserr[7]={0};
-  TGraphErrors* g = new TGraphErrors(3,mass, effvsmass,masserr,efferrvsmass);
+  double effvsmass[4] = {(double)eff_18->GetBinContent(13),(double)eff_20->GetBinContent(13),(double)eff_22->GetBinContent(13),(double)eff_26->GetBinContent(13)};
+  double efferrvsmass[4] = {(double)eff_18->GetBinError(13),(double)eff_20->GetBinError(13),(double)eff_22->GetBinError(13),(double)eff_26->GetBinError(13)};
+  double mass[4] = {18,20,22,26};
+  double masserr[4]={0};
+  TGraphErrors* g = new TGraphErrors(4,mass, effvsmass,masserr,efferrvsmass);
   TH1F* h = new TH1F("h","",30,0,30);
   h->GetYaxis()->SetRangeUser(0.0000001,1);
   h->GetYaxis()->SetTitle("Total Efficiency");
